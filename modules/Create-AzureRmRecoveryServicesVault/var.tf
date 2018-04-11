@@ -1,25 +1,6 @@
-variable "app_name" {}
-variable "env_name" {}
-variable "location" {}
-variable "rg_apps_name" {}
-variable subscription_id {}
+variable "rsv_name" {}
+variable "rsv_resource_group_name" {}
 
-variable "default_tags" {
-  type = "map"
-}
-
-variable "recovery_service_vaults" {
-  type = "list"
-}
-
-variable "backup_policies" {
-  type = "list"
-}
-
-variable "vms_ids" {
-  type = "list"
-}
-
-variable "Vms" {
+variable "rsv_backup_policies" {
   type = "list"
 }

@@ -1,3 +1,3 @@
-output "backup_vault_names" {
-  value = ["${azurerm_template_deployment.backup_vaults.*.name}"]
+output "backup_vault_name" {
+  value = ["${azurerm_template_deployment.backup_vault.outputs["vaultName"]}"]
 }

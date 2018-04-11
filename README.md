@@ -9,4 +9,4 @@ General Requirements
 ------------
 
 -	[Terraform](https://www.terraform.io/downloads.html) 0.10.x
--	[AzureRM Terraform Provider] (https://github.com/terraform-providers/terraform-provider-azurerm/blob/master/README.md)
+-	[AzureRM Terraform Provider](https://github.com/terraform-providers/terraform-provider-azurerm/blob/master/README.md)
