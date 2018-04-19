@@ -1,12 +1,12 @@
 #Variables initialization
 #Authentication
-subscription_id = "83acdf26-3269-4a8f-9b10-f472df718dc7"
+subscription_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 
-client_id = "9b8c4f76-e337-4605-b973-47e963f32339"
+client_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 
-client_secret = "a25a15fd-04d9-487a-9254-e87869518784"
+client_secret = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 
-tenant_id = "dd1c6376-71cf-495d-a78e-2694b30474b3"
+tenant_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 
 #Common variables
 app_name = "jdld"
