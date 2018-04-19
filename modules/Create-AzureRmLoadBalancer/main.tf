@@ -12,7 +12,7 @@ resource "azurerm_lb" "lb" {
     private_ip_address            = "${lookup(var.Lbs[count.index], "static_ip")}"
   }
 
-  tags = "${var.ava_tags}"
+  tags = "${var.lb_tags}"
 }
 
 resource "azurerm_lb_backend_address_pool" "lb_backend" {

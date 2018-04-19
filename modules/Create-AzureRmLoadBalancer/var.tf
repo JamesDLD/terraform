@@ -12,7 +12,7 @@ variable "subnets_ids" {
   type = "list"
 }
 
-variable "ava_tags" {
+variable "lb_tags" {
   type = "map"
 }
 

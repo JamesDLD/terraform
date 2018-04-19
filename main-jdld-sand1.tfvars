@@ -1,12 +1,12 @@
 #Variables initialization
 #Authentication
-subscription_id = "TO BE REPLACED"
+subscription_id = "83acdf26-3269-4a8f-9b10-f472df718dc7"
 
-client_id = "TO BE REPLACED"
+client_id = "9b8c4f76-e337-4605-b973-47e963f32339"
 
-client_secret = "TO BE REPLACED"
+client_secret = "a25a15fd-04d9-487a-9254-e87869518784"
 
-tenant_id = "TO BE REPLACED"
+tenant_id = "dd1c6376-71cf-495d-a78e-2694b30474b3"
 
 #Common variables
 app_name = "jdld"
@@ -94,6 +94,20 @@ subnet_nsgrules = [
   },
   {
     subnet_suffix_name         = "rebond"
+    suffix_name                = "ALL_to_RBD_Allow-All"
+    access                     = "Allow"
+    priority                   = "4095"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+    destination_port_range     = "*"
+    protocol                   = "*"
+    source_port_range          = "*"
+  },
+]
+
+/*
+  {
+    subnet_suffix_name         = "rebond"
     suffix_name                = "ALL_to_RBD_Deny-All"
     access                     = "Deny"
     priority                   = "4095"
@@ -103,12 +117,17 @@ subnet_nsgrules = [
     protocol                   = "*"
     source_port_range          = "*"
   },
-]
+  */
 
 # Virtual Machines components : Load Balancer & Availability Set & Nic & VM
-Lb_sku = "Standard"
+Lb_sku = "Standard" #"Basic" 
 
 Lbs = [
+  {
+    suffix_name = "bou"       #It must equals the Vm suffix_name
+    Id_Subnet   = "0"         #Id of the Subnet
+    static_ip   = "10.0.3.13"
+  },
   {
     suffix_name = "rdg"       #It must equals the Vm suffix_name
     Id_Subnet   = "0"         #Id of the Subnet
@@ -120,7 +139,7 @@ LbRules = [
   {
     Id             = "1"    #Id of a the rule within the Load Balancer 
     Id_Lb          = "0"    #Id of the Load Balancer
-    suffix_name    = "rdg"  #It must equals the Lbs suffix_name
+    suffix_name    = "bou"  #It must equals the Lbs suffix_name
     lb_port        = "80"
     probe_protocol = "Http"
     request_path   = "/"
@@ -128,6 +147,14 @@ LbRules = [
   {
     Id             = "2"
     Id_Lb          = "0"
+    suffix_name    = "bou"
+    lb_port        = "22"
+    probe_protocol = "Tcp"
+    request_path   = ""
+  },
+  {
+    Id             = "1"
+    Id_Lb          = "1"
     suffix_name    = "rdg"
     lb_port        = "3389"
     probe_protocol = "Tcp"
@@ -148,7 +175,7 @@ Linux_Vms = [
     Id_BackupVault    = "0"                      #Id of the Backup Recovery Vault
     Id_Lb             = "0"                      #Id of the Load Balancer
     Id_Subnet         = "0"                      #Id of the Subnet
-    Id_Ava            = "0"                      #Id of the Availabilitysets, set to 777 if there is no Availabilitysets
+    Id_Ava            = "777"                    #Id of the Availabilitysets, set to 777 if there is no Availabilitysets
     BackupPolicyName  = "BackupPolicy-Schedule1"
     static_ip         = "10.0.3.5"
     vm_size           = "Standard_DS2_v2"
@@ -166,12 +193,12 @@ Windows_Vms = [
     suffix_name       = "rdg"                    #If Availabilitysets it must equals the Availabilitysets suffix_name / If Load Balancer it must with the Lbs suffix_name
     id                = "1"                      #Id of the VM
     Id_BackupVault    = "0"                      #Id of the Backup Recovery Vault
-    Id_Lb             = "0"                      #Id of the Load Balancer
+    Id_Lb             = "1"                      #Id of the Load Balancer
     Id_Subnet         = "0"                      #Id of the Subnet
-    Id_Ava            = "777"                    #Id of the Availabilitysets, set to 777 if there is no Availabilitysets
+    Id_Ava            = "0"                      #Id of the Availabilitysets, set to 777 if there is no Availabilitysets
     BackupPolicyName  = "BackupPolicy-Schedule1"
     static_ip         = "10.0.3.4"
-    vm_size           = "Standard_DS12_v2"
+    vm_size           = "Standard_DS2_v2"
     managed_disk_type = "Premium_LRS"
     publisher         = "MicrosoftWindowsServer"
     offer             = "WindowsServer"

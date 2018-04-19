@@ -107,7 +107,7 @@ module "Create-AzureRmLoadBalancer-Apps" {
   lb_resource_group_name = "${var.rg_apps_name}"
   Lb_sku                 = "${var.Lb_sku}"
   subnets_ids            = "${module.Create-AzureRmSubnet-Apps.subnets_ids}"
-  ava_tags               = "${var.default_tags}"
+  lb_tags                = "${var.default_tags}"
   LbRules                = ["${var.LbRules}"]
 }
 

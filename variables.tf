@@ -68,13 +68,13 @@ variable "Windows_Vms" {
 }
 
 variable "app_admin" {
-  default = "TO BE REPLACED"
+  default = "admindigital"
 }
 
 variable "pass" {
-  default = "TO BE REPLACED"
+  default = "Passw0rd!123"
 }
 
 variable "ssh_key" {
-  default = "ssh-rsa TO BE REPLACED"
+  default = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDMelxhig6IY80GykqTf0wkozE860GPkd7RU5231b2UEMVyj1BBiPwTYCbAzY/8xBNyz9VL5uzjM6+S9N+OpIZKAMITzU1IVGzo7DtucNwKkRZ6egq+kfFG2JiKs945XOB6xhfFbzoneBu++yEToOrNLHM9Eu5eFFS07Ow+I2YIrTPpfw/UZCNUGFZun2iwm9MkKSWrBR8+/kE54WOAbrGq9symayBvD1A3aHBJ3HPL/geIzNAWw4y6YYsaCWOht1pVMfxf+LSf42XKJ/T8HjO0Ea2lKq5Nmh5cv5aKm6nVprF/L6SlQ3dNSUYPprnDiDBlPBGaBvtz2Hj0sseiu0YH"
 }
