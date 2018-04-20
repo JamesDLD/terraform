@@ -57,6 +57,6 @@ Improvment & Limitation
 ------------
 -	Terraform authentication to AzureRM via Service Principal & certificate
 -	Currently there is no Terraform resource for AzureRm recovery services, that's why I used the Terraform resource azurerm_template_deployment. [Improvment has been requested here for info](https://github.com/Terraform-providers/Terraform-provider-azurerm/issues/1007)
---	[Recovery Services provisionning is being studied here](https://github.com/terraform-providers/terraform-provider-azurerm/pull/995)
---	[VM enrollment to a Recovery Service vault is being studied](https://github.com/terraform-providers/terraform-provider-azurerm/pull/995)
+    -	[Recovery Services provisionning is being studied here](https://github.com/terraform-providers/terraform-provider-azurerm/pull/995)
+    -	[VM enrollment to a Recovery Service vault is being studied here](https://github.com/terraform-providers/terraform-provider-azurerm/pull/995)
 -	Couldn't find any option to set the BackupStorageRedundancy paremeter (LRS or GRS) in the RecoveryServices/vaults template, [Microsoft.RecoveryServices/vaults template reference](https://docs.microsoft.com/en-us/azure/templates/microsoft.recoveryservices/vaults)
