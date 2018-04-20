@@ -21,21 +21,24 @@ With your Terraform template created, the first step is to initialize Terraform.
 This step ensures that Terraform has all the prerequisites to build your template in Azure.
 
 ```hcl
+
 terraform init -backend-config="backend-jdld-sand1.tfvars"
-}
+
 ```
 
 The next step is to have Terraform review and validate the template. 
 This step compares the requested resources to the state information saved by Terraform and then outputs the planned execution. Resources are not created in Azure.
 ```hcl
+
 terraform plan -var-file="main-jdld-sand1.tfvars"
-}
+
 ```
 
 If all is ok with the proposal you can now apply the configuration.
 ```hcl
+
 terraform apply -var-file="main-jdld-sand1.tfvars"
-}
+
 ```
 
 General Requirements
