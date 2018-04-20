@@ -150,3 +150,24 @@ module "Enable-AzureRmRecoveryServicesBackupProtection-Apps" {
   bck_BackupPolicyName        = "BackupPolicy-Schedule1"
   bck_location                = "${var.location}"
 }
+
+## Custom API
+module "Create-DnsThroughApi" {
+  source               = "./modules/Create-DnsThroughApi"
+  dns_fqdn_api         = "${var.dns_fqdn_api}"
+  dns_secret           = "${var.dns_secret}"
+  dns_application_name = "${var.dns_application_name}"
+  xpod_dns_zone_name   = "${var.xpod_dns_zone_name}"
+  vpod_dns_zone_name   = "${var.vpod_dns_zone_name}"
+
+  Dns_Wan_RecordsCount = "${var.Dns_Wan_RecordsCount}" #If no need just set to "0"
+  Dns_Wan_Records      = ["${var.Dns_Wan_Records}"]    #If no need just set to []
+
+  vm_prefix            = "${var.app_name}-${var.env_name}-"
+  Dns_Vms_RecordsCount = "${var.Dns_Vms_RecordsCount}"                #If no need just set to "0"
+  Vms                  = ["${concat(var.Linux_Vms,var.Windows_Vms)}"] #If no need just set to []
+
+  lb_prefix            = "${var.app_name}-${var.env_name}-"
+  Dns_Lbs_RecordsCount = "${var.Dns_Lbs_RecordsCount}"      #If no need just set to "0"
+  Lbs                  = ["${var.Lbs}"]                     #If no need just set to []
+}
