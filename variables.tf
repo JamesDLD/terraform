@@ -23,6 +23,11 @@ variable "rg_apps_name" {}
 variable "sa_apps_name" {}
 variable "rg_infr_name" {}
 variable "sa_infr_name" {}
+variable "kv_sku" {}
+
+variable "key_vaults" {
+  type = "list"
+}
 
 #Backup 
 variable "backup_policies" {
@@ -67,14 +72,6 @@ variable "Windows_Vms" {
   type = "list"
 }
 
-variable "app_admin" {
-  default = "TO BE REPLACED"
-}
-
-variable "pass" {
-  default = "TO BE REPLACED"
-}
-
-variable "ssh_key" {
-  default = "ssh-rsa TO BE REPLACED"
-}
+variable "app_admin" {}
+variable "pass" {}
+variable "ssh_key" {}

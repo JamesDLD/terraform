@@ -1,5 +1,5 @@
 #Variables initialization
-#Authentication
+#Azure Authentication & VM credentials
 subscription_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 
 client_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
@@ -7,6 +7,12 @@ client_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 client_secret = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 
 tenant_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+
+app_admin = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+
+pass = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+
+ssh_key = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 
 #Common variables
 app_name = "jdld"
@@ -47,6 +53,17 @@ backup_policies = [
     dailyRetentionDurationCount   = "14"
     weeklyRetentionDurationCount  = "2"
     monthlyRetentionDurationCount = "2"
+  },
+]
+
+#Key vault
+kv_sku = "standard"
+
+key_vaults = [
+  {
+    suffix_name       = "sci"
+    policy1_tenant_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+    policy1_object_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
   },
 ]
 
@@ -94,20 +111,6 @@ subnet_nsgrules = [
   },
   {
     subnet_suffix_name         = "rebond"
-    suffix_name                = "ALL_to_RBD_Allow-All"
-    access                     = "Allow"
-    priority                   = "4095"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-    destination_port_range     = "*"
-    protocol                   = "*"
-    source_port_range          = "*"
-  },
-]
-
-/*
-  {
-    subnet_suffix_name         = "rebond"
     suffix_name                = "ALL_to_RBD_Deny-All"
     access                     = "Deny"
     priority                   = "4095"
@@ -117,7 +120,7 @@ subnet_nsgrules = [
     protocol                   = "*"
     source_port_range          = "*"
   },
-  */
+]
 
 # Virtual Machines components : Load Balancer & Availability Set & Nic & VM
 Lb_sku = "Standard" #"Basic" 
