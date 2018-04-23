@@ -23,11 +23,20 @@ dns_application_name = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 
 xpod_dns_zone_name = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 
+#DNS Custom API Credential
+dns_fqdn_api = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+
+dns_secret = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+
+dns_application_name = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+
+xpod_dns_zone_name = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+
 vpod_dns_zone_name = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 
-Dns_Vms_RecordsCount = "2"
+Dns_Vms_RecordsCount = "0" #"2"
 
-Dns_Lbs_RecordsCount = "1"
+Dns_Lbs_RecordsCount = "0" #"1"
 
 Dns_Wan_RecordsCount = "2"
 
