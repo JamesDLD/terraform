@@ -21,6 +21,6 @@ resource "azurerm_subnet" "subnets" {
   virtual_network_name      = "${var.vnet_name}"
   resource_group_name       = "${var.subnet_resource_group_name}"
   address_prefix            = "${lookup(var.snets[count.index], "cidr")}"
-  network_security_group_id = "${element(var.subnet_nsgs_ids,count.index)}"
+  network_security_group_id = "${"${lookup(var.snets[count.index], "Id_Nsg")}" == "777" ? "" : "${element(var.nsgs_ids,lookup(var.snets[count.index], "Id_Nsg"))}"}"
   route_table_id            = "${azurerm_route_table.route_table.id}"
 }

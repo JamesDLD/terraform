@@ -1,4 +1,4 @@
-variable "snets" {
+variable "nsgs" {
   type = "list"
 }
 

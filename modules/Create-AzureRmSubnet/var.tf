@@ -19,6 +19,6 @@ variable "snets" {
   type = "list"
 }
 
-variable "subnet_nsgs_ids" {
+variable "nsgs_ids" {
   type = "list"
 }

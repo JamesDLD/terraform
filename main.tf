@@ -61,13 +61,23 @@ module "Create-AzureRmVirtualNetwork-Apps" {
 
 module "Create-AzureRmNetworkSecurityGroup-Apps" {
   source                  = "./modules/Create-AzureRmNetworkSecurityGroup"
-  snets                   = ["${var.apps_snets}"]
+  nsgs                    = ["${var.nsgs}"]
   nsg_prefix              = "${var.app_name}-${var.env_name}-"
   nsg_suffix              = "-nsg1"
   nsg_location            = "${var.location}"
   nsg_resource_group_name = "${var.rg_apps_name}"
   nsg_tags                = "${var.default_tags}"
-  nsgrules                = ["${var.subnet_nsgrules}"]
+  nsgrules                = ["${var.nsgrules}"]
+}
+
+module "Create-AzureRmApplicationkSecurityGroup-Apps" {
+  source                  = "./modules/Create-AzureRmApplicationSecurityGroup"
+  asgs                    = ["${var.asgs}"]
+  asg_prefix              = "${var.app_name}-${var.env_name}-"
+  asg_suffix              = "-asg1"
+  asg_location            = "${var.location}"
+  asg_resource_group_name = "${var.rg_apps_name}"
+  asg_tags                = "${var.default_tags}"
 }
 
 module "Create-AzureRmSubnet-Apps" {
@@ -82,7 +92,7 @@ module "Create-AzureRmSubnet-Apps" {
   subnet_suffix              = "-snet1"
   snets                      = ["${var.apps_snets}"]
   vnet_name                  = "${module.Create-AzureRmVirtualNetwork-Apps.vnet_name}"
-  subnet_nsgs_ids            = "${module.Create-AzureRmNetworkSecurityGroup-Apps.nsgs_subnet_ids}"
+  nsgs_ids                   = "${module.Create-AzureRmNetworkSecurityGroup-Apps.nsgs_ids}"
 }
 
 ## Virtual Machines components
@@ -120,6 +130,23 @@ module "Create-AzureRmNetworkInterface-Apps" {
   subnets_ids             = "${module.Create-AzureRmSubnet-Apps.subnets_ids}"
   lb_backend_ids          = "${module.Create-AzureRmLoadBalancer-Apps.lb_backend_ids}"
   nic_tags                = "${var.default_tags}"
+}
+
+module "Create-AzureRmVmss-Apps" {
+  source                   = "./modules/Create-AzureRmVmss"
+  sa_bootdiag_storage_uri  = "${module.Create-AzureRmStorageAccount-Infr.sa_primary_blob_endpoint}"
+  Linux_Ss_Vms             = ["${var.Linux_Ss_Vms}"]                                                #If no need just fill "Linux_Vms = []" in the tfvars file
+  Windows_Ss_Vms           = ["${var.Windows_Ss_Vms}"]                                              #If no need just fill "Linux_Vms = []" in the tfvars file
+  vmss_location            = "${var.location}"
+  vmss_resource_group_name = "${var.rg_apps_name}"
+  vmss_prefix              = "${var.app_name}-${var.env_name}-"
+  vmss_tags                = "${var.default_tags}"
+  app_admin                = "${var.app_admin}"
+  pass                     = "${var.pass}"
+  ssh_key                  = "${var.ssh_key}"
+  subnets_ids              = "${module.Create-AzureRmSubnet-Apps.subnets_ids}"
+  lb_backend_ids           = "${module.Create-AzureRmLoadBalancer-Apps.lb_backend_ids}"
+  nsgs_ids                 = "${module.Create-AzureRmNetworkSecurityGroup-Apps.nsgs_ids}"
 }
 
 module "Create-AzureRmVm-Apps" {

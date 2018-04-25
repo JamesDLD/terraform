@@ -23,15 +23,6 @@ dns_application_name = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 
 xpod_dns_zone_name = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 
-#DNS Custom API Credential
-dns_fqdn_api = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-
-dns_secret = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-
-dns_application_name = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-
-xpod_dns_zone_name = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-
 vpod_dns_zone_name = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 
 Dns_Vms_RecordsCount = "0" #"2"
@@ -98,9 +89,10 @@ kv_sku = "standard"
 
 key_vaults = [
   {
-    suffix_name       = "sci"
-    policy1_tenant_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-    policy1_object_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+    suffix_name            = "sci"
+    policy1_tenant_id      = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+    policy1_object_id      = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+    policy1_application_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
   },
 ]
 
@@ -111,6 +103,12 @@ apps_snets = [
   {
     subnet_suffix_name = "rebond"
     cidr               = "10.0.3.0/28"
+    Id_Nsg             = "0"           #Id of the Network Security Group, , set to 777 if there is no Network Security Groups
+  },
+  {
+    subnet_suffix_name = "data"
+    cidr               = "10.0.3.16/28"
+    Id_Nsg             = "777"          #Id of the Network Security Group, , set to 777 if there is no Network Security Groups
   },
 ]
 
@@ -123,9 +121,19 @@ default_routes = [
   },
 ]
 
-subnet_nsgrules = [
+nsgs = [
   {
-    subnet_suffix_name         = "rebond"
+    suffix_name = "snet-rebond"
+  },
+  {
+    suffix_name = "nic-all"
+  },
+]
+
+nsgrules = [
+  {
+    Id_Nsg                     = "0"                   #Id of the Network Security Group
+    direction                  = "Inbound"
     suffix_name                = "ALL_to_RBD_tcp-3389"
     access                     = "Allow"
     priority                   = "2000"
@@ -136,7 +144,8 @@ subnet_nsgrules = [
     source_port_range          = "*"
   },
   {
-    subnet_suffix_name         = "rebond"
+    Id_Nsg                     = "0"
+    direction                  = "Inbound"
     suffix_name                = "ALL_to_RBD_tcp-22"
     access                     = "Allow"
     priority                   = "2001"
@@ -147,7 +156,8 @@ subnet_nsgrules = [
     source_port_range          = "*"
   },
   {
-    subnet_suffix_name         = "rebond"
+    Id_Nsg                     = "0"
+    direction                  = "Inbound"
     suffix_name                = "ALL_to_RBD_Deny-All"
     access                     = "Deny"
     priority                   = "4095"
@@ -157,6 +167,27 @@ subnet_nsgrules = [
     protocol                   = "*"
     source_port_range          = "*"
   },
+  {
+    Id_Nsg                     = "1"                   #Id of the Network Security Group
+    direction                  = "Inbound"
+    suffix_name                = "ALL_to_NIC_tcp-3389"
+    access                     = "Allow"
+    priority                   = "2000"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+    destination_port_range     = "3389"
+    protocol                   = "tcp"
+    source_port_range          = "*"
+  },
+]
+
+asgs = [
+  {
+    suffix_name = "bou"
+  },
+  {
+    suffix_name = "rdg"
+  },
 ]
 
 # Virtual Machines components : Load Balancer & Availability Set & Nic & VM
@@ -164,14 +195,24 @@ Lb_sku = "Standard" #"Basic"
 
 Lbs = [
   {
-    suffix_name = "bou"       #It must equals the Vm suffix_name
+    suffix_name = "bou"
     Id_Subnet   = "0"         #Id of the Subnet
     static_ip   = "10.0.3.13"
   },
   {
-    suffix_name = "rdg"       #It must equals the Vm suffix_name
+    suffix_name = "rdg"
     Id_Subnet   = "0"         #Id of the Subnet
     static_ip   = "10.0.3.14"
+  },
+  {
+    suffix_name = "mft"
+    Id_Subnet   = "1"         #Id of the Subnet
+    static_ip   = "10.0.3.30"
+  },
+  {
+    suffix_name = "rds"
+    Id_Subnet   = "1"         #Id of the Subnet
+    static_ip   = "10.0.3.29"
   },
 ]
 
@@ -179,7 +220,7 @@ LbRules = [
   {
     Id             = "1"    #Id of a the rule within the Load Balancer 
     Id_Lb          = "0"    #Id of the Load Balancer
-    suffix_name    = "bou"  #It must equals the Lbs suffix_name
+    suffix_name    = "bou"  #MUST match the Lbs suffix_name
     lb_port        = "80"
     probe_protocol = "Http"
     request_path   = "/"
@@ -200,6 +241,46 @@ LbRules = [
     probe_protocol = "Tcp"
     request_path   = ""
   },
+  {
+    Id             = "2"
+    Id_Lb          = "2"
+    suffix_name    = "mft"
+    lb_port        = "80"
+    probe_protocol = "Tcp"
+    request_path   = ""
+  },
+  {
+    Id             = "3"
+    Id_Lb          = "2"
+    suffix_name    = "mft"
+    lb_port        = "22"
+    probe_protocol = "Tcp"
+    request_path   = ""
+  },
+  {
+    Id             = "4"
+    Id_Lb          = "2"
+    suffix_name    = "mft"
+    lb_port        = "6321"
+    probe_protocol = "Tcp"
+    request_path   = ""
+  },
+  {
+    Id             = "5"
+    Id_Lb          = "2"
+    suffix_name    = "mft"
+    lb_port        = "111"
+    probe_protocol = "Tcp"
+    request_path   = ""
+  },
+  {
+    Id             = "1"
+    Id_Lb          = "3"
+    suffix_name    = "rds"
+    lb_port        = "3389"
+    probe_protocol = "Tcp"
+    request_path   = ""
+  },
 ]
 
 Availabilitysets = [
@@ -210,10 +291,9 @@ Availabilitysets = [
 
 Linux_Vms = [
   {
-    suffix_name       = "bou"                    #If Availabilitysets it must equals the Availabilitysets suffix_name / If Load Balancer it must with the Lbs suffix_name
+    suffix_name       = "bou"
     id                = "1"                      #Id of the VM
-    Id_BackupVault    = "0"                      #Id of the Backup Recovery Vault
-    Id_Lb             = "0"                      #Id of the Load Balancer
+    Id_Lb             = "1"                      #Id of the Load Balancer
     Id_Subnet         = "0"                      #Id of the Subnet
     Id_Ava            = "777"                    #Id of the Availabilitysets, set to 777 if there is no Availabilitysets
     BackupPolicyName  = "BackupPolicy-Schedule1"
@@ -230,10 +310,9 @@ Linux_Vms = [
 
 Windows_Vms = [
   {
-    suffix_name       = "rdg"                    #If Availabilitysets it must equals the Availabilitysets suffix_name / If Load Balancer it must with the Lbs suffix_name
+    suffix_name       = "rdg"
     id                = "1"                      #Id of the VM
-    Id_BackupVault    = "0"                      #Id of the Backup Recovery Vault
-    Id_Lb             = "1"                      #Id of the Load Balancer
+    Id_Lb             = "2"                      #Id of the Load Balancer
     Id_Subnet         = "0"                      #Id of the Subnet
     Id_Ava            = "0"                      #Id of the Availabilitysets, set to 777 if there is no Availabilitysets
     BackupPolicyName  = "BackupPolicy-Schedule1"
@@ -245,5 +324,46 @@ Windows_Vms = [
     sku               = "2016-Datacenter"
     lun               = "0"
     disk_size_gb      = "32"
+  },
+]
+
+#VM Scale Set
+Linux_Ss_Vms = [
+  {
+    suffix_name         = "mft"
+    id                  = "1"               #Id of the VM
+    Id_Lb               = "2"               #Id of the Load Balancer
+    Id_Subnet           = "1"               #Id of the Subnet
+    Id_Nsg              = "1"               #Id of the Network Security Group
+    upgrade_policy_mode = "Manual"
+    sku_name            = "Standard_DS2_v2"
+    sku_tier            = "Standard"
+    sku_capacity        = 2
+    publisher           = "OpenLogic"
+    offer               = "CentOS"
+    sku                 = "7.4"
+    managed_disk_type   = "Premium_LRS"
+    lun                 = "0"
+    disk_size_gb        = "32"
+  },
+]
+
+Windows_Ss_Vms = [
+  {
+    suffix_name         = "rds"                    #Windows computer name prefix cannot be more than 9 characters long
+    id                  = "1"                      #Id of the VM
+    Id_Lb               = "3"                      #Id of the Load Balancer
+    Id_Subnet           = "1"                      #Id of the Subnet
+    Id_Nsg              = "1"                      #Id of the Network Security Group
+    upgrade_policy_mode = "Manual"
+    sku_name            = "Standard_DS2_v2"
+    sku_tier            = "Standard"
+    sku_capacity        = 2
+    publisher           = "MicrosoftWindowsServer"
+    offer               = "WindowsServer"
+    sku                 = "2016-Datacenter"
+    managed_disk_type   = "Premium_LRS"
+    lun                 = "0"
+    disk_size_gb        = "32"
   },
 ]

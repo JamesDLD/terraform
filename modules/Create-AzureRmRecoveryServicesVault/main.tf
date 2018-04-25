@@ -27,4 +27,5 @@ resource "azurerm_template_deployment" "backup_policies" {
   }
 
   #Terraform sends only string, I had to convert it to integer or array into the Json, for info : https://github.com/terraform-providers/terraform-provider-azurerm/issues/34
+  #Also for the same reason we can't tag our subresources
 }

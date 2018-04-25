@@ -105,11 +105,12 @@ resource "azurerm_virtual_machine" "Windows_Vms" {
   }
 
   storage_data_disk {
-    name          = "${var.vm_prefix}${lookup(var.Windows_Vms[count.index], "suffix_name")}${lookup(var.Windows_Vms[count.index], "id")}-datadk${lookup(var.Windows_Vms[count.index], "lun")}"
-    create_option = "Empty"
-    lun           = "${lookup(var.Windows_Vms[count.index], "lun")}"                                                                                                                           #"${lookup(var.${lookup(var.Windows_Vms[count.index], "DataDisks")}[count.index], "lun")}"
-    caching       = "ReadWrite"
-    disk_size_gb  = "${lookup(var.Windows_Vms[count.index], "disk_size_gb")}"                                                                                                                  #"${lookup(var.${lookup(var.Windows_Vms[count.index], "DataDisks")}[count.index], "disk_size_gb")}"
+    name              = "${var.vm_prefix}${lookup(var.Windows_Vms[count.index], "suffix_name")}${lookup(var.Windows_Vms[count.index], "id")}-datadk${lookup(var.Windows_Vms[count.index], "lun")}"
+    create_option     = "Empty"
+    lun               = "${lookup(var.Windows_Vms[count.index], "lun")}"
+    caching           = "ReadWrite"
+    disk_size_gb      = "${lookup(var.Windows_Vms[count.index], "disk_size_gb")}"
+    managed_disk_type = "${lookup(var.Windows_Vms[count.index], "managed_disk_type")}"
   }
 
   tags = "${var.vm_tags}"

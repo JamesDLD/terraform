@@ -18,6 +18,7 @@ variable "key_vaults" {
     suffix_name       = "sci"
     policy1_tenant_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
     policy1_object_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+    policy1_application_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
   }
 }
 

@@ -1,13 +1,18 @@
 #Variables declaration
 
 #Authentication
-variable "subscription_id" {}
+terraform {
+  backend "azurerm" {}
+}
 
+variable "subscription_id" {}
 variable "client_id" {}
 variable "client_secret" {}
 variable "tenant_id" {}
 
+#Common
 variable "app_name" {}
+
 variable "env_name" {}
 variable "location" {}
 
@@ -15,9 +20,7 @@ variable "default_tags" {
   type = "map"
 }
 
-#Common
 variable "sa_account_replication_type" {}
-
 variable "sa_account_tier" {}
 variable "rg_apps_name" {}
 variable "sa_apps_name" {}
@@ -29,7 +32,7 @@ variable "key_vaults" {
   type = "list"
 }
 
-#Backup 
+#Backup
 variable "backup_policies" {
   type = "list"
 }
@@ -45,7 +48,15 @@ variable "default_routes" {
   type = "list"
 }
 
-variable "subnet_nsgrules" {
+variable "nsgs" {
+  type = "list"
+}
+
+variable "nsgrules" {
+  type = "list"
+}
+
+variable "asgs" {
   type = "list"
 }
 
@@ -69,6 +80,14 @@ variable "Linux_Vms" {
 }
 
 variable "Windows_Vms" {
+  type = "list"
+}
+
+variable "Linux_Ss_Vms" {
+  type = "list"
+}
+
+variable "Windows_Ss_Vms" {
   type = "list"
 }
 
