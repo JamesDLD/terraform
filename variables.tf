@@ -94,7 +94,6 @@ variable "Windows_Ss_Vms" {
 variable "app_admin" {}
 variable "pass" {}
 variable "ssh_key" {}
-
 variable "dns_fqdn_api" {}
 variable "dns_secret" {}
 variable "dns_application_name" {}

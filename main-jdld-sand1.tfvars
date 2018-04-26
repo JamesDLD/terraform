@@ -4,28 +4,20 @@
 The following values are listed in a local file that is ignored by git pushing, 
 this file name is : main-jdld-sand1-secret.tfvars
 subscription_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-
 client_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-
 client_secret = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-
 tenant_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 
+# VM Credential and public key certificate
 app_admin = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-
 pass = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-
 ssh_key = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 
 #DNS Custom API Credential
 dns_fqdn_api = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-
 dns_secret = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-
 dns_application_name = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-
 xpod_dns_zone_name = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-
 vpod_dns_zone_name = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 */
 
