@@ -1,5 +1,8 @@
 #Variables initialization
 #Azure Authentication & VM credentials
+/*
+The following values are listed in a local file that is ignored by git pushing, 
+this file name is : main-jdld-sand1-secret.tfvars
 subscription_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 
 client_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
@@ -24,6 +27,7 @@ dns_application_name = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 xpod_dns_zone_name = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 
 vpod_dns_zone_name = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+*/
 
 Dns_Vms_RecordsCount = "0" #"2"
 
@@ -87,6 +91,9 @@ backup_policies = [
 #Key vault
 kv_sku = "standard"
 
+/*
+The following values are listed in a local file that is ignored by git pushing, 
+this file name is : main-jdld-sand1-secret.tfvars
 key_vaults = [
   {
     suffix_name            = "sci"
@@ -95,6 +102,7 @@ key_vaults = [
     policy1_application_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
   },
 ]
+*/
 
 #Vnet & Subnet & Network Security group
 vnet_apps_address_space = "10.0.3.0/24"
