@@ -7,3 +7,4 @@
 
 # Secret files
 backend-jdld-sand1-secret.tfvars
+main-jdld-sand1-secret.tfvars

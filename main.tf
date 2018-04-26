@@ -20,7 +20,7 @@ module "Create-AzureRmStorageAccount-Infr" {
 
 module "Create-AzureRmRecoveryServicesVault-Infr" {
   source                  = "./modules/Create-AzureRmRecoveryServicesVault"
-  rsv_name                = "apps-${var.app_name}-${var.env_name}-rsv1"
+  rsv_name                = "infra-${var.app_name}-${var.env_name}-rsv1"
   rsv_resource_group_name = "${var.rg_infr_name}"
   rsv_tags                = "${var.default_tags}"
   rsv_backup_policies     = ["${var.backup_policies}"]
@@ -28,7 +28,7 @@ module "Create-AzureRmRecoveryServicesVault-Infr" {
 
 module "Create-AzureRmRecoveryServicesVault-Apps" {
   source                  = "./modules/Create-AzureRmRecoveryServicesVault"
-  rsv_name                = "infra-${var.app_name}-${var.env_name}-rsv1"
+  rsv_name                = "apps-${var.app_name}-${var.env_name}-rsv1"
   rsv_resource_group_name = "${var.rg_apps_name}"
   rsv_tags                = "${var.default_tags}"
   rsv_backup_policies     = ["${var.backup_policies}"]
@@ -47,9 +47,9 @@ module "Create-AzureRmKeyVault-Infr" {
 }
 
 ## Core Network components
-module "Create-AzureRmVirtualNetwork-Apps" {
+module "Create-AzureRmVirtualNetwork-Infra" {
   source                   = "./modules/Create-AzureRmVirtualNetwork"
-  vnet_name                = "apps-${var.app_name}-${var.env_name}-net1"
+  vnet_name                = "infra-${var.app_name}-${var.env_name}-net1"
   vnet_resource_group_name = "${var.rg_infr_name}"
   vnet_address_space       = "${var.vnet_apps_address_space}"
   vnet_location            = "${var.location}"
@@ -91,7 +91,7 @@ module "Create-AzureRmSubnet-Apps" {
   subnet_prefix              = "${var.app_name}-${var.env_name}-"
   subnet_suffix              = "-snet1"
   snets                      = ["${var.apps_snets}"]
-  vnet_name                  = "${module.Create-AzureRmVirtualNetwork-Apps.vnet_name}"
+  vnet_name                  = "${module.Create-AzureRmVirtualNetwork-Infra.vnet_name}"
   nsgs_ids                   = "${module.Create-AzureRmNetworkSecurityGroup-Apps.nsgs_ids}"
 }
 
