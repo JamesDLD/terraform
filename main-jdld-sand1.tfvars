@@ -103,12 +103,12 @@ apps_snets = [
   {
     subnet_suffix_name = "rebond"
     cidr               = "10.0.3.0/28"
-    Id_Nsg             = "0"           #Id of the Network Security Group, , set to 777 if there is no Network Security Groups
+    Id_Nsg             = "0"           #Id of the Network Security Group, set to 777 if there is no Network Security Groups
   },
   {
     subnet_suffix_name = "data"
     cidr               = "10.0.3.16/28"
-    Id_Nsg             = "777"          #Id of the Network Security Group, , set to 777 if there is no Network Security Groups
+    Id_Nsg             = "777"          #Id of the Network Security Group, set to 777 if there is no Network Security Groups
   },
 ]
 
@@ -168,15 +168,39 @@ nsgrules = [
     source_port_range          = "*"
   },
   {
-    Id_Nsg                     = "1"                   #Id of the Network Security Group
+    Id_Nsg                     = "1"                 #Id of the Network Security Group
     direction                  = "Inbound"
-    suffix_name                = "ALL_to_NIC_tcp-3389"
+    suffix_name                = "ALL_to_NIC_tcp-22"
     access                     = "Allow"
     priority                   = "2000"
     source_address_prefix      = "*"
     destination_address_prefix = "*"
+    destination_port_range     = "22"
+    protocol                   = "tcp"
+    source_port_range          = "*"
+  },
+  {
+    Id_Nsg                     = "1"                   #Id of the Network Security Group
+    direction                  = "Inbound"
+    suffix_name                = "ALL_to_NIC_tcp-3389"
+    access                     = "Allow"
+    priority                   = "2001"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
     destination_port_range     = "3389"
     protocol                   = "tcp"
+    source_port_range          = "*"
+  },
+  {
+    Id_Nsg                     = "1"
+    direction                  = "Inbound"
+    suffix_name                = "ALL_to_NIC_Deny-All"
+    access                     = "Deny"
+    priority                   = "4096"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+    destination_port_range     = "*"
+    protocol                   = "*"
     source_port_range          = "*"
   },
 ]
@@ -296,6 +320,7 @@ Linux_Vms = [
     Id_Lb             = "1"                      #Id of the Load Balancer
     Id_Subnet         = "0"                      #Id of the Subnet
     Id_Ava            = "777"                    #Id of the Availabilitysets, set to 777 if there is no Availabilitysets
+    Id_Nsg            = "1"                      #Id of the Network Security Group, set to 777 if there is no Network Security Groups
     BackupPolicyName  = "BackupPolicy-Schedule1"
     static_ip         = "10.0.3.5"
     vm_size           = "Standard_DS2_v2"
@@ -315,6 +340,7 @@ Windows_Vms = [
     Id_Lb             = "2"                      #Id of the Load Balancer
     Id_Subnet         = "0"                      #Id of the Subnet
     Id_Ava            = "0"                      #Id of the Availabilitysets, set to 777 if there is no Availabilitysets
+    Id_Nsg            = "1"                      #Id of the Network Security Group, set to 777 if there is no Network Security Groups
     BackupPolicyName  = "BackupPolicy-Schedule1"
     static_ip         = "10.0.3.4"
     vm_size           = "Standard_DS2_v2"
@@ -334,7 +360,7 @@ Linux_Ss_Vms = [
     id                  = "1"               #Id of the VM
     Id_Lb               = "2"               #Id of the Load Balancer
     Id_Subnet           = "1"               #Id of the Subnet
-    Id_Nsg              = "1"               #Id of the Network Security Group
+    Id_Nsg              = "1"               #Id of the Network Security Group, set to 777 if there is no Network Security Groups
     upgrade_policy_mode = "Manual"
     sku_name            = "Standard_DS2_v2"
     sku_tier            = "Standard"
@@ -354,7 +380,7 @@ Windows_Ss_Vms = [
     id                  = "1"                      #Id of the VM
     Id_Lb               = "3"                      #Id of the Load Balancer
     Id_Subnet           = "1"                      #Id of the Subnet
-    Id_Nsg              = "1"                      #Id of the Network Security Group
+    Id_Nsg              = "1"                      #Id of the Network Security Group, set to 777 if there is no Network Security Groups
     upgrade_policy_mode = "Manual"
     sku_name            = "Standard_DS2_v2"
     sku_tier            = "Standard"

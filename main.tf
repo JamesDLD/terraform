@@ -121,8 +121,8 @@ module "Create-AzureRmLoadBalancer-Apps" {
 
 module "Create-AzureRmNetworkInterface-Apps" {
   source                  = "./modules/Create-AzureRmNetworkInterface"
-  Linux_Vms               = ["${var.Linux_Vms}"]                                       #If no need just fill "Linux_Vms = []" in the tfvars file
-  Windows_Vms             = ["${var.Windows_Vms}"]                                     #If no need just fill "Windows_Vms = []" in the tfvars file
+  Linux_Vms               = ["${var.Linux_Vms}"]                                         #If no need just fill "Linux_Vms = []" in the tfvars file
+  Windows_Vms             = ["${var.Windows_Vms}"]                                       #If no need just fill "Windows_Vms = []" in the tfvars file
   nic_prefix              = "${var.app_name}-${var.env_name}-"
   nic_suffix              = "-nic1"
   nic_location            = "${var.location}"
@@ -130,6 +130,7 @@ module "Create-AzureRmNetworkInterface-Apps" {
   subnets_ids             = "${module.Create-AzureRmSubnet-Apps.subnets_ids}"
   lb_backend_ids          = "${module.Create-AzureRmLoadBalancer-Apps.lb_backend_ids}"
   nic_tags                = "${var.default_tags}"
+  nsgs_ids                = "${module.Create-AzureRmNetworkSecurityGroup-Apps.nsgs_ids}"
 }
 
 module "Create-AzureRmVmss-Apps" {

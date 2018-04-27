@@ -22,3 +22,7 @@ variable "lb_backend_ids" {
 variable "nic_tags" {
   type = "map"
 }
+
+variable "nsgs_ids" {
+  type = "list"
+}

@@ -13,7 +13,6 @@ resource "azurerm_virtual_machine_scale_set" "Linux_Ss_Vms" {
   }
 
   storage_profile_os_disk {
-    #name              = "${var.vmss_prefix}${lookup(var.Linux_Ss_Vms[count.index], "suffix_name")}${lookup(var.Linux_Ss_Vms[count.index], "id")}-posdk1"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "${lookup(var.Linux_Ss_Vms[count.index], "managed_disk_type")}"
@@ -59,7 +58,7 @@ resource "azurerm_virtual_machine_scale_set" "Linux_Ss_Vms" {
   network_profile {
     name                      = "${var.vmss_prefix}${lookup(var.Linux_Ss_Vms[count.index], "suffix_name")}${lookup(var.Linux_Ss_Vms[count.index], "id")}-netpf1"
     primary                   = true
-    network_security_group_id = "${element(var.nsgs_ids,lookup(var.Linux_Ss_Vms[count.index], "Id_Nsg"))}"
+    network_security_group_id = "${"${lookup(var.Linux_Ss_Vms[count.index], "Id_Nsg")}" == "777" ? "" : "${element(var.nsgs_ids,lookup(var.Linux_Ss_Vms[count.index], "Id_Nsg"))}"}"
 
     ip_configuration {
       name                                   = "${var.vmss_prefix}${lookup(var.Linux_Ss_Vms[count.index], "suffix_name")}${lookup(var.Linux_Ss_Vms[count.index], "id")}-ipcfg1"
@@ -126,7 +125,7 @@ resource "azurerm_virtual_machine_scale_set" "Windows_Ss_Vms" {
   network_profile {
     name                      = "${var.vmss_prefix}${lookup(var.Windows_Ss_Vms[count.index], "suffix_name")}${lookup(var.Windows_Ss_Vms[count.index], "id")}-netpf1"
     primary                   = true
-    network_security_group_id = "${element(var.nsgs_ids,lookup(var.Windows_Ss_Vms[count.index], "Id_Nsg"))}"
+    network_security_group_id = "${"${lookup(var.Windows_Ss_Vms[count.index], "Id_Nsg")}" == "777" ? "" : "${element(var.nsgs_ids,lookup(var.Windows_Ss_Vms[count.index], "Id_Nsg"))}"}"
 
     ip_configuration {
       name                                   = "${var.vmss_prefix}${lookup(var.Windows_Ss_Vms[count.index], "suffix_name")}${lookup(var.Windows_Ss_Vms[count.index], "id")}-ipcfg1"

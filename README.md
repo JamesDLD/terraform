@@ -37,7 +37,7 @@ terraform plan -var-file="main-jdld-sand1.tfvars" -var-file="main-jdld-sand1-sec
 If all is ok with the proposal you can now apply the configuration.
 ```hcl
 
-terraform plan -var-file="main-jdld-sand1.tfvars" -var-file="main-jdld-sand1-secret.tfvars"
+terraform apply -var-file="main-jdld-sand1.tfvars" -var-file="main-jdld-sand1-secret.tfvars"
 
 ```
 
