@@ -9,7 +9,7 @@ provider "azurerm" {
 # Module
 ## Core Infra components
 module "Create-AzureRmStorageAccount-Infr" {
-  source                      = "./modules/Create-AzureRmStorageAccount"
+  source                      = "./module/Create-AzureRmStorageAccount"
   sa_name                     = "${var.sa_infr_name}"
   sa_resource_group_name      = "${var.rg_infr_name}"
   sa_location                 = "${var.location}"
@@ -19,7 +19,7 @@ module "Create-AzureRmStorageAccount-Infr" {
 }
 
 module "Create-AzureRmRecoveryServicesVault-Infr" {
-  source                  = "./modules/Create-AzureRmRecoveryServicesVault"
+  source                  = "./module/Create-AzureRmRecoveryServicesVault"
   rsv_name                = "infra-${var.app_name}-${var.env_name}-rsv1"
   rsv_resource_group_name = "${var.rg_infr_name}"
   rsv_tags                = "${var.default_tags}"
@@ -27,7 +27,7 @@ module "Create-AzureRmRecoveryServicesVault-Infr" {
 }
 
 module "Create-AzureRmRecoveryServicesVault-Apps" {
-  source                  = "./modules/Create-AzureRmRecoveryServicesVault"
+  source                  = "./module/Create-AzureRmRecoveryServicesVault"
   rsv_name                = "apps-${var.app_name}-${var.env_name}-rsv1"
   rsv_resource_group_name = "${var.rg_apps_name}"
   rsv_tags                = "${var.default_tags}"
@@ -35,7 +35,7 @@ module "Create-AzureRmRecoveryServicesVault-Apps" {
 }
 
 module "Create-AzureRmKeyVault-Infr" {
-  source                 = "./modules/Create-AzureRmKeyVault"
+  source                 = "./module/Create-AzureRmKeyVault"
   key_vaults             = ["${var.key_vaults}"]
   kv_tenant_id           = "${var.tenant_id}"
   kv_prefix              = "${var.app_name}-${var.env_name}-"
@@ -48,7 +48,7 @@ module "Create-AzureRmKeyVault-Infr" {
 
 ## Core Network components
 module "Create-AzureRmVirtualNetwork-Infra" {
-  source                   = "./modules/Create-AzureRmVirtualNetwork"
+  source                   = "./module/Create-AzureRmVirtualNetwork"
   vnet_name                = "infra-${var.app_name}-${var.env_name}-net1"
   vnet_resource_group_name = "${var.rg_infr_name}"
   vnet_address_space       = "${var.vnet_apps_address_space}"
@@ -60,7 +60,7 @@ module "Create-AzureRmVirtualNetwork-Infra" {
 }
 
 module "Create-AzureRmNetworkSecurityGroup-Apps" {
-  source                  = "./modules/Create-AzureRmNetworkSecurityGroup"
+  source                  = "./module/Create-AzureRmNetworkSecurityGroup"
   nsgs                    = ["${var.nsgs}"]
   nsg_prefix              = "${var.app_name}-${var.env_name}-"
   nsg_suffix              = "-nsg1"
@@ -71,7 +71,7 @@ module "Create-AzureRmNetworkSecurityGroup-Apps" {
 }
 
 module "Create-AzureRmApplicationkSecurityGroup-Apps" {
-  source                  = "./modules/Create-AzureRmApplicationSecurityGroup"
+  source                  = "./module/Create-AzureRmApplicationSecurityGroup"
   asgs                    = ["${var.asgs}"]
   asg_prefix              = "${var.app_name}-${var.env_name}-"
   asg_suffix              = "-asg1"
@@ -81,7 +81,7 @@ module "Create-AzureRmApplicationkSecurityGroup-Apps" {
 }
 
 module "Create-AzureRmSubnet-Apps" {
-  source                     = "./modules/Create-AzureRmSubnet"
+  source                     = "./module/Create-AzureRmSubnet"
   subnet_resource_group_name = "${var.rg_infr_name}"
   rt_name                    = "${var.app_name}-${var.env_name}-rt1"
   rt_location                = "${var.location}"
@@ -97,7 +97,7 @@ module "Create-AzureRmSubnet-Apps" {
 
 ## Virtual Machines components
 module "Create-AzureRmAvailabilitySet-Apps" {
-  source                  = "./modules/Create-AzureRmAvailabilitySet"
+  source                  = "./module/Create-AzureRmAvailabilitySet"
   ava_availabilitysets    = ["${var.Availabilitysets}"]
   ava_prefix              = "${var.app_name}-${var.env_name}-"
   ava_suffix              = "-avs1"
@@ -107,7 +107,7 @@ module "Create-AzureRmAvailabilitySet-Apps" {
 }
 
 module "Create-AzureRmLoadBalancer-Apps" {
-  source                 = "./modules/Create-AzureRmLoadBalancer"
+  source                 = "./module/Create-AzureRmLoadBalancer"
   Lbs                    = ["${var.Lbs}"]
   lb_prefix              = "${var.app_name}-${var.env_name}-"
   lb_suffix              = "-lb1"
@@ -120,7 +120,7 @@ module "Create-AzureRmLoadBalancer-Apps" {
 }
 
 module "Create-AzureRmNetworkInterface-Apps" {
-  source                  = "./modules/Create-AzureRmNetworkInterface"
+  source                  = "./module/Create-AzureRmNetworkInterface"
   Linux_Vms               = ["${var.Linux_Vms}"]                                         #If no need just fill "Linux_Vms = []" in the tfvars file
   Windows_Vms             = ["${var.Windows_Vms}"]                                       #If no need just fill "Windows_Vms = []" in the tfvars file
   nic_prefix              = "${var.app_name}-${var.env_name}-"
@@ -134,7 +134,7 @@ module "Create-AzureRmNetworkInterface-Apps" {
 }
 
 module "Create-AzureRmVmss-Apps" {
-  source                   = "./modules/Create-AzureRmVmss"
+  source                   = "./module/Create-AzureRmVmss"
   sa_bootdiag_storage_uri  = "${module.Create-AzureRmStorageAccount-Infr.sa_primary_blob_endpoint}"
   Linux_Ss_Vms             = ["${var.Linux_Ss_Vms}"]                                                #If no need just fill "Linux_Vms = []" in the tfvars file
   Windows_Ss_Vms           = ["${var.Windows_Ss_Vms}"]                                              #If no need just fill "Linux_Vms = []" in the tfvars file
@@ -151,7 +151,7 @@ module "Create-AzureRmVmss-Apps" {
 }
 
 module "Create-AzureRmVm-Apps" {
-  source                  = "./modules/Create-AzureRmVm"
+  source                  = "./module/Create-AzureRmVm"
   sa_bootdiag_storage_uri = "${module.Create-AzureRmStorageAccount-Infr.sa_primary_blob_endpoint}"
   Linux_Vms               = ["${var.Linux_Vms}"]                                                   #If no need just fill "Linux_Vms = []" in the tfvars file
   Windows_Vms             = ["${var.Windows_Vms}"]                                                 #If no need just fill "Windows_Vms = []" in the tfvars file
@@ -168,7 +168,7 @@ module "Create-AzureRmVm-Apps" {
 }
 
 module "Enable-AzureRmRecoveryServicesBackupProtection-Apps" {
-  source                      = "./modules/Enable-AzureRmRecoveryServicesBackupProtection"
+  source                      = "./module/Enable-AzureRmRecoveryServicesBackupProtection"
   resource_names              = "${concat(module.Create-AzureRmVm-Apps.Linux_Vms_names,module.Create-AzureRmVm-Apps.Windows_Vms_names)}"     #Names of the resources to backup
   resource_group_names        = "${concat(module.Create-AzureRmVm-Apps.Linux_Vms_rgnames,module.Create-AzureRmVm-Apps.Windows_Vms_rgnames)}" #Resource Group Names of the resources to backup
   resource_ids                = "${concat(module.Create-AzureRmVm-Apps.Linux_Vms_ids,module.Create-AzureRmVm-Apps.Windows_Vms_ids)}"         #Ids of the resources to backup
@@ -181,7 +181,7 @@ module "Enable-AzureRmRecoveryServicesBackupProtection-Apps" {
 
 ## Custom API
 module "Create-DnsThroughApi" {
-  source               = "./modules/Create-DnsThroughApi"
+  source               = "./module/Create-DnsThroughApi"
   dns_fqdn_api         = "${var.dns_fqdn_api}"
   dns_secret           = "${var.dns_secret}"
   dns_application_name = "${var.dns_application_name}"

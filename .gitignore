@@ -3,6 +3,7 @@
 *.tfstate.backup
 
 # Module directory
+secret/
 .terraform/
 
 # Secret files

@@ -21,7 +21,9 @@ resource "azurerm_network_interface" "linux_vms_nics" {
     https://github.com/hashicorp/terraform/issues/13733
     */
 
-    load_balancer_backend_address_pools_ids = ["${element(var.lb_backend_ids,lookup(var.Linux_Vms[count.index], "Id_Lb"))}"]
+    load_balancer_backend_address_pools_ids = []
+
+    #["${element(var.lb_backend_ids,lookup(var.Linux_Vms[count.index], "Id_Lb"))}"]
   }
 
   tags = "${var.nic_tags}"
@@ -39,7 +41,9 @@ resource "azurerm_network_interface" "Windows_Vms_nics" {
     subnet_id                               = "${element(var.subnets_ids,lookup(var.Windows_Vms[count.index], "Id_Subnet"))}"
     private_ip_address_allocation           = "static"
     private_ip_address                      = "${lookup(var.Windows_Vms[count.index], "static_ip")}"
-    load_balancer_backend_address_pools_ids = ["${element(var.lb_backend_ids,lookup(var.Windows_Vms[count.index], "Id_Lb"))}"]
+    load_balancer_backend_address_pools_ids = []
+
+    #"${element(var.lb_backend_ids,lookup(var.Windows_Vms[count.index], "Id_Lb"))}"]
   }
 
   tags = "${var.nic_tags}"

@@ -1,7 +1,7 @@
 resource "azurerm_template_deployment" "backup_vault" {
   name                = "${var.rsv_name}-DEP"
   resource_group_name = "${var.rsv_resource_group_name}"
-  template_body       = "${file("./modules/Create-AzureRmRecoveryServicesVault/AzureRmKeyVault_template.json")}"
+  template_body       = "${file("./module/Create-AzureRmRecoveryServicesVault/AzureRmKeyVault_template.json")}"
   deployment_mode     = "Incremental"
 
   parameters {
@@ -13,7 +13,7 @@ resource "azurerm_template_deployment" "backup_policies" {
   count               = "${length(var.rsv_backup_policies)}"
   name                = "${azurerm_template_deployment.backup_vault.outputs["vaultName"]}-${lookup(var.rsv_backup_policies[count.index], "Name")}-DEP"
   resource_group_name = "${var.rsv_resource_group_name}"
-  template_body       = "${file("./modules/Create-AzureRmRecoveryServicesVault/AzureRmKeyVaultPolicy_template.json")}"
+  template_body       = "${file("./module/Create-AzureRmRecoveryServicesVault/AzureRmKeyVaultPolicy_template.json")}"
   deployment_mode     = "Incremental"
 
   parameters = {

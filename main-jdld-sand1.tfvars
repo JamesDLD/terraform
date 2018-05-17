@@ -1,8 +1,9 @@
 #Variables initialization
 #Azure Authentication & VM credentials
 /*
-The following values are listed in a local file that is ignored by git pushing, 
-this file name is : main-jdld-sand1-secret.tfvars
+Below secret are located in the "secret" folder which is ignored for any git sync, 
+this associated file name is : main-jdld-sand1.tfvars
+
 subscription_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 client_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 client_secret = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
@@ -84,8 +85,8 @@ backup_policies = [
 kv_sku = "standard"
 
 /*
-The following values are listed in a local file that is ignored by git pushing, 
-this file name is : main-jdld-sand1-secret.tfvars
+The following values are located in the "secret" folder which is ignored for any git sync, 
+this associated file name is : main-jdld-sand1.tfvars
 key_vaults = [
   {
     suffix_name            = "sci"
@@ -97,25 +98,25 @@ key_vaults = [
 */
 
 #Vnet & Subnet & Network Security group
-vnet_apps_address_space = "10.0.3.0/24"
+vnet_apps_address_space = "198.18.1.0/24"
 
 apps_snets = [
   {
-    subnet_suffix_name = "rebond"
-    cidr               = "10.0.3.0/28"
-    Id_Nsg             = "0"           #Id of the Network Security Group, set to 777 if there is no Network Security Groups
+    subnet_suffix_name = "frontend"
+    cidr               = "198.18.1.224/28"
+    Id_Nsg             = "0"               #Id of the Network Security Group, set to 777 if there is no Network Security Groups
   },
   {
-    subnet_suffix_name = "data"
-    cidr               = "10.0.3.16/28"
-    Id_Nsg             = "777"          #Id of the Network Security Group, set to 777 if there is no Network Security Groups
+    subnet_suffix_name = "backend"
+    cidr               = "198.18.1.240/28"
+    Id_Nsg             = "777"             #Id of the Network Security Group, set to 777 if there is no Network Security Groups
   },
 ]
 
 default_routes = [
   {
     name                   = "sec-via-routeurcusto-rt1"
-    address_prefix         = "192.168.1.0/24"
+    address_prefix         = "192.168.2.0/24"
     next_hop_type          = "VirtualAppliance"
     next_hop_in_ip_address = "10.0.5.5"
   },
@@ -123,7 +124,7 @@ default_routes = [
 
 nsgs = [
   {
-    suffix_name = "snet-rebond"
+    suffix_name = "snet-frontend"
   },
   {
     suffix_name = "nic-all"
@@ -132,13 +133,25 @@ nsgs = [
 
 nsgrules = [
   {
-    Id_Nsg                     = "0"                   #Id of the Network Security Group
+    Id_Nsg                     = "0"                        #Id of the Network Security Group
     direction                  = "Inbound"
-    suffix_name                = "ALL_to_RBD_tcp-3389"
+    suffix_name                = "ALL_to_frontend_tcp-3389"
     access                     = "Allow"
     priority                   = "2000"
     source_address_prefix      = "*"
-    destination_address_prefix = "10.0.3.0/28"
+    destination_address_prefix = "198.18.1.224/28"
+    destination_port_range     = "3389"
+    protocol                   = "tcp"
+    source_port_range          = "*"
+  },
+  {
+    Id_Nsg                     = "0"                      #Id of the Network Security Group
+    direction                  = "Inbound"
+    suffix_name                = "ALL_to_frontend_tcp-22"
+    access                     = "Allow"
+    priority                   = "2001"
+    source_address_prefix      = "*"
+    destination_address_prefix = "198.18.1.224/28"
     destination_port_range     = "3389"
     protocol                   = "tcp"
     source_port_range          = "*"
@@ -146,37 +159,13 @@ nsgrules = [
   {
     Id_Nsg                     = "0"
     direction                  = "Inbound"
-    suffix_name                = "ALL_to_RBD_tcp-22"
-    access                     = "Allow"
-    priority                   = "2001"
-    source_address_prefix      = "*"
-    destination_address_prefix = "10.0.3.0/28"
-    destination_port_range     = "22"
-    protocol                   = "tcp"
-    source_port_range          = "*"
-  },
-  {
-    Id_Nsg                     = "0"
-    direction                  = "Inbound"
-    suffix_name                = "ALL_to_RBD_Deny-All"
+    suffix_name                = "ALL_to_frontend_Deny-All"
     access                     = "Deny"
     priority                   = "4095"
     source_address_prefix      = "*"
-    destination_address_prefix = "10.0.3.0/28"
+    destination_address_prefix = "198.18.1.224/28"
     destination_port_range     = "*"
     protocol                   = "*"
-    source_port_range          = "*"
-  },
-  {
-    Id_Nsg                     = "1"                 #Id of the Network Security Group
-    direction                  = "Inbound"
-    suffix_name                = "ALL_to_NIC_tcp-22"
-    access                     = "Allow"
-    priority                   = "2000"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-    destination_port_range     = "22"
-    protocol                   = "tcp"
     source_port_range          = "*"
   },
   {
@@ -184,10 +173,22 @@ nsgrules = [
     direction                  = "Inbound"
     suffix_name                = "ALL_to_NIC_tcp-3389"
     access                     = "Allow"
-    priority                   = "2001"
+    priority                   = "2000"
     source_address_prefix      = "*"
     destination_address_prefix = "*"
     destination_port_range     = "3389"
+    protocol                   = "tcp"
+    source_port_range          = "*"
+  },
+  {
+    Id_Nsg                     = "1"
+    direction                  = "Inbound"
+    suffix_name                = "ALL_to_NIC_tcp-22"
+    access                     = "Allow"
+    priority                   = "2001"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+    destination_port_range     = "22"
     protocol                   = "tcp"
     source_port_range          = "*"
   },
@@ -207,7 +208,7 @@ nsgrules = [
 
 asgs = [
   {
-    suffix_name = "bou"
+    suffix_name = "ssh"
   },
   {
     suffix_name = "rdg"
@@ -215,28 +216,23 @@ asgs = [
 ]
 
 # Virtual Machines components : Load Balancer & Availability Set & Nic & VM
-Lb_sku = "Standard" #"Basic" 
+Lb_sku = "Basic" #"Standard" 
 
 Lbs = [
   {
-    suffix_name = "bou"
-    Id_Subnet   = "0"         #Id of the Subnet
-    static_ip   = "10.0.3.13"
+    suffix_name = "ssh"
+    Id_Subnet   = "0"            #Id of the Subnet
+    static_ip   = "198.18.1.238"
   },
   {
-    suffix_name = "rdg"
-    Id_Subnet   = "0"         #Id of the Subnet
-    static_ip   = "10.0.3.14"
-  },
-  {
-    suffix_name = "mft"
-    Id_Subnet   = "1"         #Id of the Subnet
-    static_ip   = "10.0.3.30"
+    suffix_name = "gfs"
+    Id_Subnet   = "1"            #Id of the Subnet
+    static_ip   = "198.18.1.254"
   },
   {
     suffix_name = "rds"
-    Id_Subnet   = "1"         #Id of the Subnet
-    static_ip   = "10.0.3.29"
+    Id_Subnet   = "1"            #Id of the Subnet
+    static_ip   = "198.18.1.253"
   },
 ]
 
@@ -244,7 +240,7 @@ LbRules = [
   {
     Id             = "1"    #Id of a the rule within the Load Balancer 
     Id_Lb          = "0"    #Id of the Load Balancer
-    suffix_name    = "bou"  #MUST match the Lbs suffix_name
+    suffix_name    = "ssh"  #MUST match the Lbs suffix_name
     lb_port        = "80"
     probe_protocol = "Http"
     request_path   = "/"
@@ -252,7 +248,7 @@ LbRules = [
   {
     Id             = "2"
     Id_Lb          = "0"
-    suffix_name    = "bou"
+    suffix_name    = "ssh"
     lb_port        = "22"
     probe_protocol = "Tcp"
     request_path   = ""
@@ -260,46 +256,14 @@ LbRules = [
   {
     Id             = "1"
     Id_Lb          = "1"
-    suffix_name    = "rdg"
-    lb_port        = "3389"
-    probe_protocol = "Tcp"
-    request_path   = ""
-  },
-  {
-    Id             = "2"
-    Id_Lb          = "2"
-    suffix_name    = "mft"
-    lb_port        = "80"
-    probe_protocol = "Tcp"
-    request_path   = ""
-  },
-  {
-    Id             = "3"
-    Id_Lb          = "2"
-    suffix_name    = "mft"
+    suffix_name    = "gfs"
     lb_port        = "22"
     probe_protocol = "Tcp"
     request_path   = ""
   },
   {
-    Id             = "4"
-    Id_Lb          = "2"
-    suffix_name    = "mft"
-    lb_port        = "6321"
-    probe_protocol = "Tcp"
-    request_path   = ""
-  },
-  {
-    Id             = "5"
-    Id_Lb          = "2"
-    suffix_name    = "mft"
-    lb_port        = "111"
-    probe_protocol = "Tcp"
-    request_path   = ""
-  },
-  {
     Id             = "1"
-    Id_Lb          = "3"
+    Id_Lb          = "2"
     suffix_name    = "rds"
     lb_port        = "3389"
     probe_protocol = "Tcp"
@@ -315,14 +279,14 @@ Availabilitysets = [
 
 Linux_Vms = [
   {
-    suffix_name       = "bou"
+    suffix_name       = "ssh"
     id                = "1"                      #Id of the VM
-    Id_Lb             = "1"                      #Id of the Load Balancer
+    Id_Lb             = "777"                    #Id of the Load Balancer
     Id_Subnet         = "0"                      #Id of the Subnet
     Id_Ava            = "777"                    #Id of the Availabilitysets, set to 777 if there is no Availabilitysets
     Id_Nsg            = "1"                      #Id of the Network Security Group, set to 777 if there is no Network Security Groups
     BackupPolicyName  = "BackupPolicy-Schedule1"
-    static_ip         = "10.0.3.5"
+    static_ip         = "198.18.1.228"
     vm_size           = "Standard_DS2_v2"
     managed_disk_type = "Premium_LRS"
     publisher         = "redhat"
@@ -337,12 +301,12 @@ Windows_Vms = [
   {
     suffix_name       = "rdg"
     id                = "1"                      #Id of the VM
-    Id_Lb             = "2"                      #Id of the Load Balancer
+    Id_Lb             = "777"                    #Id of the Load Balancer
     Id_Subnet         = "0"                      #Id of the Subnet
     Id_Ava            = "0"                      #Id of the Availabilitysets, set to 777 if there is no Availabilitysets
     Id_Nsg            = "1"                      #Id of the Network Security Group, set to 777 if there is no Network Security Groups
     BackupPolicyName  = "BackupPolicy-Schedule1"
-    static_ip         = "10.0.3.4"
+    static_ip         = "198.18.1.230"
     vm_size           = "Standard_DS2_v2"
     managed_disk_type = "Premium_LRS"
     publisher         = "MicrosoftWindowsServer"
@@ -356,15 +320,15 @@ Windows_Vms = [
 #VM Scale Set
 Linux_Ss_Vms = [
   {
-    suffix_name         = "mft"
+    suffix_name         = "gfs"
     id                  = "1"               #Id of the VM
-    Id_Lb               = "2"               #Id of the Load Balancer
+    Id_Lb               = "1"               #Id of the Load Balancer
     Id_Subnet           = "1"               #Id of the Subnet
     Id_Nsg              = "1"               #Id of the Network Security Group, set to 777 if there is no Network Security Groups
     upgrade_policy_mode = "Manual"
     sku_name            = "Standard_DS2_v2"
     sku_tier            = "Standard"
-    sku_capacity        = 2
+    sku_capacity        = 1
     publisher           = "OpenLogic"
     offer               = "CentOS"
     sku                 = "7.4"
@@ -378,13 +342,13 @@ Windows_Ss_Vms = [
   {
     suffix_name         = "rds"                    #Windows computer name prefix cannot be more than 9 characters long
     id                  = "1"                      #Id of the VM
-    Id_Lb               = "3"                      #Id of the Load Balancer
+    Id_Lb               = "2"                      #Id of the Load Balancer
     Id_Subnet           = "1"                      #Id of the Subnet
     Id_Nsg              = "1"                      #Id of the Network Security Group, set to 777 if there is no Network Security Groups
     upgrade_policy_mode = "Manual"
     sku_name            = "Standard_DS2_v2"
     sku_tier            = "Standard"
-    sku_capacity        = 2
+    sku_capacity        = 1
     publisher           = "MicrosoftWindowsServer"
     offer               = "WindowsServer"
     sku                 = "2016-Datacenter"

@@ -22,7 +22,7 @@ This step ensures that Terraform has all the prerequisites to build your templat
 
 ```hcl
 
-terraform init -backend-config="backend-jdld-sand1.tfvars" -backend-config="backend-jdld-sand1-secret.tfvars"
+terraform init -backend-config="backend-jdld-sand1.tfvars" -backend-config="secret/backend-jdld-sand1.tfvars"
 
 ```
 
@@ -30,14 +30,14 @@ The next step is to have Terraform review and validate the template.
 This step compares the requested resources to the state information saved by Terraform and then outputs the planned execution. Resources are not created in Azure.
 ```hcl
 
-terraform plan -var-file="main-jdld-sand1.tfvars" -var-file="main-jdld-sand1-secret.tfvars"
+terraform plan -var-file="main-jdld-sand1.tfvars" -var-file="secret/main-jdld-sand1.tfvars"
 
 ```
 
 If all is ok with the proposal you can now apply the configuration.
 ```hcl
 
-terraform apply -var-file="main-jdld-sand1.tfvars" -var-file="main-jdld-sand1-secret.tfvars"
+terraform apply -var-file="main-jdld-sand1.tfvars" -var-file="secret/main-jdld-sand1.tfvars"
 
 ```
 
