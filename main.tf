@@ -1,8 +1,8 @@
 # Provider
 provider "azurerm" {
   subscription_id = "${var.subscription_id}"
-  client_id       = "${var.client_id}"
-  client_secret   = "${var.client_secret}"
+  client_id       = "${lookup(var.service_principals[0], "Application_Id")}"
+  client_secret   = "${lookup(var.service_principals[0], "Application_Secret")}"
   tenant_id       = "${var.tenant_id}"
 }
 
@@ -208,4 +208,5 @@ module "Create-AzureRmAutomationAccount-Apps" {
   auto_resource_group_name = "${var.rg_apps_name}"
   auto_sku                 = "${var.auto_sku}"
   auto_tags                = "${var.default_tags}"
+  auto_credentials         = ["${var.service_principals}"]              #If no need just set to []
 }

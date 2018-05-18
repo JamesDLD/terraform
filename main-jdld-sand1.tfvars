@@ -5,8 +5,13 @@ Below secret are located in the "secret" folder which is ignored for any git syn
 this associated file name is : main-jdld-sand1.tfvars
 
 subscription_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-client_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-client_secret = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+service_principals = [
+  {
+    Application_Name   = "sp_apps_owner"
+    Application_Id     = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+    Application_Secret = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+  },
+]
 tenant_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 
 # VM Credential and public key certificate

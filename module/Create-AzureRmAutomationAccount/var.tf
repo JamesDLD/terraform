@@ -6,3 +6,7 @@ variable "auto_sku" {}
 variable "auto_tags" {
   type = "map"
 }
+
+variable "auto_credentials" {
+  type = "list"
+}

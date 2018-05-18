@@ -6,9 +6,11 @@ terraform {
 }
 
 variable "subscription_id" {}
-variable "client_id" {}
-variable "client_secret" {}
 variable "tenant_id" {}
+
+variable "service_principals" {
+  type = "list"
+}
 
 #Common
 variable "app_name" {}
