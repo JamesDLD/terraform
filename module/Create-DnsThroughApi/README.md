@@ -94,7 +94,7 @@ variable "Lbs" {
 
 #Call module
 module "Create-DnsThroughApi" {
-  source               = "./modules/Create-DnsThroughApi"
+  source               = "./module/Create-DnsThroughApi"
   dns_fqdn_api         = "${var.dns_fqdn_api}"
   dns_secret           = "${var.dns_secret}"
   dns_application_name = "${var.dns_application_name}"

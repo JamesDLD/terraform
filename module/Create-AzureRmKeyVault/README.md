@@ -59,7 +59,7 @@ variable "default_tags" {
 
 #Call module
 module "Create-AzureRmKeyVault-Infr" {
-  source                 = "./modules/Create-AzureRmKeyVault"
+  source                 = "./module/Create-AzureRmKeyVault"
   key_vaults             = ["${var.key_vaults}"]
   kv_tenant_id           = "${var.tenant_id}"
   kv_prefix              = "${var.app_name}-${var.env_name}-"

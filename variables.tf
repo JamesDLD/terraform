@@ -106,3 +106,5 @@ variable "vpod_dns_zone_name" {}
 variable "Dns_Wan_Records" {
   type = "list"
 }
+
+variable "auto_sku" {}

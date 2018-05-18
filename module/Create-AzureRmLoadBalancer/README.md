@@ -71,7 +71,7 @@ variable "default_tags" {
 
 #Call module
 module "Create-AzureRmLoadBalancer-Apps" {
-  source                 = "./modules/Create-AzureRmLoadBalancer"
+  source                 = "./module/Create-AzureRmLoadBalancer"
   Lbs                    = ["${var.Lbs}"]
   lb_prefix              = "${var.app_name}-${var.env_name}-"
   lb_suffix              = "-lb1"

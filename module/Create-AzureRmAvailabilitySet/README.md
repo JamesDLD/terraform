@@ -48,7 +48,7 @@ variable "default_tags" {
 
 #Call module
 module "Create-AzureRmAvailabilitySet-Apps" {
-  source                  = "./modules/Create-AzureRmAvailabilitySet"
+  source                  = "./module/Create-AzureRmAvailabilitySet"
   ava_availabilitysets    = ["${var.Availabilitysets}"]
   ava_prefix              = "${var.app_name}-${var.env_name}-"
   ava_suffix              = "-avs1"

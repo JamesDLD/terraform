@@ -357,3 +357,7 @@ Windows_Ss_Vms = [
     disk_size_gb        = "32"
   },
 ]
+
+## Infra common services
+#Automation account
+auto_sku = "Basic"

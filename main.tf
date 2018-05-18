@@ -199,3 +199,13 @@ module "Create-DnsThroughApi" {
   Dns_Lbs_RecordsCount = "${var.Dns_Lbs_RecordsCount}"      #If no need just set to "0"
   Lbs                  = ["${var.Lbs}"]                     #If no need just set to []
 }
+
+## Infra common services
+module "Create-AzureRmAutomationAccount-Apps" {
+  source                   = "./module/Create-AzureRmAutomationAccount"
+  auto_name                = "${var.app_name}-${var.env_name}-auto1"
+  auto_location            = "${var.location}"
+  auto_resource_group_name = "${var.rg_apps_name}"
+  auto_sku                 = "${var.auto_sku}"
+  auto_tags                = "${var.default_tags}"
+}
