@@ -16,7 +16,6 @@ variable "service_principals" {
 variable "app_name" {}
 
 variable "env_name" {}
-variable "location" {}
 
 variable "default_tags" {
   type = "map"

@@ -43,4 +43,6 @@ module "Create-AzureRmAutomationAccount-Apps" {
   auto_sku                 = "${var.auto_sku}"
   auto_tags                = "${var.default_tags}"
 }
+
+
 ```
