@@ -144,23 +144,6 @@ module "Create-AzureRmNetworkInterface-Apps" {
   nsgs_ids                = "${module.Create-AzureRmNetworkSecurityGroup-Apps.nsgs_ids}"
 }
 
-module "Create-AzureRmVmss-Apps" {
-  source                   = "./module/Create-AzureRmVmss"
-  sa_bootdiag_storage_uri  = "${module.Create-AzureRmStorageAccount-Infr.sa_primary_blob_endpoint}"
-  Linux_Ss_Vms             = ["${var.Linux_Ss_Vms}"]                                                #If no need just fill "Linux_Vms = []" in the tfvars file
-  Windows_Ss_Vms           = ["${var.Windows_Ss_Vms}"]                                              #If no need just fill "Linux_Vms = []" in the tfvars file
-  vmss_location            = "${module.Get-AzureRmResourceGroup-Apps.rg_location}"
-  vmss_resource_group_name = "${module.Get-AzureRmResourceGroup-Apps.rg_name}"
-  vmss_prefix              = "${var.app_name}-${var.env_name}-"
-  vmss_tags                = "${module.Get-AzureRmResourceGroup-Apps.rg_tags}"
-  app_admin                = "${var.app_admin}"
-  pass                     = "${var.pass}"
-  ssh_key                  = "${var.ssh_key}"
-  subnets_ids              = "${module.Create-AzureRmSubnet-Apps.subnets_ids}"
-  lb_backend_ids           = "${module.Create-AzureRmLoadBalancer-Apps.lb_backend_ids}"
-  nsgs_ids                 = "${module.Create-AzureRmNetworkSecurityGroup-Apps.nsgs_ids}"
-}
-
 module "Create-AzureRmVm-Apps" {
   source                  = "./module/Create-AzureRmVm"
   sa_bootdiag_storage_uri = "${module.Create-AzureRmStorageAccount-Infr.sa_primary_blob_endpoint}"
@@ -176,6 +159,23 @@ module "Create-AzureRmVm-Apps" {
   ava_set_ids             = "${module.Create-AzureRmAvailabilitySet-Apps.ava_set_ids}"
   Linux_nics_ids          = "${module.Create-AzureRmNetworkInterface-Apps.Linux_nics_ids}"
   Windows_nics_ids        = "${module.Create-AzureRmNetworkInterface-Apps.Windows_nics_ids}"
+}
+
+module "Create-AzureRmVmss-Apps" {
+  source                   = "./module/Create-AzureRmVmss"
+  sa_bootdiag_storage_uri  = "${module.Create-AzureRmStorageAccount-Infr.sa_primary_blob_endpoint}"
+  Linux_Ss_Vms             = ["${var.Linux_Ss_Vms}"]                                                #If no need just fill "Linux_Vms = []" in the tfvars file
+  Windows_Ss_Vms           = ["${var.Windows_Ss_Vms}"]                                              #If no need just fill "Linux_Vms = []" in the tfvars file
+  vmss_location            = "${module.Get-AzureRmResourceGroup-Apps.rg_location}"
+  vmss_resource_group_name = "${module.Get-AzureRmResourceGroup-Apps.rg_name}"
+  vmss_prefix              = "${var.app_name}-${var.env_name}-"
+  vmss_tags                = "${module.Get-AzureRmResourceGroup-Apps.rg_tags}"
+  app_admin                = "${var.app_admin}"
+  pass                     = "${var.pass}"
+  ssh_key                  = "${var.ssh_key}"
+  subnets_ids              = "${module.Create-AzureRmSubnet-Apps.subnets_ids}"
+  lb_backend_ids           = "${module.Create-AzureRmLoadBalancer-Apps.lb_backend_ids}"
+  nsgs_ids                 = "${module.Create-AzureRmNetworkSecurityGroup-Apps.nsgs_ids}"
 }
 
 module "Enable-AzureRmRecoveryServicesBackupProtection-Apps" {

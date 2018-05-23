@@ -299,6 +299,23 @@ Linux_Vms = [
     lun               = "0"
     disk_size_gb      = "32"
   },
+  {
+    suffix_name       = "ssh"
+    id                = "2"                      #Id of the VM
+    Id_Lb             = "777"                    #Id of the Load Balancer
+    Id_Subnet         = "0"                      #Id of the Subnet
+    Id_Ava            = "777"                    #Id of the Availabilitysets, set to 777 if there is no Availabilitysets
+    Id_Nsg            = "1"                      #Id of the Network Security Group, set to 777 if there is no Network Security Groups
+    BackupPolicyName  = "BackupPolicy-Schedule1"
+    static_ip         = "198.18.1.229"
+    vm_size           = "Standard_DS2_v2"
+    managed_disk_type = "Premium_LRS"
+    publisher         = "redhat"
+    offer             = "RHEL"
+    sku               = "7.3"
+    lun               = "0"
+    disk_size_gb      = "32"
+  },
 ]
 
 Windows_Vms = [
@@ -311,6 +328,23 @@ Windows_Vms = [
     Id_Nsg            = "1"                      #Id of the Network Security Group, set to 777 if there is no Network Security Groups
     BackupPolicyName  = "BackupPolicy-Schedule1"
     static_ip         = "198.18.1.230"
+    vm_size           = "Standard_DS2_v2"
+    managed_disk_type = "Premium_LRS"
+    publisher         = "MicrosoftWindowsServer"
+    offer             = "WindowsServer"
+    sku               = "2016-Datacenter"
+    lun               = "0"
+    disk_size_gb      = "32"
+  },
+  {
+    suffix_name       = "rdg"
+    id                = "2"                      #Id of the VM
+    Id_Lb             = "777"                    #Id of the Load Balancer
+    Id_Subnet         = "0"                      #Id of the Subnet
+    Id_Ava            = "0"                      #Id of the Availabilitysets, set to 777 if there is no Availabilitysets
+    Id_Nsg            = "1"                      #Id of the Network Security Group, set to 777 if there is no Network Security Groups
+    BackupPolicyName  = "BackupPolicy-Schedule1"
+    static_ip         = "198.18.1.231"
     vm_size           = "Standard_DS2_v2"
     managed_disk_type = "Premium_LRS"
     publisher         = "MicrosoftWindowsServer"
