@@ -10,7 +10,7 @@ resource "null_resource" "vm_dns_records" {
   }
 
   provisioner "local-exec" {
-    command = "bash ./module/Create-DnsThroughApi/Create-Dns.sh ${var.dns_fqdn_api} ${var.dns_fqdn_api} ${var.dns_secret} ${var.dns_application_name} ${var.xpod_dns_zone_name} ${var.vm_prefix}${lookup(var.Vms[count.index], "suffix_name")}${lookup(var.Vms[count.index], "id")} ${lookup(var.Vms[count.index], "static_ip")}"
+    command = "bash ./module/Create-DnsThroughApi/Create-Dns.sh ${var.dns_fqdn_api} ${var.dns_secret} ${var.dns_application_name} ${var.xpod_dns_zone_name} ${var.vm_prefix}${lookup(var.Vms[count.index], "suffix_name")}${lookup(var.Vms[count.index], "id")} ${lookup(var.Vms[count.index], "static_ip")}"
   }
 
   provisioner "local-exec" {
@@ -26,7 +26,7 @@ resource "null_resource" "lb_dns_records" {
     dns_fqdn_api         = "${var.dns_fqdn_api}"
     dns_application_name = "${var.dns_application_name}"
     xpod_dns_zone_name   = "${var.xpod_dns_zone_name}"
-    dns_hostname         = "${var.lb_prefix}${lookup(var.Lbs[count.index], "suffix_name")}"
+    dns_hostname         = "${var.lb_prefix}${lookup(var.Lbs[count.index], "suffix_name")}${var.lb_suffix}"
     static_ip            = "${lookup(var.Lbs[count.index], "static_ip")}"
   }
 

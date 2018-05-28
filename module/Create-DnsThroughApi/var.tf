@@ -12,6 +12,7 @@ variable "Dns_Wan_Records" {
 
 variable "vm_prefix" {}
 variable "lb_prefix" {}
+variable "lb_suffix" {}
 variable "dns_fqdn_api" {}
 variable "dns_secret" {}
 variable "dns_application_name" {}

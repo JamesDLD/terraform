@@ -206,6 +206,7 @@ module "Create-DnsThroughApi" {
   Dns_Vms_RecordsCount = "${var.Dns_Vms_RecordsCount}"                #If no need just set to "0"
   Vms                  = ["${concat(var.Linux_Vms,var.Windows_Vms)}"] #If no need just set to []
 
+  lb_suffix            = "-lb1"
   lb_prefix            = "${var.app_name}-${var.env_name}-"
   Dns_Lbs_RecordsCount = "${var.Dns_Lbs_RecordsCount}"      #If no need just set to "0"
   Lbs                  = ["${var.Lbs}"]                     #If no need just set to []
