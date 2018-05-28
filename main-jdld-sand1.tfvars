@@ -27,11 +27,11 @@ xpod_dns_zone_name = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 vpod_dns_zone_name = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 */
 
-Dns_Vms_RecordsCount = "0" #"2"
+Dns_Vms_RecordsCount = "1"
 
-Dns_Lbs_RecordsCount = "0" #"1"
+Dns_Lbs_RecordsCount = "1"
 
-Dns_Wan_RecordsCount = "2"
+Dns_Wan_RecordsCount = "1"
 
 Dns_Wan_Records = [
   {
@@ -285,9 +285,9 @@ Linux_Vms = [
   {
     suffix_name       = "ssh"
     id                = "1"                      #Id of the VM
-    Id_Lb             = "777"                    #Id of the Load Balancer
+    Id_Lb             = "0"                      #Id of the Load Balancer
     Id_Subnet         = "0"                      #Id of the Subnet
-    Id_Ava            = "777"                    #Id of the Availabilitysets, set to 777 if there is no Availabilitysets
+    Id_Ava            = "0"                      #Id of the Availabilitysets, set to 777 if there is no Availabilitysets
     Id_Nsg            = "1"                      #Id of the Network Security Group, set to 777 if there is no Network Security Groups
     BackupPolicyName  = "BackupPolicy-Schedule1"
     static_ip         = "198.18.1.228"
@@ -304,7 +304,7 @@ Linux_Vms = [
     id                = "2"                      #Id of the VM
     Id_Lb             = "777"                    #Id of the Load Balancer
     Id_Subnet         = "0"                      #Id of the Subnet
-    Id_Ava            = "777"                    #Id of the Availabilitysets, set to 777 if there is no Availabilitysets
+    Id_Ava            = "0"                      #Id of the Availabilitysets, set to 777 if there is no Availabilitysets
     Id_Nsg            = "1"                      #Id of the Network Security Group, set to 777 if there is no Network Security Groups
     BackupPolicyName  = "BackupPolicy-Schedule1"
     static_ip         = "198.18.1.229"

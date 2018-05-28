@@ -1,5 +1,7 @@
 #Need improvment 1 : find a way to get condition on the LB usage
 
+data "azurerm_subscription" "current" {}
+
 resource "azurerm_network_interface" "linux_vms_nics" {
   count                     = "${length(var.Linux_Vms)}"
   name                      = "${var.nic_prefix}${lookup(var.Linux_Vms[count.index], "suffix_name")}${lookup(var.Linux_Vms[count.index], "id")}${var.nic_suffix}"
@@ -17,13 +19,13 @@ resource "azurerm_network_interface" "linux_vms_nics" {
     # Condition testing not working with list, should find a way to send : []
     load_balancer_backend_address_pools_ids = "${split(" ", "${lookup(var.Linux_Vms[count.index], "Id_Lb")}"  == "777" ? "" : "${local.lb_id}" )}"
     load_balancer_backend_address_pools_ids = "${split(" ", "${lookup(var.Linux_Vms[count.index], "Id_Lb")}"  == "777" ? "" : "${element(var.lb_backend_ids,1)}" )}"
+    #["${element(var.lb_backend_ids,lookup(var.Linux_Vms[count.index], "Id_Lb"))}"]
+    #load_balancer_backend_address_pools_ids = "${split(" ", "${lookup(var.Linux_Vms[count.index], "Id_Lb")}"  == "777" ? "" : "/subscriptions/data.azurerm_subscription.current.subscription_id/resourceGroups/apps-jdld-sand1-rg1/providers/Microsoft.Network/loadBalancers/jdld-sand1-ssh-lb1/backendAddressPools/jdld-sand1-ssh-bckpool1" )}"
     https://stackoverflow.com/questions/48301709/terraform-conditionally-creating-a-resource-within-a-loop
     https://github.com/hashicorp/terraform/issues/13733
     */
 
     load_balancer_backend_address_pools_ids = []
-
-    #["${element(var.lb_backend_ids,lookup(var.Linux_Vms[count.index], "Id_Lb"))}"]
   }
 
   tags = "${var.nic_tags}"
