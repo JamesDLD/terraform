@@ -4,9 +4,6 @@ provider "azurerm" {
   client_id       = "${lookup(var.service_principals[0], "Application_Id")}"
   client_secret   = "${lookup(var.service_principals[0], "Application_Secret")}"
   tenant_id       = "${var.tenant_id}"
-
-  #alias           = "service_principal_apps"
-  #alias issues raised here : https://github.com/terraform-providers/terraform-provider-azurerm/issues/1308
 }
 
 # Module

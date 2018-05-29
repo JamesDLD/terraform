@@ -302,7 +302,7 @@ Linux_Vms = [
   {
     suffix_name       = "ssh"
     id                = "2"                      #Id of the VM
-    Id_Lb             = "777"                    #Id of the Load Balancer
+    Id_Lb             = "0"                      #Id of the Load Balancer
     Id_Subnet         = "0"                      #Id of the Subnet
     Id_Ava            = "0"                      #Id of the Availabilitysets, set to 777 if there is no Availabilitysets
     Id_Nsg            = "1"                      #Id of the Network Security Group, set to 777 if there is no Network Security Groups
