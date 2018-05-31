@@ -31,12 +31,12 @@ resource "null_resource" "lb_dns_records" {
   }
 
   provisioner "local-exec" {
-    command = "bash ./module/Create-DnsThroughApi/Create-Dns.sh ${var.dns_fqdn_api} ${var.dns_secret} ${var.dns_application_name} ${var.xpod_dns_zone_name} ${var.lb_prefix}${lookup(var.Lbs[count.index], "suffix_name")} ${lookup(var.Lbs[count.index], "static_ip")}"
+    command = "bash ./module/Create-DnsThroughApi/Create-Dns.sh ${var.dns_fqdn_api} ${var.dns_secret} ${var.dns_application_name} ${var.xpod_dns_zone_name} ${var.lb_prefix}${lookup(var.Lbs[count.index], "suffix_name")}${var.lb_suffix} ${lookup(var.Lbs[count.index], "static_ip")}"
   }
 
   provisioner "local-exec" {
     when    = "destroy"
-    command = "bash ./module/Create-DnsThroughApi/Delete-Dns.sh ${var.dns_fqdn_api} ${var.dns_secret} ${var.dns_application_name} ${var.xpod_dns_zone_name} ${var.lb_prefix}${lookup(var.Lbs[count.index], "suffix_name")} ${lookup(var.Lbs[count.index], "static_ip")}"
+    command = "bash ./module/Create-DnsThroughApi/Delete-Dns.sh ${var.dns_fqdn_api} ${var.dns_secret} ${var.dns_application_name} ${var.xpod_dns_zone_name} ${var.lb_prefix}${lookup(var.Lbs[count.index], "suffix_name")}${var.lb_suffix} ${lookup(var.Lbs[count.index], "static_ip")}"
   }
 }
 
