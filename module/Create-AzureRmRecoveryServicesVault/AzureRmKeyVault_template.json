@@ -8,6 +8,13 @@
                 "description": "Name of the Vault"
             }
         },
+        "rsvtags": {
+            "type": "string",
+            "defaultValue": "{\"APP\":\"XXX\",\"BUD\":\"XXX\",\"CTC\":\"XXX@XXX\",\"ENV\":\"XXX\"}",
+            "metadata": {
+                "description": "Tags of the Vault"
+            }
+        },
         "skuTier": {
             "type": "string",
             "defaultValue": "Standard",
@@ -19,12 +26,16 @@
             }
         }
     },
+    "variables": {
+        "rsvtagsbase64": "[base64(parameters('rsvtags'))]"
+    },
     "resources": [
         {
             "type": "Microsoft.RecoveryServices/vaults",
             "apiVersion": "2016-06-01",
             "name": "[parameters('vaultName')]",
             "location": "[resourceGroup().location]",
+            "tags": "[base64ToJson(variables('rsvtagsbase64'))]",
             "sku": {
                 "name": "RS0",
                 "tier": "[parameters('skuTier')]"
@@ -37,6 +48,10 @@
         "vaultName": {
             "type": "string",
             "value": "[parameters('vaultName')]"
+        },
+        "rsvtagsjson": {
+            "type": "object",
+            "value": "[base64ToJson(variables('rsvtagsbase64'))]"
         }
     }
 }

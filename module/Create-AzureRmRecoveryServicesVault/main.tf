@@ -6,7 +6,10 @@ resource "azurerm_template_deployment" "backup_vault" {
 
   parameters {
     vaultName = "${var.rsv_name}"
+    rsvtags   = "${jsonencode(var.rsv_tags)}"
   }
+
+  #Terraform sends only string to azurerm template, I had to convert it to integer or array into the ARM Template Json, for info : https://github.com/terraform-providers/terraform-provider-azurerm/issues/34
 }
 
 resource "azurerm_template_deployment" "backup_policies" {
@@ -26,6 +29,5 @@ resource "azurerm_template_deployment" "backup_policies" {
     StringToConvertmonthlyRetentionDurationCount = "${lookup(var.rsv_backup_policies[count.index], "monthlyRetentionDurationCount")}"
   }
 
-  #Terraform sends only string, I had to convert it to integer or array into the Json, for info : https://github.com/terraform-providers/terraform-provider-azurerm/issues/34
-  #Also for the same reason we can't tag our subresources
+  #Terraform sends only string to azurerm template, I had to convert it to integer or array into the ARM Template Json, for info : https://github.com/terraform-providers/terraform-provider-azurerm/issues/34
 }
