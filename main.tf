@@ -178,6 +178,7 @@ module "Create-AzureRmVmss-Apps" {
   nsgs_ids                 = "${module.Create-AzureRmNetworkSecurityGroup-Apps.nsgs_ids}"
 }
 
+# Infra cross services
 module "Enable-AzureRmRecoveryServicesBackupProtection-Apps" {
   source                      = "./module/Enable-AzureRmRecoveryServicesBackupProtection"
   resource_names              = "${concat(module.Create-AzureRmVm-Apps.Linux_Vms_names,module.Create-AzureRmVm-Apps.Windows_Vms_names)}"     #Names of the resources to backup

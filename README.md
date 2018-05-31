@@ -12,6 +12,10 @@ Share Terraform custom modules with the community with the following guidelines 
 -	a module doesn't contain any static values
 -	a module is called using variables
 
+Workflow
+------------
+![Workflow](workflow.png)
+
 Usage
 -----
 The following sample will launch all the modules to show the reader how they are called.
