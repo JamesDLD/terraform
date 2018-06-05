@@ -45,7 +45,11 @@ variable "apps_snets" {
   type = "list"
 }
 
-variable "default_routes" {
+variable "route_tables" {
+  type = "list"
+}
+
+variable "routes" {
   type = "list"
 }
 

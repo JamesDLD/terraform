@@ -101,7 +101,24 @@ key_vaults = [
 ]
 */
 
-#Vnet & Subnet & Network Security group
+#Vnet & Route & Subnet & Network Security group & Application Security group
+
+route_tables = [
+  {
+    route_suffix_name = "core"
+  },
+]
+
+routes = [
+  {
+    name                   = "sec-via-routeurcusto"
+    Id_rt                  = "0"
+    address_prefix         = "192.168.2.0/24"
+    next_hop_type          = "VirtualAppliance"
+    next_hop_in_ip_address = "10.0.5.5"
+  },
+]
+
 vnet_apps_address_space = "198.18.1.0/24"
 
 apps_snets = [
@@ -109,20 +126,13 @@ apps_snets = [
     subnet_suffix_name = "frontend"
     cidr               = "198.18.1.224/28"
     Id_Nsg             = "0"               #Id of the Network Security Group, set to 777 if there is no Network Security Groups
+    Id_route_table     = "0"               #Id of the Route table, set to 777 if there is no Route table
   },
   {
     subnet_suffix_name = "backend"
     cidr               = "198.18.1.240/28"
     Id_Nsg             = "777"             #Id of the Network Security Group, set to 777 if there is no Network Security Groups
-  },
-]
-
-default_routes = [
-  {
-    name                   = "sec-via-routeurcusto-rt1"
-    address_prefix         = "192.168.2.0/24"
-    next_hop_type          = "VirtualAppliance"
-    next_hop_in_ip_address = "10.0.5.5"
+    Id_route_table     = "777"             #Id of the Route table, set to 777 if there is no Route table
   },
 ]
 

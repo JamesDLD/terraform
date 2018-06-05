@@ -1,3 +1,3 @@
-output "subnets_ids" {
-  value = "${azurerm_subnet.subnets.*.id}"
+output "rt_ids" {
+  value = "${azurerm_route_table.route_table.*.id}"
 }

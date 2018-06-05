@@ -91,22 +91,32 @@ module "Create-AzureRmApplicationkSecurityGroup-Apps" {
   asg_tags                = "${module.Get-AzureRmResourceGroup-Apps.rg_tags}"
 }
 
+## Secops policies
+
+## Virtual Machines components
+module "Create-AzureRmRoute-Infra" {
+  source                 = "./module/Create-AzureRmRoute"
+  rt_resource_group_name = "${module.Get-AzureRmResourceGroup-Infr.rg_name}"
+  rt_location            = "${module.Get-AzureRmResourceGroup-Infr.rg_location}"
+  routes                 = ["${var.routes}"]
+  route_tables           = ["${var.route_tables}"]
+  rt_prefix              = "${var.app_name}-${var.env_name}-"
+  rt_suffix              = "-rt1"
+  rt_tags                = "${module.Get-AzureRmResourceGroup-Infr.rg_tags}"
+}
+
 module "Create-AzureRmSubnet-Apps" {
   source                     = "./module/Create-AzureRmSubnet"
   subnet_resource_group_name = "${module.Get-AzureRmResourceGroup-Infr.rg_name}"
-  rt_name                    = "${var.app_name}-${var.env_name}-rt1"
-  rt_location                = "${module.Get-AzureRmResourceGroup-Apps.rg_location}"
-  rt_resource_group_name     = "${module.Get-AzureRmResourceGroup-Apps.rg_name}"
-  rt_tags                    = "${module.Get-AzureRmResourceGroup-Apps.rg_tags}"
-  rt_routes                  = ["${var.default_routes}"]
   subnet_prefix              = "${var.app_name}-${var.env_name}-"
   subnet_suffix              = "-snet1"
   snets                      = ["${var.apps_snets}"]
   vnet_name                  = "${module.Create-AzureRmVirtualNetwork-Infra.vnet_name}"
   nsgs_ids                   = "${module.Create-AzureRmNetworkSecurityGroup-Apps.nsgs_ids}"
+  subnet_route_table_ids     = "${module.Create-AzureRmRoute-Infra.rt_ids}"
 }
 
-## Virtual Machines components
+/*
 module "Create-AzureRmAvailabilitySet-Apps" {
   source                  = "./module/Create-AzureRmAvailabilitySet"
   ava_availabilitysets    = ["${var.Availabilitysets}"]
@@ -208,7 +218,6 @@ module "Create-DnsThroughApi" {
   Dns_Hostnames         = ["${concat(module.Create-AzureRmVm-Apps.Linux_Vms_names,module.Create-AzureRmVm-Apps.Windows_Vms_names,module.Create-AzureRmLoadBalancer-Apps.lb_names)}"]                                                                      #If no need just set to []
   Dns_Ips               = ["${concat(module.Create-AzureRmNetworkInterface-Apps.Linux_nics_private_ip_address,module.Create-AzureRmNetworkInterface-Apps.Windows_nics_private_ip_address,module.Create-AzureRmLoadBalancer-Apps.lb_private_ip_address)}"] #If no need just set to []
 }
-*/
 
 ## Infra common services
 module "Create-AzureRmAutomationAccount-Apps" {
@@ -220,3 +229,5 @@ module "Create-AzureRmAutomationAccount-Apps" {
   auto_tags                = "${module.Get-AzureRmResourceGroup-Apps.rg_tags}"
   auto_credentials         = ["${var.service_principals}"]                         #If no need just set to []
 }
+*/
+
