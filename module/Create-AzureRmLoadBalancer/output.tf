@@ -1,3 +1,11 @@
+output "lb_names" {
+  value = ["${azurerm_lb.lb.*.name}"]
+}
+
+output "lb_private_ip_address" {
+  value = ["${azurerm_lb.lb.*.private_ip_address}"]
+}
+
 output "lb_backend_ids" {
   value = ["${azurerm_lb_backend_address_pool.lb_backend.*.id}"]
 }

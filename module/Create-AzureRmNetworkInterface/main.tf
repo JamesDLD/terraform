@@ -1,4 +1,4 @@
-#Need improvment 1 : find a way to get condition on the LB usage
+#Need improvment 1 : find a way to get condition on the LB usage, ticket raised here : https://github.com/terraform-providers/terraform-provider-azurerm/issues/1318
 
 resource "azurerm_network_interface" "linux_vms_nics" {
   count                     = "${length(var.Linux_Vms)}"

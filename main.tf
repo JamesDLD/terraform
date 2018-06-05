@@ -191,6 +191,7 @@ module "Enable-AzureRmRecoveryServicesBackupProtection-Apps" {
   bck_location                = "${module.Get-AzureRmResourceGroup-Apps.rg_location}"
 }
 
+/*
 ## Custom API
 module "Create-DnsThroughApi" {
   source               = "./module/Create-DnsThroughApi"
@@ -203,15 +204,11 @@ module "Create-DnsThroughApi" {
   Dns_Wan_RecordsCount = "${var.Dns_Wan_RecordsCount}" #If no need just set to "0"
   Dns_Wan_Records      = ["${var.Dns_Wan_Records}"]    #If no need just set to []
 
-  vm_prefix            = "${var.app_name}-${var.env_name}-"
-  Dns_Vms_RecordsCount = "${var.Dns_Vms_RecordsCount}"                #If no need just set to "0"
-  Vms                  = ["${concat(var.Linux_Vms,var.Windows_Vms)}"] #If no need just set to []
-
-  lb_suffix            = "-lb1"
-  lb_prefix            = "${var.app_name}-${var.env_name}-"
-  Dns_Lbs_RecordsCount = "${var.Dns_Lbs_RecordsCount}"      #If no need just set to "0"
-  Lbs                  = ["${var.Lbs}"]                     #If no need just set to []
+  Dns_Host_RecordsCount = "${var.Dns_Vms_RecordsCount + var.Dns_Lbs_RecordsCount}"                                                                                                                                                                        #If no need just set to "0"
+  Dns_Hostnames         = ["${concat(module.Create-AzureRmVm-Apps.Linux_Vms_names,module.Create-AzureRmVm-Apps.Windows_Vms_names,module.Create-AzureRmLoadBalancer-Apps.lb_names)}"]                                                                      #If no need just set to []
+  Dns_Ips               = ["${concat(module.Create-AzureRmNetworkInterface-Apps.Linux_nics_private_ip_address,module.Create-AzureRmNetworkInterface-Apps.Windows_nics_private_ip_address,module.Create-AzureRmLoadBalancer-Apps.lb_private_ip_address)}"] #If no need just set to []
 }
+*/
 
 ## Infra common services
 module "Create-AzureRmAutomationAccount-Apps" {
