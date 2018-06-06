@@ -51,6 +51,7 @@ General Requirements
 -	[Terraform](https://www.Terraform.io/downloads.html) 0.10.x
 -	[AzureRM Terraform Provider](https://github.com/Terraform-providers/Terraform-provider-azurerm/blob/master/README.md)
 -	[AzureRM Terraform Provider - Authentication](https://www.Terraform.io/docs/providers/azurerm/)
+-   An Azure Service Principal with the Owner privilege at Azure Subscription level (mandatory to create and assign custom roles)
 
 Golden rules
 ------------

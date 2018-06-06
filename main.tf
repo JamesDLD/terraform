@@ -116,6 +116,23 @@ module "Create-AzureRmSubnet-Apps" {
   subnet_route_table_ids     = "${module.Create-AzureRmRoute-Infra.rt_ids}"
 }
 
+module "Create-AzureRmPolicyDefinition" {
+  source     = "./module/Create-AzureRmPolicyDefinition"
+  policies   = ["${var.policies}"]
+  pol_prefix = "${var.app_name}-${var.env_name}-"
+  pol_suffix = "-pol1"
+}
+
+module "Enable-AzureRmPolicyAssignment-Infra-nsg-on-vnet" {
+  source                     = "./module/Enable-AzureRmPolicyAssignment"
+  p_ass_name                 = "enforce-nsg-on-subvnet-${module.Create-AzureRmVirtualNetwork-Infra.vnet_name}"
+  p_ass_scope                = "${module.Create-AzureRmVirtualNetwork-Infra.vnet_id}"
+  p_ass_policy_definition_id = "${element(module.Create-AzureRmPolicyDefinition.policy_ids,0)}"
+  p_ass_key_parameter1       = "nsgId"
+  p_ass_value_parameter1     = "${element(module.Create-AzureRmNetworkSecurityGroup-Apps.nsgs_ids,0)}"
+}
+
+#"${module.Get-AzureRmResourceGroup-Infr.rg_id}"
 /*
 module "Create-AzureRmAvailabilitySet-Apps" {
   source                  = "./module/Create-AzureRmAvailabilitySet"

@@ -61,6 +61,16 @@ rg_apps_name = "apps-jdld-sand1-rg1"
 
 rg_infr_name = "infr-jdld-noprd-rg1"
 
+#Policies
+policies = [
+  {
+    policy_suffix_name = "enforce-nsg-on-subnet" #Used to name the policy and to call json template files located into the module's folder
+    policy_type        = "Custom"
+    mode               = "All"
+    Id_nsg             = "0"
+  },
+]
+
 #Storage
 sa_account_replication_type = "LRS"
 
@@ -131,10 +141,19 @@ apps_snets = [
   {
     subnet_suffix_name = "backend"
     cidr               = "198.18.1.240/28"
-    Id_Nsg             = "777"             #Id of the Network Security Group, set to 777 if there is no Network Security Groups
+    Id_Nsg             = "0"               #Id of the Network Security Group, set to 777 if there is no Network Security Groups
     Id_route_table     = "777"             #Id of the Route table, set to 777 if there is no Route table
   },
 ]
+
+/*
+  {
+    subnet_suffix_name = "test"
+    cidr               = "198.18.1.192/28"
+    Id_Nsg             = "777"             #Id of the Network Security Group, set to 777 if there is no Network Security Groups
+    Id_route_table     = "777"             #Id of the Route table, set to 777 if there is no Route table
+  },
+  */
 
 nsgs = [
   {

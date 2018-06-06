@@ -13,6 +13,10 @@ variable "service_principals" {
 }
 
 #Common
+variable "policies" {
+  type = "list"
+}
+
 variable "app_name" {}
 
 variable "env_name" {}
