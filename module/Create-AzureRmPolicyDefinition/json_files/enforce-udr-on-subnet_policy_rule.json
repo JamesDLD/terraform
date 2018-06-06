@@ -1,0 +1,39 @@
+{
+    "if": {
+        "anyOf": [
+            {
+                "allOf": [
+                    {
+                        "field": "type",
+                        "equals": "Microsoft.Network/virtualNetworks"
+                    },
+                    {
+                        "not": {
+                            "field": "Microsoft.Network/virtualNetworks/subnets[*].routeTable.id",
+                            "equals": "[parameters('udrId')]"
+                        }
+                    }
+                ]
+            },
+            {
+                "allOf": [
+                    {
+                        "field": "type",
+                        "equals": "Microsoft.Network/virtualNetworks/subnets"
+                    },
+                    {
+                        "not": {
+                            "field": "Microsoft.Network/virtualNetworks/subnets/routeTable.id",
+                            "equals": "[parameters('udrId')]"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "then": {
+        "effect": "deny"
+    }
+}
+
+
