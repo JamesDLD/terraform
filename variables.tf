@@ -13,10 +13,6 @@ variable "service_principals" {
 }
 
 #Common
-variable "policies" {
-  type = "list"
-}
-
 variable "app_name" {}
 
 variable "env_name" {}
@@ -34,6 +30,14 @@ variable "sa_infr_name" {}
 variable "kv_sku" {}
 
 variable "key_vaults" {
+  type = "list"
+}
+
+variable "policies" {
+  type = "list"
+}
+
+variable "roles" {
   type = "list"
 }
 
@@ -57,11 +61,19 @@ variable "routes" {
   type = "list"
 }
 
-variable "nsgs" {
+variable "infra_nsgs" {
   type = "list"
 }
 
-variable "nsgrules" {
+variable "infra_nsgrules" {
+  type = "list"
+}
+
+variable "apps_nsgs" {
+  type = "list"
+}
+
+variable "apps_nsgrules" {
   type = "list"
 }
 

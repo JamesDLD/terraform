@@ -51,7 +51,9 @@ General Requirements
 -	[Terraform](https://www.Terraform.io/downloads.html) 0.10.x
 -	[AzureRM Terraform Provider](https://github.com/Terraform-providers/Terraform-provider-azurerm/blob/master/README.md)
 -	[AzureRM Terraform Provider - Authentication](https://www.Terraform.io/docs/providers/azurerm/)
--   An Azure Service Principal with the Owner privilege at Azure Subscription level (mandatory to create and assign custom roles)
+-   The called "Infra" Azure Service Principal has the following privileges :
+    - Owner privilege at Azure Subscription level (mandatory to create custom roles)
+    - Read directory data on Windows Azure Active Directory (mandatory to assign custom roles)
 
 Golden rules
 ------------
@@ -63,8 +65,12 @@ Improvment & Feature request & Limitation
 -	Terraform authentication to AzureRM via Service Principal & certificate
 -   Use condition to decide wether or not a NIC should be linked to a Load Balancer, [ticket raised here](https://github.com/terraform-providers/terraform-provider-azurerm/issues/1318)
 -   Feature Request: resource azurerm_automation_variable, [ticket raised here](https://github.com/terraform-providers/terraform-provider-azurerm/issues/1312)
--   Use multiple Azure service principal through the provider AzureRm, [ticket raised here](https://github.com/terraform-providers/terraform-provider-azurerm/issues/1308)
 -	Currently there is no Terraform resource for AzureRm recovery services, that's why I used the Terraform resource azurerm_template_deployment. [Improvment has been requested here for info](https://github.com/Terraform-providers/Terraform-provider-azurerm/issues/1007)
     -	[Recovery Services provisionning is being studied here](https://github.com/terraform-providers/terraform-provider-azurerm/pull/995)
     -	[VM enrollment to a Recovery Service vault is being studied here](https://github.com/terraform-providers/terraform-provider-azurerm/pull/995)
 -	Couldn't find any option to set the BackupStorageRedundancy paremeter (LRS or GRS) in the RecoveryServices/vaults template, [Microsoft.RecoveryServices/vaults template reference](https://docs.microsoft.com/en-us/azure/templates/microsoft.recoveryservices/vaults)
+
+Solved issues
+------------
+-   Use multiple Azure service principal through the provider AzureRm, [ticket raised here](https://github.com/terraform-providers/terraform-provider-azurerm/issues/1308)
+    - Solution : usage of provider.azurerm v1.6.0

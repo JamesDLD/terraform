@@ -7,9 +7,16 @@ this associated file name is : main-jdld-sand1.tfvars
 subscription_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 service_principals = [
   {
-    Application_Name   = "sp_apps_owner"
+    Application_Name   = "sp_infra" #Subscription Owner & Read directory data on Windows Azure Active Directory
     Application_Id     = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
     Application_Secret = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+    Application_object_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" #To get this param : $(Get-AzureRmADServicePrincipal -DisplayName $Application_Name).Id
+  },
+  {
+    Application_Name   = "sp_apps"  #No Privileges needed, will be set by the script 
+    Application_Id     = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+    Application_Secret = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+    Application_object_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" #To get this param : $(Get-AzureRmADServicePrincipal -DisplayName $Application_Name).Id
   },
 ]
 tenant_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
@@ -64,14 +71,54 @@ rg_infr_name = "infr-jdld-noprd-rg1"
 #Policies
 policies = [
   {
-    policy_suffix_name = "enforce-nsg-on-subnet" #Used to name the policy and to call json template files located into the module's folder
-    policy_type        = "Custom"
-    mode               = "All"
+    suffix_name = "enforce-nsg-on-subnet" #Used to name the policy and to call json template files located into the module's folder
+    policy_type = "Custom"
+    mode        = "All"
   },
   {
-    policy_suffix_name = "enforce-udr-on-subnet" #Used to name the policy and to call json template files located into the module's folder
-    policy_type        = "Custom"
-    mode               = "All"
+    suffix_name = "enforce-udr-on-subnet" #Used to name the policy and to call json template files located into the module's folder
+    policy_type = "Custom"
+    mode        = "All"
+  },
+]
+
+#Custom roles
+roles = [
+  {
+    suffix_name        = "apps-contributor"
+    role_definition_id = "336310d2-7fe4-f488-9a55-8387df1052bf"
+    actions            = "*"
+    not_actions        = "Microsoft.Authorization/*/Delete Microsoft.Authorization/*/Write Microsoft.Authorization/elevateAccess/Action"
+  },
+  {
+    suffix_name        = "apps-write-subnet"
+    role_definition_id = "234418bc-6b32-11e8-adc0-fa7ae01bbebc"
+    actions            = "Microsoft.Network/virtualNetworks/subnets/write Microsoft.Network/virtualNetworks/subnets/read Microsoft.Network/virtualNetworks/subnets/join/action"
+    not_actions        = "Microsoft.Authorization/*/Delete Microsoft.Authorization/*/Write Microsoft.Authorization/elevateAccess/Action"
+  },
+  {
+    suffix_name        = "apps-join-infra-routeTable"
+    role_definition_id = "082b080a-6b38-11e8-adc0-fa7ae01bbebc"
+    actions            = "Microsoft.Network/routeTables/join/action"
+    not_actions        = "Microsoft.Authorization/*/Delete Microsoft.Authorization/*/Write Microsoft.Authorization/elevateAccess/Action"
+  },
+  {
+    suffix_name        = "apps-join-infra-nsg"
+    role_definition_id = "e54ee19c-6b39-11e8-adc0-fa7ae01bbebc"
+    actions            = "Microsoft.Network/networkSecurityGroups/join/action"
+    not_actions        = "Microsoft.Authorization/*/Delete Microsoft.Authorization/*/Write Microsoft.Authorization/elevateAccess/Action"
+  },
+  {
+    suffix_name        = "apps-armdeploy-infra"
+    role_definition_id = "49c0ddbc-6b3d-11e8-adc0-fa7ae01bbebc"
+    actions            = "Microsoft.Resources/deployments/write"
+    not_actions        = "Microsoft.Authorization/*/Delete Microsoft.Authorization/*/Write Microsoft.Authorization/elevateAccess/Action"
+  },
+  {
+    suffix_name        = "apps-enrollbackup-infra"
+    role_definition_id = "c0d5bc38-6b3d-11e8-adc0-fa7ae01bbebc"
+    actions            = "Microsoft.RecoveryServices/vaults/backupFabrics/protectionContainers/protectedItems/write Microsoft.RecoveryServices/vaults/backupFabrics/protectionContainers/protectedItems/operationsStatus/read"
+    not_actions        = "Microsoft.Authorization/*/Delete Microsoft.Authorization/*/Write Microsoft.Authorization/elevateAccess/Action"
   },
 ]
 
@@ -80,7 +127,7 @@ sa_account_replication_type = "LRS"
 
 sa_account_tier = "Standard"
 
-sa_apps_name = "appssand1vpodjdlddiagsa1"
+sa_apps_name = "appssand1vpodjdlddiagsa2"
 
 sa_infr_name = "infrsand1vpodjdlddiagsa1"
 
@@ -150,18 +197,15 @@ apps_snets = [
   },
 ]
 
-nsgs = [
+infra_nsgs = [
   {
     suffix_name = "snet-frontend"
   },
-  {
-    suffix_name = "nic-all"
-  },
 ]
 
-nsgrules = [
+infra_nsgrules = [
   {
-    Id_Nsg                     = "0"                        #Id of the Network Security Group
+    Id_Nsg                     = "0"                        #Id of the infra Network Security Group
     direction                  = "Inbound"
     suffix_name                = "ALL_to_frontend_tcp-3389"
     access                     = "Allow"
@@ -173,7 +217,7 @@ nsgrules = [
     source_port_range          = "*"
   },
   {
-    Id_Nsg                     = "0"                      #Id of the Network Security Group
+    Id_Nsg                     = "0"                      #Id of the infra Network Security Group
     direction                  = "Inbound"
     suffix_name                = "ALL_to_frontend_tcp-22"
     access                     = "Allow"
@@ -196,8 +240,17 @@ nsgrules = [
     protocol                   = "*"
     source_port_range          = "*"
   },
+]
+
+apps_nsgs = [
   {
-    Id_Nsg                     = "1"                   #Id of the Network Security Group
+    suffix_name = "nic-all"
+  },
+]
+
+apps_nsgrules = [
+  {
+    Id_Nsg                     = "0"                   #Id of the apps Network Security Group
     direction                  = "Inbound"
     suffix_name                = "ALL_to_NIC_tcp-3389"
     access                     = "Allow"
@@ -209,7 +262,7 @@ nsgrules = [
     source_port_range          = "*"
   },
   {
-    Id_Nsg                     = "1"
+    Id_Nsg                     = "0"
     direction                  = "Inbound"
     suffix_name                = "ALL_to_NIC_tcp-22"
     access                     = "Allow"
@@ -221,7 +274,7 @@ nsgrules = [
     source_port_range          = "*"
   },
   {
-    Id_Nsg                     = "1"
+    Id_Nsg                     = "0"
     direction                  = "Inbound"
     suffix_name                = "ALL_to_NIC_Deny-All"
     access                     = "Deny"
