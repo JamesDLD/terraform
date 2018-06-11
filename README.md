@@ -54,6 +54,8 @@ General Requirements
 -   The called "Infra" Azure Service Principal has the following privileges :
     - Owner privilege at Azure Subscription level (mandatory to create custom roles)
     - Read directory data on Windows Azure Active Directory (mandatory to assign custom roles)
+-   The called "Apps" Azure Service Principal has the following privilege :
+    - Reader privilege at Azure Subscription level (mandatory to use terraform data source ressource)
 
 Golden rules
 ------------
@@ -62,6 +64,7 @@ Golden rules
 
 Improvment & Feature request & Limitation
 ------------
+-	Even with the use of implicit dependency, the script doesn't wait enough between the privileges setting for Apps SPN and the when Apps SPN creates it's objects, for this reason the script will raise a privilege error at the first time, you will have to relaunch it to have a full success of all operations. After this, the Apps SPN doesn't need anymore to have the Reader privilege at the subscription level.
 -	Terraform authentication to AzureRM via Service Principal & certificate
 -   Use condition to decide wether or not a NIC should be linked to a Load Balancer, [ticket raised here](https://github.com/terraform-providers/terraform-provider-azurerm/issues/1318)
 -   Feature Request: resource azurerm_automation_variable, [ticket raised here](https://github.com/terraform-providers/terraform-provider-azurerm/issues/1312)

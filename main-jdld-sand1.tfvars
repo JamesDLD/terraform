@@ -32,6 +32,16 @@ dns_secret = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 dns_application_name = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 xpod_dns_zone_name = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 vpod_dns_zone_name = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+
+#Key Vault
+key_vaults = [
+  {
+    suffix_name            = "sci"
+    policy1_tenant_id      = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+    policy1_object_id      = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+    policy1_application_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+  },
+]
 */
 
 Dns_Vms_RecordsCount = "1"
@@ -148,19 +158,6 @@ backup_policies = [
 
 #Key vault
 kv_sku = "standard"
-
-/*
-The following values are located in the "secret" folder which is ignored for any git sync, 
-this associated file name is : main-jdld-sand1.tfvars
-key_vaults = [
-  {
-    suffix_name            = "sci"
-    policy1_tenant_id      = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-    policy1_object_id      = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-    policy1_application_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-  },
-]
-*/
 
 #Vnet & Route & Subnet & Network Security group & Application Security group
 

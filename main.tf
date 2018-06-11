@@ -182,7 +182,7 @@ module "Enable-AzureRmRoleAssignment" {
 ## Prerequisistes Inventory
 module "Get-AzureRmResourceGroup-MyApps" {
   source  = "./module/Get-AzureRmResourceGroup"
-  rg_name = "${var.rg_apps_name}"
+  rg_name = "${element(split("/",element(module.Enable-AzureRmRoleAssignment.role_assignment_scopes,0)),4)}" #"${var.rg_apps_name}"
 
   providers {
     "azurerm" = "azurerm.service_principal_apps"
