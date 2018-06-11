@@ -69,6 +69,20 @@ module "Create-AzureRmKeyVault-Infr" {
   }
 }
 
+module "Create-AzureRmStorageAccount-Infr" {
+  source                      = "./module/Create-AzureRmStorageAccount"
+  sa_name                     = "${var.sa_infr_name}"
+  sa_resource_group_name      = "${module.Get-AzureRmResourceGroup-Infr.rg_name}"
+  sa_location                 = "${module.Get-AzureRmResourceGroup-Infr.rg_location}"
+  sa_account_replication_type = "${var.sa_account_replication_type}"
+  sa_account_tier             = "${var.sa_account_tier}"
+  sa_tags                     = "${module.Get-AzureRmResourceGroup-Infr.rg_tags}"
+
+  providers {
+    "azurerm" = "azurerm.service_principal_infra"
+  }
+}
+
 ## Core Network components
 module "Create-AzureRmVirtualNetwork-Infra" {
   source                   = "./module/Create-AzureRmVirtualNetwork"
@@ -166,7 +180,7 @@ module "Create-AzureRmRoleDefinition-Apps" {
 
 module "Enable-AzureRmRoleAssignment" {
   source                  = "./module/Enable-AzureRmRoleAssignment"
-  ass_scopes              = ["${module.Get-AzureRmResourceGroup-Apps.rg_id}", "${module.Create-AzureRmVirtualNetwork-Infra.vnet_id}", "${element(module.Create-AzureRmRoute-Infra.rt_ids,0)}", "${element(module.Create-AzureRmNetworkSecurityGroup-Infra.nsgs_ids,0)}", "${module.Get-AzureRmResourceGroup-Infr.rg_id}", "${module.Get-AzureRmResourceGroup-Infr.rg_id}"]
+  ass_scopes              = ["${module.Get-AzureRmResourceGroup-Apps.rg_id}", "${module.Create-AzureRmVirtualNetwork-Infra.vnet_id}", "${element(module.Create-AzureRmRoute-Infra.rt_ids,0)}", "${element(module.Create-AzureRmNetworkSecurityGroup-Infra.nsgs_ids,0)}", "${module.Get-AzureRmResourceGroup-Infr.rg_id}", "${module.Get-AzureRmResourceGroup-Infr.rg_id}", "${module.Create-AzureRmStorageAccount-Infr.sa_id}"]
   ass_role_definition_ids = "${module.Create-AzureRmRoleDefinition-Apps.role_ids}"
   ass_principal_id        = "${lookup(var.service_principals[1], "Application_object_id")}"
 
@@ -203,20 +217,6 @@ module "Create-AzureRmStorageAccount-Apps" {
     "azurerm" = "azurerm.service_principal_apps"
   }
 }
-
-/*
-module "Create-AzureRmRecoveryServicesVault-Apps" {
-  source                  = "./module/Create-AzureRmRecoveryServicesVault"
-  rsv_name                = "apps-${var.app_name}-${var.env_name}-rsv1"
-  rsv_resource_group_name = "${module.Get-AzureRmResourceGroup-MyApps.rg_name}"
-  rsv_tags                = "${module.Get-AzureRmResourceGroup-MyApps.rg_tags}"
-  rsv_backup_policies     = ["${var.backup_policies}"]
-
-  providers {
-    "azurerm" = "azurerm.service_principal_apps"
-  }
-}
-*/
 
 ## Core Network components
 module "Create-AzureRmNetworkSecurityGroup-Apps" {

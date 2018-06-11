@@ -103,7 +103,7 @@ roles = [
   {
     suffix_name        = "apps-write-subnet"
     role_definition_id = "234418bc-6b32-11e8-adc0-fa7ae01bbebc"
-    actions            = "Microsoft.Network/virtualNetworks/subnets/write Microsoft.Network/virtualNetworks/subnets/read Microsoft.Network/virtualNetworks/subnets/join/action"
+    actions            = "Microsoft.Network/virtualNetworks/subnets/Write Microsoft.Network/virtualNetworks/subnets/read Microsoft.Network/virtualNetworks/subnets/join/action"
     not_actions        = "Microsoft.Authorization/*/Delete Microsoft.Authorization/*/Write Microsoft.Authorization/elevateAccess/Action"
   },
   {
@@ -121,13 +121,19 @@ roles = [
   {
     suffix_name        = "apps-armdeploy-infra"
     role_definition_id = "49c0ddbc-6b3d-11e8-adc0-fa7ae01bbebc"
-    actions            = "Microsoft.Resources/deployments/write"
+    actions            = "Microsoft.Resources/deployments/Write Microsoft.Resources/deployments/Read Microsoft.Resources/deployments/Delete"
     not_actions        = "Microsoft.Authorization/*/Delete Microsoft.Authorization/*/Write Microsoft.Authorization/elevateAccess/Action"
   },
   {
     suffix_name        = "apps-enrollbackup-infra"
     role_definition_id = "c0d5bc38-6b3d-11e8-adc0-fa7ae01bbebc"
-    actions            = "Microsoft.RecoveryServices/vaults/backupFabrics/protectionContainers/protectedItems/write Microsoft.RecoveryServices/vaults/backupFabrics/protectionContainers/protectedItems/operationsStatus/read"
+    actions            = "Microsoft.RecoveryServices/*"
+    not_actions        = "Microsoft.Authorization/*/Delete Microsoft.Authorization/*/Write Microsoft.Authorization/elevateAccess/Action"
+  },
+  {
+    suffix_name        = "apps-manage-infra-sa"
+    role_definition_id = "cabd3138-6d6b-11e8-adc0-fa7ae01bbebc"
+    actions            = "Microsoft.Storage/storageAccounts/*"
     not_actions        = "Microsoft.Authorization/*/Delete Microsoft.Authorization/*/Write Microsoft.Authorization/elevateAccess/Action"
   },
 ]
