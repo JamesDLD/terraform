@@ -95,46 +95,39 @@ policies = [
 #Custom roles
 roles = [
   {
-    suffix_name        = "apps-contributor"
-    role_definition_id = "336310d2-7fe4-f488-9a55-8387df1052bf"
-    actions            = "*"
-    not_actions        = "Microsoft.Authorization/*/Delete Microsoft.Authorization/*/Write Microsoft.Authorization/elevateAccess/Action"
+    suffix_name = "apps-contributor"
+    actions     = "*"
+    not_actions = "Microsoft.Authorization/*/Delete Microsoft.Authorization/*/Write Microsoft.Authorization/elevateAccess/Action"
   },
   {
-    suffix_name        = "apps-write-subnet"
-    role_definition_id = "234418bc-6b32-11e8-adc0-fa7ae01bbebc"
-    actions            = "Microsoft.Network/virtualNetworks/subnets/Write Microsoft.Network/virtualNetworks/subnets/read Microsoft.Network/virtualNetworks/subnets/join/action"
-    not_actions        = "Microsoft.Authorization/*/Delete Microsoft.Authorization/*/Write Microsoft.Authorization/elevateAccess/Action"
+    suffix_name = "apps-write-subnet"
+    actions     = "Microsoft.Network/virtualNetworks/subnets/Write Microsoft.Network/virtualNetworks/subnets/read Microsoft.Network/virtualNetworks/subnets/join/action"
+    not_actions = "Microsoft.Authorization/*/Delete Microsoft.Authorization/*/Write Microsoft.Authorization/elevateAccess/Action"
   },
   {
-    suffix_name        = "apps-join-infra-routeTable"
-    role_definition_id = "082b080a-6b38-11e8-adc0-fa7ae01bbebc"
-    actions            = "Microsoft.Network/routeTables/join/action"
-    not_actions        = "Microsoft.Authorization/*/Delete Microsoft.Authorization/*/Write Microsoft.Authorization/elevateAccess/Action"
+    suffix_name = "apps-join-infra-routeTable"
+    actions     = "Microsoft.Network/routeTables/join/action"
+    not_actions = "Microsoft.Authorization/*/Delete Microsoft.Authorization/*/Write Microsoft.Authorization/elevateAccess/Action"
   },
   {
-    suffix_name        = "apps-join-infra-nsg"
-    role_definition_id = "e54ee19c-6b39-11e8-adc0-fa7ae01bbebc"
-    actions            = "Microsoft.Network/networkSecurityGroups/join/action"
-    not_actions        = "Microsoft.Authorization/*/Delete Microsoft.Authorization/*/Write Microsoft.Authorization/elevateAccess/Action"
+    suffix_name = "apps-join-infra-nsg"
+    actions     = "Microsoft.Network/networkSecurityGroups/join/action"
+    not_actions = "Microsoft.Authorization/*/Delete Microsoft.Authorization/*/Write Microsoft.Authorization/elevateAccess/Action"
   },
   {
-    suffix_name        = "apps-armdeploy-infra"
-    role_definition_id = "49c0ddbc-6b3d-11e8-adc0-fa7ae01bbebc"
-    actions            = "Microsoft.Resources/deployments/*"
-    not_actions        = "Microsoft.Authorization/*/Delete Microsoft.Authorization/*/Write Microsoft.Authorization/elevateAccess/Action"
+    suffix_name = "apps-armdeploy-infra"
+    actions     = "Microsoft.Resources/deployments/*"
+    not_actions = "Microsoft.Authorization/*/Delete Microsoft.Authorization/*/Write Microsoft.Authorization/elevateAccess/Action"
   },
   {
-    suffix_name        = "apps-enrollbackup-infra"
-    role_definition_id = "c0d5bc38-6b3d-11e8-adc0-fa7ae01bbebc"
-    actions            = "Microsoft.RecoveryServices/*"
-    not_actions        = "Microsoft.Authorization/*/Delete Microsoft.Authorization/*/Write Microsoft.Authorization/elevateAccess/Action"
+    suffix_name = "apps-enrollbackup-infra"
+    actions     = "Microsoft.RecoveryServices/*"
+    not_actions = "Microsoft.Authorization/*/Delete Microsoft.Authorization/*/Write Microsoft.Authorization/elevateAccess/Action"
   },
   {
-    suffix_name        = "apps-manage-infra-sa"
-    role_definition_id = "cabd3138-6d6b-11e8-adc0-fa7ae01bbebc"
-    actions            = "Microsoft.Storage/storageAccounts/*"
-    not_actions        = "Microsoft.Authorization/*/Delete Microsoft.Authorization/*/Write Microsoft.Authorization/elevateAccess/Action"
+    suffix_name = "apps-manage-infra-sa"
+    actions     = "Microsoft.Storage/storageAccounts/*"
+    not_actions = "Microsoft.Authorization/*/Delete Microsoft.Authorization/*/Write Microsoft.Authorization/elevateAccess/Action"
   },
 ]
 
