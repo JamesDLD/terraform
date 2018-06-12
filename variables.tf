@@ -47,7 +47,9 @@ variable "backup_policies" {
 }
 
 #Vnet & Subnet & Network Security group
-variable "vnet_apps_address_space" {}
+variable "vnets" {
+  type = "list"
+}
 
 variable "apps_snets" {
   type = "list"

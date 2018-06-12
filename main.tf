@@ -86,14 +86,13 @@ module "Create-AzureRmStorageAccount-Infr" {
 ## Core Network components
 module "Create-AzureRmVirtualNetwork-Infra" {
   source                   = "./module/Create-AzureRmVirtualNetwork"
-  vnet_name                = "infra-${var.app_name}-${var.env_name}-net1"
+  vnets                    = ["${var.vnets}"]
+  vnet_prefix              = "infra-${var.app_name}-${var.env_name}-"
+  vnet_suffix              = "-net1"
   vnet_resource_group_name = "${module.Get-AzureRmResourceGroup-Infr.rg_name}"
-  vnet_address_space       = "${var.vnet_apps_address_space}"
   vnet_location            = "${module.Get-AzureRmResourceGroup-Infr.rg_location}"
   vnet_tags                = "${module.Get-AzureRmResourceGroup-Infr.rg_tags}"
 
-  #vnet_dns1                = "not used in this sample"
-  #vnet_dns2                = "not used in this sample"
   providers {
     "azurerm" = "azurerm.service_principal_infra"
   }
@@ -143,8 +142,8 @@ module "Create-AzureRmPolicyDefinition" {
 
 module "Enable-AzureRmPolicyAssignment-Infra-nsg-on-subnet" {
   source                     = "./module/Enable-AzureRmPolicyAssignment"
-  p_ass_name                 = "enforce-nsg-on-subnet-${module.Create-AzureRmVirtualNetwork-Infra.vnet_name}"
-  p_ass_scope                = "${module.Create-AzureRmVirtualNetwork-Infra.vnet_id}"
+  p_ass_name                 = "enforce-nsg-under-vnet-${element(module.Create-AzureRmVirtualNetwork-Infra.vnet_names,0)}"
+  p_ass_scope                = "${element(module.Create-AzureRmVirtualNetwork-Infra.vnet_ids,0)}"
   p_ass_policy_definition_id = "${element(module.Create-AzureRmPolicyDefinition.policy_ids,0)}"
   p_ass_key_parameter1       = "nsgId"
   p_ass_value_parameter1     = "${element(module.Create-AzureRmNetworkSecurityGroup-Infra.nsgs_ids,0)}"
@@ -156,8 +155,8 @@ module "Enable-AzureRmPolicyAssignment-Infra-nsg-on-subnet" {
 
 module "Enable-AzureRmPolicyAssignment-Infra-udr-on-subnet" {
   source                     = "./module/Enable-AzureRmPolicyAssignment"
-  p_ass_name                 = "enforce-udr-on-subnet-${module.Create-AzureRmVirtualNetwork-Infra.vnet_name}"
-  p_ass_scope                = "${module.Create-AzureRmVirtualNetwork-Infra.vnet_id}"
+  p_ass_name                 = "enforce-udr-under-vnet-${element(module.Create-AzureRmVirtualNetwork-Infra.vnet_names,0)}"
+  p_ass_scope                = "${element(module.Create-AzureRmVirtualNetwork-Infra.vnet_ids,0)}"
   p_ass_policy_definition_id = "${element(module.Create-AzureRmPolicyDefinition.policy_ids,1)}"
   p_ass_key_parameter1       = "udrId"
   p_ass_value_parameter1     = "${element(module.Create-AzureRmRoute-Infra.rt_ids,0)}"
@@ -180,7 +179,17 @@ module "Create-AzureRmRoleDefinition-Apps" {
 
 module "Enable-AzureRmRoleAssignment" {
   source                  = "./module/Enable-AzureRmRoleAssignment"
-  ass_scopes              = ["${module.Get-AzureRmResourceGroup-Apps.rg_id}", "${module.Create-AzureRmVirtualNetwork-Infra.vnet_id}", "${element(module.Create-AzureRmRoute-Infra.rt_ids,0)}", "${element(module.Create-AzureRmNetworkSecurityGroup-Infra.nsgs_ids,0)}", "${module.Get-AzureRmResourceGroup-Infr.rg_id}", "${module.Get-AzureRmResourceGroup-Infr.rg_id}", "${module.Create-AzureRmStorageAccount-Infr.sa_id}"]
+  ass_countRoleAssignment = "${length(var.roles)}"
+
+  ass_scopes = ["${module.Get-AzureRmResourceGroup-Apps.rg_id}",
+    "${element(module.Create-AzureRmVirtualNetwork-Infra.vnet_ids,0)}",
+    "${element(module.Create-AzureRmRoute-Infra.rt_ids,0)}",
+    "${element(module.Create-AzureRmNetworkSecurityGroup-Infra.nsgs_ids,0)}",
+    "${module.Get-AzureRmResourceGroup-Infr.rg_id}",
+    "${module.Create-AzureRmRecoveryServicesVault-Infr.backup_vault_id}",
+    "${module.Create-AzureRmStorageAccount-Infr.sa_id}",
+  ]
+
   ass_role_definition_ids = "${module.Create-AzureRmRoleDefinition-Apps.role_ids}"
   ass_principal_id        = "${lookup(var.service_principals[1], "Application_object_id")}"
 
@@ -188,6 +197,8 @@ module "Enable-AzureRmRoleAssignment" {
     "azurerm" = "azurerm.service_principal_infra"
   }
 }
+
+#module.Get-AzureRmResourceGroup-Infr.rg_id
 
 ####################################################
 ##########              Apps              ##########
@@ -254,7 +265,7 @@ module "Create-AzureRmSubnet-Apps" {
   subnet_prefix              = "${var.app_name}-${var.env_name}-"
   subnet_suffix              = "-snet1"
   snets                      = ["${var.apps_snets}"]
-  vnet_name                  = "${module.Create-AzureRmVirtualNetwork-Infra.vnet_name}"
+  vnets                      = "${module.Create-AzureRmVirtualNetwork-Infra.vnet_names}"
   nsgs_ids                   = "${module.Create-AzureRmNetworkSecurityGroup-Infra.nsgs_ids}"
   subnet_route_table_ids     = "${module.Create-AzureRmRoute-Infra.rt_ids}"
 

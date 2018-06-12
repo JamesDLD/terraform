@@ -1,6 +1,8 @@
 variable "subnet_resource_group_name" {}
 
-variable "vnet_name" {}
+variable "vnets" {
+  type = "list"
+}
 
 variable "subnet_prefix" {}
 variable "subnet_suffix" {}

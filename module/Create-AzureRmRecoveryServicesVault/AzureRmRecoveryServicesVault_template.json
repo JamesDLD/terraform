@@ -52,6 +52,10 @@
         "rsvtagsjson": {
             "type": "object",
             "value": "[base64ToJson(variables('rsvtagsbase64'))]"
-        }
+        },
+        "resourceID": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.RecoveryServices/vaults', parameters('vaultName'))]"
+          }
     }
 }

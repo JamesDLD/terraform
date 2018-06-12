@@ -7,3 +7,4 @@ variable "ass_role_definition_ids" {
 }
 
 variable "ass_principal_id" {}
+variable "ass_countRoleAssignment" {}

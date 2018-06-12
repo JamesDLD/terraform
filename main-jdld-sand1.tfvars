@@ -101,7 +101,7 @@ roles = [
   },
   {
     suffix_name = "apps-write-subnet"
-    actions     = "Microsoft.Network/virtualNetworks/subnets/Write Microsoft.Network/virtualNetworks/subnets/read Microsoft.Network/virtualNetworks/subnets/join/action"
+    actions     = "Microsoft.Network/virtualNetworks/subnets/Write Microsoft.Network/virtualNetworks/subnets/read Microsoft.Network/virtualNetworks/subnets/delete Microsoft.Network/virtualNetworks/subnets/join/action"
     not_actions = "Microsoft.Authorization/*/Delete Microsoft.Authorization/*/Write Microsoft.Authorization/elevateAccess/Action"
   },
   {
@@ -176,7 +176,13 @@ routes = [
   },
 ]
 
-vnet_apps_address_space = "198.18.1.0/24"
+vnets = [
+  {
+    vnet_suffix_name = "tech"
+    address_spaces   = "198.18.1.0/24"           #For multiple values add spaces between values
+    dns_servers      = "198.18.1.23 198.18.1.24" #For multiple values add spaces between values
+  },
+]
 
 apps_snets = [
   {
@@ -184,12 +190,14 @@ apps_snets = [
     cidr               = "198.18.1.224/28"
     Id_Nsg             = "0"               #Id of the Network Security Group, set to 777 if there is no Network Security Groups
     Id_route_table     = "0"               #Id of the Route table, set to 777 if there is no Route table
+    Id_Vnet            = "0"               #Id of the vnet
   },
   {
     subnet_suffix_name = "backend"
     cidr               = "198.18.1.240/28"
     Id_Nsg             = "0"               #Id of the Network Security Group, set to 777 if there is no Network Security Groups
     Id_route_table     = "0"               #Id of the Route table, set to 777 if there is no Route table
+    Id_Vnet            = "0"               #Id of the vnet
   },
 ]
 

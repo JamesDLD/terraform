@@ -1,7 +1,7 @@
-output "vnet_name" {
-  value = "${azurerm_virtual_network.vnet.name}"
+output "vnet_names" {
+  value = "${azurerm_virtual_network.vnets.*.name}"
 }
 
-output "vnet_id" {
-  value = "${azurerm_virtual_network.vnet.id}"
+output "vnet_ids" {
+  value = "${azurerm_virtual_network.vnets.*.id}"
 }
