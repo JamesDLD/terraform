@@ -121,7 +121,7 @@ roles = [
   {
     suffix_name        = "apps-armdeploy-infra"
     role_definition_id = "49c0ddbc-6b3d-11e8-adc0-fa7ae01bbebc"
-    actions            = "Microsoft.Resources/deployments/Write Microsoft.Resources/deployments/Read Microsoft.Resources/deployments/Delete"
+    actions            = "Microsoft.Resources/deployments/*"
     not_actions        = "Microsoft.Authorization/*/Delete Microsoft.Authorization/*/Write Microsoft.Authorization/elevateAccess/Action"
   },
   {
