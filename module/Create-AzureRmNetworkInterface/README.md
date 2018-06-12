@@ -1,6 +1,6 @@
 Usage
 -----
-
+```hcl
 #Set the Provider
 provider "azurerm" {
   subscription_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
@@ -80,3 +80,4 @@ module "Create-AzureRmNetworkInterface-Apps" {
   nic_tags                = "${var.nic_tags}"
   nsgs_ids                = "${var.nsgs_ids}"
 }
+```

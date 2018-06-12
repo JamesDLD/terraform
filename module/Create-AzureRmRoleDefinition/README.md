@@ -1,6 +1,6 @@
 Usage
 -----
-
+```hcl
 #Set the Provider
 provider "azurerm" {
   subscription_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
@@ -44,3 +44,4 @@ module "Create-AzureRmRoleDefinition-Apps" {
   role_prefix = "TeamRole-"
   role_suffix = "-role1"
 }
+```
