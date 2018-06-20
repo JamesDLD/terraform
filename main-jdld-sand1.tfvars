@@ -366,7 +366,7 @@ Linux_Vms = [
   {
     suffix_name       = "ssh"
     id                = "1"                      #Id of the VM
-    Id_Lb             = "0"                      #Id of the Load Balancer
+    Id_Lb             = "0"                      #Id of the Load Balancer, set to 777 if there is no Load Balancer
     Id_Subnet         = "0"                      #Id of the Subnet
     Id_Ava            = "0"                      #Id of the Availabilitysets, set to 777 if there is no Availabilitysets
     Id_Nsg            = "1"                      #Id of the Network Security Group, set to 777 if there is no Network Security Groups
@@ -383,7 +383,7 @@ Linux_Vms = [
   {
     suffix_name       = "ssh"
     id                = "2"                      #Id of the VM
-    Id_Lb             = "0"                      #Id of the Load Balancer
+    Id_Lb             = "0"                      #Id of the Load Balancer, set to 777 if there is no Load Balancer
     Id_Subnet         = "0"                      #Id of the Subnet
     Id_Ava            = "0"                      #Id of the Availabilitysets, set to 777 if there is no Availabilitysets
     Id_Nsg            = "1"                      #Id of the Network Security Group, set to 777 if there is no Network Security Groups
@@ -403,7 +403,7 @@ Windows_Vms = [
   {
     suffix_name       = "rdg"
     id                = "1"                      #Id of the VM
-    Id_Lb             = "777"                    #Id of the Load Balancer
+    Id_Lb             = "777"                    #Id of the Load Balancer, set to 777 if there is no Load Balancer
     Id_Subnet         = "0"                      #Id of the Subnet
     Id_Ava            = "0"                      #Id of the Availabilitysets, set to 777 if there is no Availabilitysets
     Id_Nsg            = "1"                      #Id of the Network Security Group, set to 777 if there is no Network Security Groups
@@ -420,7 +420,7 @@ Windows_Vms = [
   {
     suffix_name       = "rdg"
     id                = "2"                      #Id of the VM
-    Id_Lb             = "777"                    #Id of the Load Balancer
+    Id_Lb             = "777"                    #Id of the Load Balancer, set to 777 if there is no Load Balancer
     Id_Subnet         = "0"                      #Id of the Subnet
     Id_Ava            = "0"                      #Id of the Availabilitysets, set to 777 if there is no Availabilitysets
     Id_Nsg            = "1"                      #Id of the Network Security Group, set to 777 if there is no Network Security Groups
@@ -441,7 +441,7 @@ Linux_Ss_Vms = [
   {
     suffix_name         = "gfs"
     id                  = "1"               #Id of the VM
-    Id_Lb               = "1"               #Id of the Load Balancer
+    Id_Lb               = "1"               #Id of the Load Balancer, set to 777 if there is no Load Balancer
     Id_Subnet           = "1"               #Id of the Subnet
     Id_Nsg              = "1"               #Id of the Network Security Group, set to 777 if there is no Network Security Groups
     upgrade_policy_mode = "Manual"
@@ -461,7 +461,7 @@ Windows_Ss_Vms = [
   {
     suffix_name         = "rds"                    #Windows computer name prefix cannot be more than 9 characters long
     id                  = "1"                      #Id of the VM
-    Id_Lb               = "2"                      #Id of the Load Balancer
+    Id_Lb               = "2"                      #Id of the Load Balancer, set to 777 if there is no Load Balancer
     Id_Subnet           = "1"                      #Id of the Subnet
     Id_Nsg              = "1"                      #Id of the Network Security Group, set to 777 if there is no Network Security Groups
     upgrade_policy_mode = "Manual"
