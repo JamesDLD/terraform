@@ -48,7 +48,7 @@ terraform apply -var-file="main-jdld-sand1.tfvars" -var-file="secret/main-jdld-s
 General Requirements
 ------------
 
--	[Terraform](https://www.Terraform.io/downloads.html) 0.10.x
+-	[Terraform](https://www.Terraform.io/downloads.html) 0.11.7
 -	[AzureRM Terraform Provider](https://github.com/Terraform-providers/Terraform-provider-azurerm/blob/master/README.md)
 -	[AzureRM Terraform Provider - Authentication](https://www.Terraform.io/docs/providers/azurerm/)
 -   The called "Infra" Azure Service Principal has the following privileges :
