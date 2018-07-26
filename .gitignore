@@ -3,9 +3,7 @@
 *.tfstate.backup
 
 # Module directory
-secret/
 .terraform/
 
 # Secret files
-backend-jdld-sand1-secret.tfvars
-main-jdld-sand1-secret.tfvars
+secret/*.tfvars

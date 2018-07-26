@@ -385,24 +385,7 @@ module "Enable-AzureRmRecoveryServicesBackupProtection-Apps" {
   }
 }
 
-/* Commented for test purposes
-module "Create-DnsThroughApi" {
-  source               = "./module/Create-DnsThroughApi"
-  dns_fqdn_api         = "${var.dns_fqdn_api}"
-  dns_secret           = "${var.dns_secret}"
-  dns_application_name = "${var.dns_application_name}"
-  xpod_dns_zone_name   = "${var.xpod_dns_zone_name}"
-  vpod_dns_zone_name   = "${var.vpod_dns_zone_name}"
-
-  Dns_Wan_RecordsCount = "${var.Dns_Wan_RecordsCount}" #If no need just set to "0"
-  Dns_Wan_Records      = ["${var.Dns_Wan_Records}"]    #If no need just set to []
-
-  Dns_Host_RecordsCount = "${var.Dns_Vms_RecordsCount + var.Dns_Lbs_RecordsCount}"                                                                                                                                                                        #If no need just set to "0"
-  Dns_Hostnames         = ["${concat(module.Create-AzureRmVm-Apps.Linux_Vms_names,module.Create-AzureRmVm-Apps.Windows_Vms_names,module.Create-AzureRmLoadBalancer-Apps.lb_names)}"]                                                                      #If no need just set to []
-  Dns_Ips               = ["${concat(module.Create-AzureRmNetworkInterface-Apps.Linux_nics_private_ip_address,module.Create-AzureRmNetworkInterface-Apps.Windows_nics_private_ip_address,module.Create-AzureRmLoadBalancer-Apps.lb_private_ip_address)}"] #If no need just set to []
-}
-
-
+/*
 ## Infra common services
 module "Create-AzureRmAutomationAccount-Apps" {
   source                   = "./module/Create-AzureRmAutomationAccount"
