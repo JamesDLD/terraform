@@ -198,8 +198,6 @@ module "Enable-AzureRmRoleAssignment" {
   }
 }
 
-#module.Get-AzureRmResourceGroup-Infr.rg_id
-
 ####################################################
 ##########              Apps              ##########
 ####################################################
@@ -207,7 +205,7 @@ module "Enable-AzureRmRoleAssignment" {
 ## Prerequisistes Inventory
 module "Get-AzureRmResourceGroup-MyApps" {
   source  = "./module/Get-AzureRmResourceGroup"
-  rg_name = "${element(split("/",element(module.Enable-AzureRmRoleAssignment.role_assignment_scopes,0)),4)}" #"${var.rg_apps_name}"
+  rg_name = "${element(split("/",element(module.Enable-AzureRmRoleAssignment.role_assignment_scopes,0)),4)}"
 
   providers {
     "azurerm" = "azurerm.service_principal_apps"
@@ -261,7 +259,7 @@ module "Create-AzureRmApplicationkSecurityGroup-Apps" {
 
 module "Create-AzureRmSubnet-Apps" {
   source                     = "./module/Create-AzureRmSubnet"
-  subnet_resource_group_name = "${module.Get-AzureRmResourceGroup-Infr.rg_name}"
+  subnet_resource_group_name = "${element(split("/",element(module.Enable-AzureRmRoleAssignment.role_assignment_scopes,4)),4)}" #Call this variable like this to create an implicit depedency, the goal here is to wait for the role assignement to be effective
   subnet_prefix              = "${var.app_name}-${var.env_name}-"
   subnet_suffix              = "-snet1"
   snets                      = ["${var.apps_snets}"]
