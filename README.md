@@ -1,4 +1,4 @@
-What's Terraform?
+Azure and Terraform
 ------------
 Simple and Powerful
 
