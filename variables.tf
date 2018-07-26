@@ -2,7 +2,16 @@
 
 #Authentication
 terraform {
-  backend "azurerm" {}
+  backend          "azurerm"        {}
+  required_version = "0.11.7"
+}
+
+provider "azurerm" {
+  version = "1.8"
+}
+
+provider "random" {
+  version = "1.3"
 }
 
 variable "subscription_id" {}
