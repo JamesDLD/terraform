@@ -7,7 +7,7 @@ Folder's golden rule
 Secret files
 ------------
 -	backend-jdld-sand1.tfvars : stores the credential to write Terraform backend files
-    - Content ==>
+    - Content sample ==>
     ```hcl
     storage_account_name = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
     arm_subscription_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
@@ -16,6 +16,7 @@ Secret files
     arm_tenant_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
     ```
 -	main-jdld-sand1.tfvars : stores the credential to write in Infra and Apps Resource groups and store the VM credentials
+    - Content sample ==>
     ```hcl
     subscription_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
     service_principals = [

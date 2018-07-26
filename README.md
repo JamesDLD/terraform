@@ -26,7 +26,7 @@ This step ensures that Terraform has all the prerequisites to build your templat
 
 ```hcl
 
-terraform init -backend-config="backend-jdld-sand1.tfvars" -backend-config="secret/backend-jdld-sand1.tfvars"
+terraform init -backend-config="backend-jdld-sand1.tfvars" -backend-config="secret/backend-jdld-sand1.tfvars" -reconfigure
 
 ```
 
