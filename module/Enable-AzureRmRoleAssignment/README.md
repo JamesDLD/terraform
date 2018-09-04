@@ -22,11 +22,20 @@ variable "ass_scopes" {
 }
 
 #Action
+data "azurerm_subscription" "primary" {}
+
+data "azurerm_role_definition" "customs" {
+  count              = "${length(var.ass_role_definition_ids)}"
+  role_definition_id = "${element(var.ass_role_definition_ids,count.index)}"
+  scope              = "${data.azurerm_subscription.primary.id}"
+}
+
 module "Enable-AzureRmRoleAssignment" {
-  source                  = "https://github.com/JamesDLD/terraform/tree/master/module/Enable-AzureRmRoleAssignment/"
-  ass_countRoleAssignment = "${length(var.ass_role_definition_ids)}"
-  ass_scopes              = "${length(var.ass_scopes)}"
-  ass_role_definition_ids = "${var.ass_role_definition_ids}"
+  source                  = "github.com/JamesDLD/terraform/module/Enable-AzureRmRoleAssignment"
+  version 				        = "9c23185"
+  ass_countRoleAssignment = "${length(data.azurerm_role_definition.customs.*.id)}"
+  ass_scopes              = "${var.ass_scopes}"
+  ass_role_definition_ids = "${data.azurerm_role_definition.customs.*.id}"
   ass_principal_id        = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 }
 ```
