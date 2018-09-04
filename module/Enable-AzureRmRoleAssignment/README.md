@@ -8,6 +8,7 @@ provider "azurerm" {
   client_id       = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
   client_secret   = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
   tenant_id       = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+  version = "1.8"
 }
 
 #Set variable
