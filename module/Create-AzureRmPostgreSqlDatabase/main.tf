@@ -50,7 +50,6 @@ resource "azurerm_postgresql_configuration" "postgresql_config" {
   value               = "${lookup(var.pgsql_config[count.index], "value")}"
 }
 
-/*
 resource "azurerm_postgresql_virtual_network_rule" "vnet_rules" {
   count               = "${length(var.pgsql_server)}"
   name                = "${var.pgsql_prefix}${lookup(var.pgsql_server[count.index], "suffix_name")}${var.pgsql_suffix}-vnetrule"
@@ -58,5 +57,4 @@ resource "azurerm_postgresql_virtual_network_rule" "vnet_rules" {
   resource_group_name = "${element(azurerm_postgresql_server.pgsql_server.*.resource_group_name,count.index)}"
   subnet_id           = "${var.pgsql_subnet_id}"
 }
-*/
 
