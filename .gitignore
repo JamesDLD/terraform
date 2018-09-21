@@ -7,3 +7,5 @@
 
 # Secret files
 secret/*.tfvars
+module/.DS_Store
+.DS_Store
