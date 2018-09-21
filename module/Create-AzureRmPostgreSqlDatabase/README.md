@@ -71,7 +71,8 @@ variable "pgsql_rg" {
 }
 
 module "Create-AzureRmPostgreSqlDatabase-Apps" {
-  source                    = "./module/Create-AzureRmPostgreSqlDatabase"
+  source                  = "github.com/JamesDLD/terraform/module/Create-AzureRmPostgreSqlDatabase"
+  version 				        = "d01cb25"
   pgsql_prefix              = "myapp"
   pgsql_suffix              = "-pgsql1"
   pgsql_server              = ["${var.pgsql_server}"]
