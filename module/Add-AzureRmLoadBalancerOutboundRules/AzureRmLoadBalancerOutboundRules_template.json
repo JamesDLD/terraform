@@ -1,12 +1,12 @@
 {
-    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "$schema": "http://schema.management.azure.com/schemas/2018-05-01/deploymentTemplate.json",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "apiVersion": {
-            "defaultValue": "2018-07-01",
+            "defaultValue": "2018-08-01",
             "type": "string",
             "metadata": {
-                "description": "API version 2018-07-01 permits an outbound rule definition structured : https://docs.microsoft.com/en-us/azure/load-balancer/load-balancer-outbound-rules-overview"
+                "description": "API version 2018-08-01 permits an outbound rule definition structured : https://docs.microsoft.com/en-us/azure/load-balancer/load-balancer-outbound-rules-overview"
             }
         },
         "lbName": {
@@ -86,8 +86,8 @@
                                 }
                             }
                         ],
-                        "allocatedOutboundPorts": "[parameters('allocatedOutboundPorts')]",
-                        "idleTimeoutInMinutes": "[parameters('idleTimeoutInMinutes')]",
+                        "allocatedOutboundPorts": "[int(parameters('allocatedOutboundPorts'))]",
+                        "idleTimeoutInMinutes": "[int(parameters('idleTimeoutInMinutes'))]",
                         "enableTcpReset": "[variables('enableTcpReset')]",
                         "protocol": "[parameters('protocol')]",
                         "backendAddressPool": {
