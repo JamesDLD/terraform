@@ -13,6 +13,6 @@ resource "azurerm_template_deployment" "lb_to_addOutboundRule" {
     idleTimeoutInMinutes                           = "${lookup(var.lbs_out[count.index], "idleTimeoutInMinutes")}"
     enableTcpReset                                 = "${lookup(var.lbs_out[count.index], "enableTcpReset")}"
     protocol                                       = "${lookup(var.lbs_out[count.index], "protocol")}"
-    backendAddressPool                             = "${element(var.lb_out_backend_ids,count.index)}"
+    backendAddressPoolId                           = "${element(var.lb_out_backend_ids,count.index)}"
   }
 }

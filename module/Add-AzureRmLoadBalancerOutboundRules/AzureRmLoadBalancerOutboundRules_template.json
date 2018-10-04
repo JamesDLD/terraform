@@ -57,10 +57,10 @@
                 "All"
             ]
         },
-        "backendAddressPool": {
+        "backendAddressPoolId": {
             "type": "string",
             "metadata": {
-                "description": "Backend pool reference."
+                "description": "Backend pool id."
             }
         }
     },
@@ -90,7 +90,9 @@
                         "idleTimeoutInMinutes": "[parameters('idleTimeoutInMinutes')]",
                         "enableTcpReset": "[variables('enableTcpReset')]",
                         "protocol": "[parameters('protocol')]",
-                        "backendAddressPool": "[parameters('backendAddressPool')]"
+                        "backendAddressPool": {
+                            "id": "[parameters('backendAddressPoolId')]"
+                        }
                     }
                 ]
             }
