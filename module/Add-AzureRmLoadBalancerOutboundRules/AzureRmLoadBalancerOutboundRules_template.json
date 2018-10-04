@@ -1,0 +1,99 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "apiVersion": {
+            "defaultValue": "2018-07-01",
+            "type": "string",
+            "metadata": {
+                "description": "API version 2018-07-01 permits an outbound rule definition structured : https://docs.microsoft.com/en-us/azure/load-balancer/load-balancer-outbound-rules-overview"
+            }
+        },
+        "lbName": {
+            "type": "string",
+            "metadata": {
+                "description": "Load balancer name."
+            }
+        },
+        "frontend_ip_configuration_name": {
+            "type": "string",
+            "metadata": {
+                "description": "Frontend ip configuation name."
+            }
+        },
+        "frontend_ip_configuration_public_ip_address_id": {
+            "type": "string",
+            "metadata": {
+                "description": "Frontend ip configuation public ip id."
+            }
+        },
+        "allocatedOutboundPorts": {
+            "type": "string",
+            "metadata": {
+                "description": "Number of SNAT ports, Load Balancer allocates SNAT ports in multiples of 8."
+            }
+        },
+        "idleTimeoutInMinutes": {
+            "type": "string",
+            "metadata": {
+                "description": "Outbound flow idle timeout. The parameter accepts a value from 4 to 66."
+            }
+        },
+        "enableTcpReset": {
+            "type": "string",
+            "defaultValue": "false",
+            "metadata": {
+                "description": "Enable TCP Reset on idle timeout."
+            }
+        },
+        "protocol": {
+            "type": "string",
+            "metadata": {
+                "description": "Transport protocol of the outbound rule."
+            },
+            "allowedValues": [
+                "Tcp",
+                "Udp",
+                "All"
+            ]
+        },
+        "backendAddressPool": {
+            "type": "string",
+            "metadata": {
+                "description": "Backend pool reference."
+            }
+        }
+    },
+    "variables": {
+        "enableTcpReset": "[contains(parameters('enableTcpReset'), 'true')]"
+    },
+    "resources": [
+        {
+            "apiVersion": "[parameters('apiVersion')]",
+            "name": "[parameters('lbName')]",
+            "type": "Microsoft.Network/loadBalancers",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "outboundRules": [
+                    {
+                        "frontendIPConfigurations": [
+                            {
+                                "name": "[parameters('frontend_ip_configuration_name')]",
+                                "properties": {
+                                    "publicIPAddress": {
+                                        "id": "[parameters('frontend_ip_configuration_public_ip_address_id')]"
+                                    }
+                                }
+                            }
+                        ],
+                        "allocatedOutboundPorts": "[parameters('allocatedOutboundPorts')]",
+                        "idleTimeoutInMinutes": "[parameters('idleTimeoutInMinutes')]",
+                        "enableTcpReset": "[variables('enableTcpReset')]",
+                        "protocol": "[parameters('protocol')]",
+                        "backendAddressPool": "[parameters('backendAddressPool')]"
+                    }
+                ]
+            }
+        }
+    ]
+}
