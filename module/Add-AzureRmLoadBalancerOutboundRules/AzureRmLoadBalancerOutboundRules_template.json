@@ -9,10 +9,22 @@
                 "description": "API version 2018-08-01 permits an outbound rule definition structured : https://docs.microsoft.com/en-us/azure/load-balancer/load-balancer-outbound-rules-overview"
             }
         },
+        "outboundRuleName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Load balancer outbound rule."
+            }
+        },
         "lbName": {
             "type": "string",
             "metadata": {
                 "description": "Load balancer name."
+            }
+        },
+        "lb_id": {
+            "type": "string",
+            "metadata": {
+                "description": "Load balancer id."
             }
         },
         "frontend_ip_configuration_name": {
@@ -76,22 +88,21 @@
             "properties": {
                 "outboundRules": [
                     {
-                        "frontendIPConfigurations": [
-                            {
-                                "name": "[parameters('frontend_ip_configuration_name')]",
-                                "properties": {
-                                    "publicIPAddress": {
-                                        "id": "[parameters('frontend_ip_configuration_public_ip_address_id')]"
-                                    }
+                        "name": "[parameters('outboundRuleName')]",
+                        "id": "[concat(parameters('lb_id'), '/outboundRules/', parameters('outboundRuleName'))]",
+                        "properties": {
+                            "frontendIPConfigurations": [
+                                {
+                                    "id": "[concat(parameters('lb_id'), '/frontendIPConfigurations/', parameters('frontend_ip_configuration_name'))]"
                                 }
+                            ],
+                            "allocatedOutboundPorts": "[int(parameters('allocatedOutboundPorts'))]",
+                            "idleTimeoutInMinutes": "[int(parameters('idleTimeoutInMinutes'))]",
+                            "enableTcpReset": "[variables('enableTcpReset')]",
+                            "protocol": "[parameters('protocol')]",
+                            "backendAddressPool": {
+                                "id": "[parameters('backendAddressPoolId')]"
                             }
-                        ],
-                        "allocatedOutboundPorts": "[int(parameters('allocatedOutboundPorts'))]",
-                        "idleTimeoutInMinutes": "[int(parameters('idleTimeoutInMinutes'))]",
-                        "enableTcpReset": "[variables('enableTcpReset')]",
-                        "protocol": "[parameters('protocol')]",
-                        "backendAddressPool": {
-                            "id": "[parameters('backendAddressPoolId')]"
                         }
                     }
                 ]
