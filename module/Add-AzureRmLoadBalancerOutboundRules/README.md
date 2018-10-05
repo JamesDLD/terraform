@@ -24,18 +24,6 @@ variable "lbs_public" {
   }
 }
 
-variable "lb_out_prefix" {
-  description = "Prefix used to set a common naming convention on the lb objects."
-}
-
-variable "lb_out_suffix" {
-  description = "Prefix used to set a common naming convention on the lb objects."
-}
-
-variable "lb_out_resource_group_name" {
-  description = "Load balancer resource group name."
-}
-
 variable "lbs_tags" {
   type = "map"
   description = "Load balancer tags."
@@ -50,8 +38,8 @@ variable "lbs_tags" {
 
 #Call module
 module "Add-AzureRmLoadBalancerOutboundRules-Apps" {
-  source                  = "github.com/JamesDLD/terraform/module/Add-AzureRmLoadBalancerOutboundRules"
-  version 				        = "c89167f"
+  source                     = "github.com/JamesDLD/terraform/module/Add-AzureRmLoadBalancerOutboundRules"
+  version 				           = "94729e4"
   lbs_out                    = ["${var.lbs_public}"]
   lb_out_prefix              = "myapp-demo-"
   lb_out_suffix              = "-publiclb1"
