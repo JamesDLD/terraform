@@ -50,7 +50,8 @@ variable "lbs_tags" {
 
 #Call module
 module "Add-AzureRmLoadBalancerOutboundRules-Apps" {
-  source                  = "./module/Add-AzureRmLoadBalancerOutboundRules"
+  source                  = "github.com/JamesDLD/terraform/module/Add-AzureRmLoadBalancerOutboundRules"
+  version 				        = "c89167f"
   lbs_out                    = ["${var.lbs_public}"]
   lb_out_prefix              = "myapp-demo-"
   lb_out_suffix              = "-publiclb1"
