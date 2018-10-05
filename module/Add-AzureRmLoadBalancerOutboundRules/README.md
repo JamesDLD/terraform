@@ -44,6 +44,6 @@ module "Add-AzureRmLoadBalancerOutboundRules-Apps" {
   lb_out_prefix              = "myapp-demo-"
   lb_out_suffix              = "-publiclb1"
   lb_out_resource_group_name = "myrg"
-  lbs_tags                   = "${var.lbs_tags}"
+  lbs_tags                   = ["${var.lbs_tags}"]
 }
 ```
