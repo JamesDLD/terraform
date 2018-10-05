@@ -6,13 +6,12 @@ resource "azurerm_template_deployment" "lb_to_addOutboundRule" {
   deployment_mode     = "Incremental"
 
   parameters = {
-    lbName                                         = "${var.lb_out_prefix}${lookup(var.lbs_out[count.index], "suffix_name")}${var.lb_out_suffix}"
-    frontend_ip_configuration_name                 = "${lookup(var.lbs_out[count.index], "suffix_name")}"
-    frontend_ip_configuration_public_ip_address_id = "${element(var.lb_out_frontend_ip_configuration_public_ip_address_ids,count.index)}"
-    allocatedOutboundPorts                         = "${lookup(var.lbs_out[count.index], "allocatedOutboundPorts")}"
-    idleTimeoutInMinutes                           = "${lookup(var.lbs_out[count.index], "idleTimeoutInMinutes")}"
-    enableTcpReset                                 = "${lookup(var.lbs_out[count.index], "enableTcpReset")}"
-    protocol                                       = "${lookup(var.lbs_out[count.index], "protocol")}"
-    backendAddressPoolId                           = "${element(var.lb_out_backend_ids,count.index)}"
+    lbName                 = "${var.lb_out_prefix}${lookup(var.lbs_out[count.index], "suffix_name")}${var.lb_out_suffix}"
+    tags                   = "${jsonencode(var.lbs_tags)}"
+    sku                    = "${lookup(var.lbs_out[count.index], "sku")}"
+    allocatedOutboundPorts = "${lookup(var.lbs_out[count.index], "allocatedOutboundPorts")}"
+    idleTimeoutInMinutes   = "${lookup(var.lbs_out[count.index], "idleTimeoutInMinutes")}"
+    enableTcpReset         = "${lookup(var.lbs_out[count.index], "enableTcpReset")}"
+    protocol               = "${lookup(var.lbs_out[count.index], "protocol")}"
   }
 }

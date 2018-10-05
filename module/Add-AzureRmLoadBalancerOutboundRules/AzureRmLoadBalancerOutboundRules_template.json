@@ -9,34 +9,33 @@
                 "description": "API version 2018-08-01 permits an outbound rule definition structured : https://docs.microsoft.com/en-us/azure/load-balancer/load-balancer-outbound-rules-overview"
             }
         },
-        "outboundRuleName": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of the Load balancer outbound rule."
-            }
-        },
         "lbName": {
             "type": "string",
             "metadata": {
                 "description": "Load balancer name."
             }
         },
-        "lb_id": {
+        "tags": {
             "type": "string",
+            "defaultValue": "{\"APP\":\"XXX\",\"BUD\":\"XXX\",\"CTC\":\"XXX@XXX\",\"ENV\":\"XXX\"}",
             "metadata": {
-                "description": "Load balancer id."
+                "description": "Tags of the Vault"
             }
         },
-        "frontend_ip_configuration_name": {
+        "sku": {
             "type": "string",
             "metadata": {
-                "description": "Frontend ip configuation name."
-            }
+                "description": "Load balancer and public IP sku."
+            },
+            "allowedValues": [
+                "Standard"
+            ]
         },
-        "frontend_ip_configuration_public_ip_address_id": {
+        "publicIPAllocationMethod": {
             "type": "string",
+            "defaultValue": "Static",
             "metadata": {
-                "description": "Frontend ip configuation public ip id."
+                "description": "The public IP allocation method. Possible values are: 'Static' and 'Dynamic'. - Static or Dynamic."
             }
         },
         "allocatedOutboundPorts": {
@@ -68,32 +67,71 @@
                 "Udp",
                 "All"
             ]
-        },
-        "backendAddressPoolId": {
-            "type": "string",
-            "metadata": {
-                "description": "Backend pool id."
-            }
         }
     },
     "variables": {
-        "enableTcpReset": "[contains(parameters('enableTcpReset'), 'true')]"
+        "enableTcpReset": "[contains(parameters('enableTcpReset'), 'true')]",
+        "publicIPAddressName": "[concat(parameters('lbName'), '_pip1')]",
+        "outboundRuleName": "[concat(parameters('lbName'), '_outrule1')]",
+        "frontend_ip_configuration_name": "[concat(parameters('lbName'), '_lbcfg1')]",
+        "backendAddressPoolName": "[concat(parameters('lbName'), '_bckpool1')]",
+        "lbID": "[resourceId('Microsoft.Network/loadBalancers',parameters('lbName'))]",
+        "publicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]",
+        "outboundRuleID": "[concat(variables('lbID'), '/outboundRules/', variables('outboundRuleName'))]",
+        "frontendIPConfigurationID": "[concat(variables('lbID'), '/frontendIPConfigurations/', variables('frontend_ip_configuration_name'))]",
+        "backendAddressPoolId": "[concat(variables('lbID'),'/backendAddressPools/', variables('backendAddressPoolName'))]",
+        "tagsbase64": "[base64(parameters('tags'))]"
     },
     "resources": [
+        {
+            "apiVersion": "2018-08-01",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[variables('publicIPAddressName')]",
+            "location": "[resourceGroup().location]",
+            "tags": "[base64ToJson(variables('tagsbase64'))]",
+            "sku": {
+                "name": "[parameters('sku')]"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "[parameters('publicIPAllocationMethod')]"
+            }
+        },
         {
             "apiVersion": "[parameters('apiVersion')]",
             "name": "[parameters('lbName')]",
             "type": "Microsoft.Network/loadBalancers",
             "location": "[resourceGroup().location]",
+            "tags": "[base64ToJson(variables('tagsbase64'))]",
+            "sku": {
+                "name": "[parameters('sku')]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]"
+            ],
             "properties": {
+                "frontendIPConfigurations": [
+                    {
+                        "name": "[variables('frontend_ip_configuration_name')]",
+                        "properties": {
+                            "publicIPAddress": {
+                                "id": "[variables('publicIPAddressID')]"
+                            }
+                        }
+                    }
+                ],
+                "backendAddressPools": [
+                    {
+                        "name": "[variables('backendAddressPoolName')]"
+                    }
+                ],
                 "outboundRules": [
                     {
-                        "name": "[parameters('outboundRuleName')]",
-                        "id": "[concat(parameters('lb_id'), '/outboundRules/', parameters('outboundRuleName'))]",
+                        "name": "[variables('outboundRuleName')]",
+                        "id": "[variables('outboundRuleID')]",
                         "properties": {
                             "frontendIPConfigurations": [
                                 {
-                                    "id": "[concat(parameters('lb_id'), '/frontendIPConfigurations/', parameters('frontend_ip_configuration_name'))]"
+                                    "id": "[variables('frontendIPConfigurationID')]"
                                 }
                             ],
                             "allocatedOutboundPorts": "[int(parameters('allocatedOutboundPorts'))]",
@@ -101,12 +139,18 @@
                             "enableTcpReset": "[variables('enableTcpReset')]",
                             "protocol": "[parameters('protocol')]",
                             "backendAddressPool": {
-                                "id": "[parameters('backendAddressPoolId')]"
+                                "id": "[variables('backendAddressPoolId')]"
                             }
                         }
                     }
                 ]
             }
         }
-    ]
+    ],
+    "outputs": {
+        "load_balancer_backend_address_pools_id": {
+            "type": "string",
+            "value": "[variables('backendAddressPoolId')]"
+        }
+    }
 }

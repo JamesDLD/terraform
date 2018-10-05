@@ -1,15 +1,21 @@
 variable "lbs_out" {
-  type = "list"
+  description = "Load balancer properties containing those values :suffix_name, sku, allocatedOutboundPorts, idleTimeoutInMinutes, enableTcpReset, protocol"
+  type        = "list"
 }
 
-variable "lb_out_prefix" {}
-variable "lb_out_suffix" {}
-variable "lb_out_resource_group_name" {}
-
-variable "lb_out_frontend_ip_configuration_public_ip_address_ids" {
-  type = "list"
+variable "lb_out_prefix" {
+  description = "Prefix used to set a common naming convention on the lb objects."
 }
 
-variable "lb_out_backend_ids" {
-  type = "list"
+variable "lb_out_suffix" {
+  description = "Prefix used to set a common naming convention on the lb objects."
+}
+
+variable "lb_out_resource_group_name" {
+  description = "Load balancer resource group name."
+}
+
+variable "lbs_tags" {
+  type        = "map"
+  description = "Load balancer tags."
 }
