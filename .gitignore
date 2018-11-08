@@ -7,4 +7,4 @@
 .terraform/
 
 # Secret files
-secret/*.tfvars
+CreateAzureRm-Infra/secret/*.tfvars
