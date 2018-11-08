@@ -1,11 +1,10 @@
 # Compiled files
 *.tfstate
 *.tfstate.backup
+*.DS_Store
 
-# Module directory
+# Directory
 .terraform/
 
 # Secret files
 secret/*.tfvars
-module/.DS_Store
-.DS_Store

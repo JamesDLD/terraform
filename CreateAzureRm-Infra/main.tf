@@ -23,7 +23,7 @@ provider "azurerm" {
 
 ## Prerequisistes Inventory
 module "Get-AzureRmResourceGroup-Infr" {
-  source  = "./module/Get-AzureRmResourceGroup"
+  source  = "../module/Get-AzureRmResourceGroup"
   rg_name = "${var.rg_infr_name}"
 
   providers {
@@ -32,7 +32,7 @@ module "Get-AzureRmResourceGroup-Infr" {
 }
 
 module "Get-AzureRmResourceGroup-Apps" {
-  source  = "./module/Get-AzureRmResourceGroup"
+  source  = "../module/Get-AzureRmResourceGroup"
   rg_name = "${var.rg_apps_name}"
 
   providers {
@@ -42,7 +42,7 @@ module "Get-AzureRmResourceGroup-Apps" {
 
 ## Core Infra components
 module "Create-AzureRmRecoveryServicesVault-Infr" {
-  source                  = "./module/Create-AzureRmRecoveryServicesVault"
+  source                  = "../module/Create-AzureRmRecoveryServicesVault"
   rsv_name                = "infra-${var.app_name}-${var.env_name}-rsv1"
   rsv_resource_group_name = "${module.Get-AzureRmResourceGroup-Infr.rg_name}"
   rsv_tags                = "${module.Get-AzureRmResourceGroup-Infr.rg_tags}"
@@ -54,7 +54,7 @@ module "Create-AzureRmRecoveryServicesVault-Infr" {
 }
 
 module "Create-AzureRmKeyVault-Infr" {
-  source                 = "./module/Create-AzureRmKeyVault"
+  source                 = "../module/Create-AzureRmKeyVault"
   key_vaults             = ["${var.key_vaults}"]
   kv_tenant_id           = "${var.tenant_id}"
   kv_prefix              = "${var.app_name}-${var.env_name}-"
@@ -70,7 +70,7 @@ module "Create-AzureRmKeyVault-Infr" {
 }
 
 module "Create-AzureRmStorageAccount-Infr" {
-  source                      = "./module/Create-AzureRmStorageAccount"
+  source                      = "../module/Create-AzureRmStorageAccount"
   sa_name                     = "${var.sa_infr_name}"
   sa_resource_group_name      = "${module.Get-AzureRmResourceGroup-Infr.rg_name}"
   sa_location                 = "${module.Get-AzureRmResourceGroup-Infr.rg_location}"
@@ -85,7 +85,7 @@ module "Create-AzureRmStorageAccount-Infr" {
 
 ## Core Network components
 module "Create-AzureRmVirtualNetwork-Infra" {
-  source                   = "./module/Create-AzureRmVirtualNetwork"
+  source                   = "../module/Create-AzureRmVirtualNetwork"
   vnets                    = ["${var.vnets}"]
   vnet_prefix              = "infra-${var.app_name}-${var.env_name}-"
   vnet_suffix              = "-net1"
@@ -99,7 +99,7 @@ module "Create-AzureRmVirtualNetwork-Infra" {
 }
 
 module "Create-AzureRmNetworkSecurityGroup-Infra" {
-  source                  = "./module/Create-AzureRmNetworkSecurityGroup"
+  source                  = "../module/Create-AzureRmNetworkSecurityGroup"
   nsgs                    = ["${var.infra_nsgs}"]
   nsg_prefix              = "${var.app_name}-${var.env_name}-"
   nsg_suffix              = "-nsg1"
@@ -114,7 +114,7 @@ module "Create-AzureRmNetworkSecurityGroup-Infra" {
 }
 
 module "Create-AzureRmRoute-Infra" {
-  source                 = "./module/Create-AzureRmRoute"
+  source                 = "../module/Create-AzureRmRoute"
   rt_resource_group_name = "${module.Get-AzureRmResourceGroup-Infr.rg_name}"
   rt_location            = "${module.Get-AzureRmResourceGroup-Infr.rg_location}"
   routes                 = ["${var.routes}"]
@@ -130,7 +130,7 @@ module "Create-AzureRmRoute-Infra" {
 
 ## Secops policies & RBAC roles
 module "Create-AzureRmPolicyDefinition" {
-  source     = "./module/Create-AzureRmPolicyDefinition"
+  source     = "../module/Create-AzureRmPolicyDefinition"
   policies   = ["${var.policies}"]
   pol_prefix = "${var.app_name}-${var.env_name}-"
   pol_suffix = "-pol1"
@@ -141,7 +141,7 @@ module "Create-AzureRmPolicyDefinition" {
 }
 
 module "Enable-AzureRmPolicyAssignment-Infra-nsg-on-subnet" {
-  source                     = "./module/Enable-AzureRmPolicyAssignment"
+  source                     = "../module/Enable-AzureRmPolicyAssignment"
   p_ass_name                 = "enforce-nsg-under-vnet-${element(module.Create-AzureRmVirtualNetwork-Infra.vnet_names,0)}"
   p_ass_scope                = "${element(module.Create-AzureRmVirtualNetwork-Infra.vnet_ids,0)}"
   p_ass_policy_definition_id = "${element(module.Create-AzureRmPolicyDefinition.policy_ids,0)}"
@@ -154,7 +154,7 @@ module "Enable-AzureRmPolicyAssignment-Infra-nsg-on-subnet" {
 }
 
 module "Enable-AzureRmPolicyAssignment-Infra-udr-on-subnet" {
-  source                     = "./module/Enable-AzureRmPolicyAssignment"
+  source                     = "../module/Enable-AzureRmPolicyAssignment"
   p_ass_name                 = "enforce-udr-under-vnet-${element(module.Create-AzureRmVirtualNetwork-Infra.vnet_names,0)}"
   p_ass_scope                = "${element(module.Create-AzureRmVirtualNetwork-Infra.vnet_ids,0)}"
   p_ass_policy_definition_id = "${element(module.Create-AzureRmPolicyDefinition.policy_ids,1)}"
@@ -167,7 +167,7 @@ module "Enable-AzureRmPolicyAssignment-Infra-udr-on-subnet" {
 }
 
 module "Create-AzureRmRoleDefinition-Apps" {
-  source      = "./module/Create-AzureRmRoleDefinition"
+  source      = "../module/Create-AzureRmRoleDefinition"
   roles       = ["${var.roles}"]
   role_prefix = "${var.env_name}-"
   role_suffix = "-role1"
@@ -178,7 +178,7 @@ module "Create-AzureRmRoleDefinition-Apps" {
 }
 
 module "Enable-AzureRmRoleAssignment" {
-  source                  = "./module/Enable-AzureRmRoleAssignment"
+  source                  = "../module/Enable-AzureRmRoleAssignment"
   ass_countRoleAssignment = "${length(var.roles)}"
 
   ass_scopes = ["${module.Get-AzureRmResourceGroup-Apps.rg_id}",
@@ -204,7 +204,7 @@ module "Enable-AzureRmRoleAssignment" {
 
 ## Prerequisistes Inventory
 module "Get-AzureRmResourceGroup-MyApps" {
-  source  = "./module/Get-AzureRmResourceGroup"
+  source  = "../module/Get-AzureRmResourceGroup"
   rg_name = "${element(split("/",element(module.Enable-AzureRmRoleAssignment.role_assignment_scopes,0)),4)}"
 
   providers {
@@ -214,7 +214,7 @@ module "Get-AzureRmResourceGroup-MyApps" {
 
 ## Core Apps components
 module "Create-AzureRmStorageAccount-Apps" {
-  source                      = "./module/Create-AzureRmStorageAccount"
+  source                      = "../module/Create-AzureRmStorageAccount"
   sa_name                     = "${var.sa_apps_name}"
   sa_resource_group_name      = "${module.Get-AzureRmResourceGroup-MyApps.rg_name}"
   sa_location                 = "${module.Get-AzureRmResourceGroup-MyApps.rg_location}"
@@ -229,7 +229,7 @@ module "Create-AzureRmStorageAccount-Apps" {
 
 ## Core Network components
 module "Create-AzureRmNetworkSecurityGroup-Apps" {
-  source                  = "./module/Create-AzureRmNetworkSecurityGroup"
+  source                  = "../module/Create-AzureRmNetworkSecurityGroup"
   nsgs                    = ["${var.apps_nsgs}"]
   nsg_prefix              = "${var.app_name}-${var.env_name}-"
   nsg_suffix              = "-nsg1"
@@ -244,7 +244,7 @@ module "Create-AzureRmNetworkSecurityGroup-Apps" {
 }
 
 module "Create-AzureRmApplicationkSecurityGroup-Apps" {
-  source                  = "./module/Create-AzureRmApplicationSecurityGroup"
+  source                  = "../module/Create-AzureRmApplicationSecurityGroup"
   asgs                    = ["${var.asgs}"]
   asg_prefix              = "${var.app_name}-${var.env_name}-"
   asg_suffix              = "-asg1"
@@ -258,7 +258,7 @@ module "Create-AzureRmApplicationkSecurityGroup-Apps" {
 }
 
 module "Create-AzureRmSubnet-Apps" {
-  source                     = "./module/Create-AzureRmSubnet"
+  source                     = "../module/Create-AzureRmSubnet"
   subnet_resource_group_name = "${element(split("/",element(module.Enable-AzureRmRoleAssignment.role_assignment_scopes,4)),4)}" #Call this variable like this to create an implicit depedency, the goal here is to wait for the role assignement to be effective
   subnet_prefix              = "${var.app_name}-${var.env_name}-"
   subnet_suffix              = "-snet1"
@@ -274,7 +274,7 @@ module "Create-AzureRmSubnet-Apps" {
 
 ## Virtual Machines components
 module "Create-AzureRmAvailabilitySet-Apps" {
-  source                  = "./module/Create-AzureRmAvailabilitySet"
+  source                  = "../module/Create-AzureRmAvailabilitySet"
   ava_availabilitysets    = ["${var.Availabilitysets}"]
   ava_prefix              = "${var.app_name}-${var.env_name}-"
   ava_suffix              = "-avs1"
@@ -288,7 +288,7 @@ module "Create-AzureRmAvailabilitySet-Apps" {
 }
 
 module "Create-AzureRmLoadBalancer-Apps" {
-  source                 = "./module/Create-AzureRmLoadBalancer"
+  source                 = "../module/Create-AzureRmLoadBalancer"
   Lbs                    = ["${var.Lbs}"]
   lb_prefix              = "${var.app_name}-${var.env_name}-"
   lb_suffix              = "-lb1"
@@ -305,7 +305,7 @@ module "Create-AzureRmLoadBalancer-Apps" {
 }
 
 module "Create-AzureRmNetworkInterface-Apps" {
-  source                  = "./module/Create-AzureRmNetworkInterface"
+  source                  = "../module/Create-AzureRmNetworkInterface"
   Linux_Vms               = ["${var.Linux_Vms}"]                                         #If no need just fill "Linux_Vms = []" in the tfvars file
   Windows_Vms             = ["${var.Windows_Vms}"]                                       #If no need just fill "Windows_Vms = []" in the tfvars file
   nic_prefix              = "${var.app_name}-${var.env_name}-"
@@ -323,7 +323,7 @@ module "Create-AzureRmNetworkInterface-Apps" {
 }
 
 module "Create-AzureRmVm-Apps" {
-  source                  = "./module/Create-AzureRmVm"
+  source                  = "../module/Create-AzureRmVm"
   sa_bootdiag_storage_uri = "${module.Create-AzureRmStorageAccount-Apps.sa_primary_blob_endpoint}"
   Linux_Vms               = ["${var.Linux_Vms}"]                                                   #If no need just fill "Linux_Vms = []" in the tfvars file
   Windows_Vms             = ["${var.Windows_Vms}"]                                                 #If no need just fill "Windows_Vms = []" in the tfvars file
@@ -345,7 +345,7 @@ module "Create-AzureRmVm-Apps" {
 
 /*
 module "Create-AzureRmVmss-Apps" {
-  source                   = "./module/Create-AzureRmVmss"
+  source                   = "../module/Create-AzureRmVmss"
   sa_bootdiag_storage_uri  = "${module.Create-AzureRmStorageAccount-Apps.sa_primary_blob_endpoint}"
   Linux_Ss_Vms             = ["${var.Linux_Ss_Vms}"]                                                #If no need just fill "Linux_Vms = []" in the tfvars file
   Windows_Ss_Vms           = ["${var.Windows_Ss_Vms}"]                                              #If no need just fill "Linux_Vms = []" in the tfvars file
@@ -368,7 +368,7 @@ module "Create-AzureRmVmss-Apps" {
 
 # Infra cross services for Apps
 module "Enable-AzureRmRecoveryServicesBackupProtection-Apps" {
-  source                      = "./module/Enable-AzureRmRecoveryServicesBackupProtection"
+  source                      = "../module/Enable-AzureRmRecoveryServicesBackupProtection"
   resource_names              = "${concat(module.Create-AzureRmVm-Apps.Linux_Vms_names,module.Create-AzureRmVm-Apps.Windows_Vms_names)}"     #Names of the resources to backup
   resource_group_names        = "${concat(module.Create-AzureRmVm-Apps.Linux_Vms_rgnames,module.Create-AzureRmVm-Apps.Windows_Vms_rgnames)}" #Resource Group Names of the resources to backup
   resource_ids                = "${concat(module.Create-AzureRmVm-Apps.Linux_Vms_ids,module.Create-AzureRmVm-Apps.Windows_Vms_ids)}"         #Ids of the resources to backup
@@ -386,7 +386,7 @@ module "Enable-AzureRmRecoveryServicesBackupProtection-Apps" {
 /*
 ## Infra common services
 module "Create-AzureRmAutomationAccount-Apps" {
-  source                   = "./module/Create-AzureRmAutomationAccount"
+  source                   = "../module/Create-AzureRmAutomationAccount"
   auto_name                = "${var.app_name}-${var.env_name}-auto1"
   auto_location            = "${module.Get-AzureRmResourceGroup-MyApps.rg_location}"
   auto_resource_group_name = "${module.Get-AzureRmResourceGroup-MyApps.rg_name}"

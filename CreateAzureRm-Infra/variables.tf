@@ -3,11 +3,11 @@
 #Authentication
 terraform {
   backend          "azurerm"        {}
-  required_version = "0.11.7"
+  required_version = "0.11.8"
 }
 
 provider "azurerm" {
-  version = "1.8"
+  version = "1.15"
 }
 
 provider "random" {
