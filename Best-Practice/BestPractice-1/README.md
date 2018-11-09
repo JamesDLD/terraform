@@ -9,7 +9,7 @@ In this article we will do the following action with a remote a backend and with
 
 The second step we will permit to demonstrate one of the reason why we should use a remote backend : some resources like "azurerm_role_assignment" couldn't update their tfstate if the "role assignment" is already done. [This article on GitHub](https://github.com/terraform-providers/terraform-provider-azurerm/issues/1857) describes this concern. 
 
-<h4>Prerequisite</h4>
+### Prerequisite
 -----
 
 | Item | Description |
@@ -18,11 +18,11 @@ The second step we will permit to demonstrate one of the reason why we should us
 | Resource Group | An Azure resource group is available |
 | Storage Account | An Azure storage account is available and is located in the upper resource group |
 | Service Principal | An Azure service principal is available and has the `owner` privilege on the upper resource group |
-| Terraform file | Clone this repository and fill in the following files with the upper prerequisite items : <br> Variable used for the Terraform `init` : ![main-jdld.tf](main-jdld.tf) & secret/main-jdld.tf <br> Variable used for the Terraform `plan` and `apply` : secret/backend-jdld.tf |
+| Terraform file | Clone this repository and fill in the following files with the upper prerequisite items : <br> Variable used for the Terraform `init` : secret/backend-jdld.tf <br> Variable used for the Terraform `plan` and `apply` : ![main-jdld.tf](main-jdld.tf) & secret/main-jdld.tf |
 
 
 
-What we should do
+What should we do?
 ------------
 We will create the upper mentioned element using remote backend.
 
@@ -45,7 +45,7 @@ terraform {
 
 
 
-<h3>1. Usage</h3>
+### 1. Usage
 -----
 
     This step ensures that Terraform has all the prerequisites to build your template in Azure.
@@ -70,7 +70,7 @@ terraform {
 
     ```
 
-<h3>2. Analysis</h3>
+### 2. Analysis
 -----
 
 | Description | Screenshot |
@@ -79,7 +79,7 @@ terraform {
 | Our remote backend has generated a Terraform tfstate with all our objects specifications | ![tfstate](png/tfstate.png) |
 
 
-What we shouldn't do
+What shouldn't we do?
 ------------
 We will now omit the backend specification, this will imply that we will no longer depend on a remote backend, in other word we will not be aware of any other deployment that have already be done by another person.
 
@@ -92,7 +92,7 @@ terraform {
 }
 ```
 
-<h3>1. Usage</h3>
+### 1. Usage
 -----
 
     This step ensures that Terraform has all the prerequisites to build your template in Azure.
@@ -112,7 +112,7 @@ terraform {
 
     ```
 
-<h3>2. Analysis</h3>
+### 2. Analysis
 -----
 
 | Description | Screenshot |
