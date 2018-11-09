@@ -7,7 +7,7 @@ In this article we will do the following action with a remote a backend and with
 1. Create a Virtual Network
 2. Assign a Role Definition to the Virtual Network
 
-The second step we will permit to demonstrate one of the reason why we should use a remote backend : some resources like "azurerm_role_assignment" couldn't update their tfstate if the "role assignment" is already done. [This article on GitHub](https://github.com/terraform-providers/terraform-provider-azurerm/issues/1857) describes this concern. 
+Through the second action we will be able to demonstrate one of the reason why we should use a remote backend : some resources like "azurerm_role_assignment" couldn't update their tfstate if the "role assignment" is already done. [This article on GitHub](https://github.com/terraform-providers/terraform-provider-azurerm/issues/1857) describes this concern. 
 
 ### Prerequisite
 -----
