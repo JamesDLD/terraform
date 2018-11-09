@@ -9,6 +9,18 @@ In this article we will do the following action with a remote a backend and with
 
 The second step we will permit to demonstrate one of the reason why we should use a remote backend : some resources like "azurerm_role_assignment" couldn't update their tfstate if the "role assignment" is already done. [This article on GitHub](https://github.com/terraform-providers/terraform-provider-azurerm/issues/1857) describes this concern. 
 
+<h4>Prerequisite</h4>
+-----
+
+| Item | Description |
+| ------------- | ------------- |
+| Azure Subscription | An Azure subscription id |
+| Resource Group | An Azure resource group is available |
+| Storage Account | An Azure storage account is available and is located in the upper resource group |
+| Service Principal | An Azure service principal is available and has the `owner` privilege on the upper resource group |
+| Terraform file | Clone this repository and fill in the following files with the upper prerequisite items : <br> Variable used for the Terraform `init` : ![main-jdld.tf](main-jdld.tf) & secret/main-jdld.tf <br> Variable used for the Terraform `plan` and `apply` : secret/backend-jdld.tf |
+
+
 
 What we should do
 ------------
@@ -106,7 +118,7 @@ terraform {
 | Description | Screenshot |
 | ------------- | ------------- |
 | Our object are still on Azure  | ![done](png/done.png) |
-| The Terraform fails because for some resource like "azurerm_role_assignment" we can’t automatically update our tfstate telling that the resource is already created as we wished. Note that it wasn’t the case for the resource "azurerm_virtual_network" | ![tfstate](png/error.png) |
+| The Terraform fails because for some resource like "azurerm_role_assignment" we can’t automatically <br> update our tfstate telling that the resource is already created as we wished. <br> Note that it wasn’t <br> the case for the resource "azurerm_virtual_network" | ![tfstate](png/error.png) |
 
 
 
