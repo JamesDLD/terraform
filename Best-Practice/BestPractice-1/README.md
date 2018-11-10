@@ -3,7 +3,7 @@
 Best Practice 1
 ------------
 Use remote backend.
-In this article we will do the following action with a remote a backend and without a remote backend : 
+In this article we will perform the following action with a remote a backend and without a remote backend : 
 1. Create a Virtual Network
 2. Assign a Role Definition to the Virtual Network
 
@@ -16,7 +16,7 @@ Through the second action we will be able to demonstrate one of the reason why w
 | ------------- | ------------- |
 | Azure Subscription | An Azure subscription id |
 | Resource Group | An Azure resource group is available |
-| Storage Account | An Azure storage account is available and is located in the upper resource group |
+| Storage Account | An Azure storage account is available and is located in the upper resource group, it contains a container named `tfstate` |
 | Service Principal | An Azure service principal is available and has the `owner` privilege on the upper resource group |
 | Terraform file | Clone this repository and fill in the following files with the upper prerequisite items : <br> Variable used for the Terraform `init` : secret/backend-jdld.tf <br> Variable used for the Terraform `plan` and `apply` : ![main-jdld.tf](main-jdld.tf) & secret/main-jdld.tf |
 
