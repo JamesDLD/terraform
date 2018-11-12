@@ -47,18 +47,18 @@ terraform {
 ### 1. Usage
 -----
 
-    This step ensures that Terraform has all the prerequisites to build your template in Azure.
+This step ensures that Terraform has all the prerequisites to build your template in Azure.
 ```hcl
 terraform init -backend-config="secret/backend-jdld.tfvars" -reconfigure
 ```
 
-    The next step is to have Terraform review and validate the template. 
-    This step compares the requested resources to the state information saved by Terraform and then outputs the planned execution. Resources are not created in Azure.
+The next step is to have Terraform review and validate the template. 
+This step compares the requested resources to the state information saved by Terraform and then outputs the planned execution. Resources are not created in Azure.
 ```hcl
 terraform plan -var-file="secret/main-jdld.tfvars" -var-file="main-jdld.tfvars"
 ```
 
-    If all is ok with the proposal you can now apply the configuration.
+If all is ok with the proposal you can now apply the configuration.
 ```hcl
 terraform apply -var-file="secret/main-jdld.tfvars" -var-file="main-jdld.tfvars"
 ```
@@ -88,18 +88,18 @@ terraform {
 ### 1. Usage
 -----
 
-    This step ensures that Terraform has all the prerequisites to build your template in Azure.
+This step ensures that Terraform has all the prerequisites to build your template in Azure.
 ```hcl
 terraform init -backend-config="secret/backend-jdld.tfvars" -reconfigure
 ```
 
-    The next step is to have Terraform review and validate the template. 
-    This step compares the requested resources to the state information saved by Terraform and then outputs the planned execution. Resources are not created in Azure.
+The next step is to have Terraform review and validate the template. 
+This step compares the requested resources to the state information saved by Terraform and then outputs the planned execution. Resources are not created in Azure.
 ```hcl
 terraform plan -var-file="secret/main-jdld.tfvars" -var-file="main-jdld.tfvars"
 ```
 
-    If all is ok with the proposal you can now apply the configuration.
+If all is ok with the proposal you can now apply the configuration.
 ```hcl
 terraform apply -var-file="secret/main-jdld.tfvars" -var-file="main-jdld.tfvars"
 ```
