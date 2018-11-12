@@ -10,6 +10,6 @@ Best Practice
 
 | Id  | Description |
 | ------------- | ------------- |
-| ![BestPractice-1](BestPractice-1) | Use remote backend  |
-| ![BestPractice-2](BestPractice-2)  | Manage terraform and resources version |
-| ![BestPractice-3](BestPractice-3)  | Use implicit dependencies |
+| [BestPractice-1](BestPractice-1) | Use remote backend  |
+| [BestPractice-2](BestPractice-2)  | Manage terraform, our provider and modules version |
+| [BestPractice-3](BestPractice-3)  | Use implicit dependencies |

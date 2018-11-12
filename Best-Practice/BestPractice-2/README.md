@@ -18,15 +18,15 @@ In this article we will perform the following action  :
 | Resource Group | An Azure resource group is available |
 | Storage Account | An Azure storage account is available and is located in the upper resource group, it contains a container named `tfstate` |
 | Service Principal | An Azure service principal is available and has the `owner` privilege on the upper resource group |
-| Terraform file | Clone this repository and fill in the following files with the upper prerequisite items : <br> Variable used for the Terraform `init` : secret/backend-jdld.tf <br> Variable used for the Terraform `plan` and `apply` : ![main-jdld.tf](main-jdld.tf) & secret/main-jdld.tf |
+| Terraform file | Clone this repository and fill in the following files with the upper prerequisite items : <br> Variable used for the Terraform `init` : secret/backend-jdld.tf <br> Variable used for the Terraform `plan` and `apply` : [main-jdld.tf](main-jdld.tf) & secret/main-jdld.tf |
 
 
 
 What should we do?
 ------------
-We will create the upper mentioned element using remote backend (see the previous article ![BestPractice-1](../BestPractice-1) for more information about remote backend).
+We will create the upper mentioned element using remote backend (see the previous article [BestPractice-1](../BestPractice-1) for more information about remote backend).
 
-The terraform excecutable file, the AzureRm provider and our modules version will be set as described in the following bracelet (also available in our ![main-jdld.tf](main-jdld.tf) terraform file).
+The terraform excecutable file, the AzureRm provider and our modules version will be set as described in the following bracelet (also available in our [main-jdld.tf](main-jdld.tf) terraform file).
 
 
 Declare terraform required version 
@@ -102,7 +102,7 @@ We will now omit the backend specification, this will imply that we will no long
 We will demonstrate here that remote backend encourage collaboration.
 
 Let's remove the following bracelet : backend "azurerm" {}.
-The top part of our ![main-jdld.tf](main-jdld.tf) script will look like the following : 
+The top part of our [main-jdld.tf](main-jdld.tf) script will look like the following : 
 ```hcl
 terraform {
 }

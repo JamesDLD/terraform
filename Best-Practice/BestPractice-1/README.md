@@ -23,7 +23,7 @@ In other words ... if you don't have the tfstate, your terraform `apply` could f
 | Resource Group | An Azure resource group is available |
 | Storage Account | An Azure storage account is available and is located in the upper resource group, it contains a container named `tfstate` |
 | Service Principal | An Azure service principal is available and has the `owner` privilege on the upper resource group |
-| Terraform file | Clone this repository and fill in the following files with the upper prerequisite items : <br> Variable used for the Terraform `init` : secret/backend-jdld.tf <br> Variable used for the Terraform `plan` and `apply` : ![main-jdld.tf](main-jdld.tf) & secret/main-jdld.tf |
+| Terraform file | Clone this repository and fill in the following files with the upper prerequisite items : <br> Variable used for the Terraform `init` : secret/backend-jdld.tf <br> Variable used for the Terraform `plan` and `apply` : [main-jdld.tf](main-jdld.tf) & secret/main-jdld.tf |
 
 
 
@@ -91,7 +91,7 @@ We will now omit the backend specification, this will imply that we will no long
 We will demonstrate here that remote backend encourage collaboration.
 
 Let's remove the following bracelet : backend "azurerm" {}.
-The top part of our ![main-jdld.tf](main-jdld.tf) script will look like the following : 
+The top part of our [main-jdld.tf](main-jdld.tf) script will look like the following : 
 ```hcl
 terraform {
 }
