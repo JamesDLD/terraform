@@ -2,10 +2,11 @@
 
 Best Practice 2 *UNDER CONSTRUCTION*
 ------------
-Implicit dependencies should be used whenever possible, see this article from [this article from terraform.io website](https://www.terraform.io/intro/getting-started/dependencies.html) for more information.
-In this article we will perform the following action with implicit dependencies and with explicit dependencies : 
-1. blala
-2. blala
+In this article we will see how to set terraform, our provider and modules version, see [this article from terraform.io website to learn more about managing terraform version](https://www.terraform.io/docs/configuration/terraform.html) for more information.
+
+In this article we will perform the following action  : 
+1. Create a Load balancer
+2. Create a Windows VM and attach it's NIC as backend of the upper load balancer
 
 
 ### Prerequisite
@@ -25,21 +26,37 @@ What should we do?
 ------------
 We will create the upper mentioned element using remote backend (see the previous article ![BestPractice-1](../BestPractice-1) for more information about remote backend).
 
-In the following article our remote backend will be located on an Azure Storage Account and we will use a service principal to write on this storage account.
-To do so we will have to declare the following bracelet in our Terraform tf file.
+The terraform excecutable file, the AzureRm provider and our modules version will be set as described in the following bracelet (also available in our ![main-jdld.tf](main-jdld.tf) terraform file).
+
+
+Declare terraform required version 
 ```hcl
 terraform {
+  required_version = "0.11.8"
+
   backend "azurerm" {
     storage_account_name = "infrsand1vpodjdlddiagsa1"
     container_name       = "tfstate"
-    key                  = "test.tfstate"
+    key                  = "BestPractice-2.tfstate"
     resource_group_name  = "infr-jdld-noprd-rg1"
-    arm_subscription_id  = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-    arm_client_id        = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-    arm_client_secret    = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-    arm_tenant_id        = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
   }
 }
+```
+
+Specify the AzureRm version 
+```hcl
+provider "azurerm" {
+  version         = "1.15"
+  subscription_id = "${var.subscription_id}"
+  client_id       = "${var.client_id}"
+  client_secret   = "${var.client_secret}"
+  tenant_id       = "${var.tenant_id}"
+}
+```
+
+Specify on module version
+```hcl
+
 ```
 
 
@@ -58,14 +75,14 @@ terraform {
     This step compares the requested resources to the state information saved by Terraform and then outputs the planned execution. Resources are not created in Azure.
     ```hcl
 
-    terraform plan -var-file="secret/main-jdld.tfvars"
+    terraform plan -var-file="secret/main-jdld.tfvars" -var-file="main-jdld.tfvars"
 
     ```
 
     If all is ok with the proposal you can now apply the configuration.
     ```hcl
 
-    terraform apply -var-file="secret/main-jdld.tfvars"
+    terraform apply -var-file="secret/main-jdld.tfvars" -var-file="main-jdld.tfvars"
 
     ```
 

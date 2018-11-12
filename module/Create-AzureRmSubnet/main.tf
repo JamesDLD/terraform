@@ -6,4 +6,5 @@ resource "azurerm_subnet" "subnets" {
   address_prefix            = "${lookup(var.snets[count.index], "cidr")}"
   network_security_group_id = "${"${lookup(var.snets[count.index], "Id_Nsg")}" == "777" ? "" : "${element(var.nsgs_ids,lookup(var.snets[count.index], "Id_Nsg"))}"}"
   route_table_id            = "${"${lookup(var.snets[count.index], "Id_route_table")}" == "777" ? "" : "${element(var.subnet_route_table_ids,lookup(var.snets[count.index], "Id_route_table"))}"}"
+  service_endpoints         = ["${compact(split(" ", "${lookup(var.snets[count.index], "service_endpoints")}"  == "777" ? "" : "${lookup(var.snets[count.index], "service_endpoints")}" ))}"]
 }

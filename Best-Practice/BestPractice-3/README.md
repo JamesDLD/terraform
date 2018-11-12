@@ -1,17 +1,11 @@
 
 
-Best Practice 1
+Best Practice 3 *UNDER CONSTRUCTION*
 ------------
-Use remote backend.
-In this article we will perform the following action with a remote a backend and without a remote backend : 
-1. Create a Virtual Network
-2. Assign a Role Definition to the Virtual Network
-
-Through the second action we will be able to demonstrate one of the reason why we should use a remote backend : some resources like "azurerm_role_assignment" couldn't update their tfstate if the "role assignment" is already done. [This article on GitHub](https://github.com/terraform-providers/terraform-provider-azurerm/issues/1857) describes this concern.
-
-In other words ... if you don't have the tfstate, your terraform `apply` could fail and the only way to re adjust it will be : 
-1. to find this tfstate back (would have been good to have it on a remote location) or 
-2. to perform Terraform import on the the resources that you can't integrate back in your tfstate.
+Implicit dependencies should be used whenever possible, see [this article from terraform.io website](https://www.terraform.io/intro/getting-started/dependencies.html) for more information.
+In this article we will perform the following action with implicit dependencies and with explicit dependencies : 
+1. blala
+2. blala
 
 
 ### Prerequisite
@@ -29,7 +23,7 @@ In other words ... if you don't have the tfstate, your terraform `apply` could f
 
 What should we do?
 ------------
-We will create the upper mentioned element using remote backend.
+We will create the upper mentioned element using remote backend (see the previous article ![BestPractice-1](../BestPractice-1) for more information about remote backend).
 
 In the following article our remote backend will be located on an Azure Storage Account and we will use a service principal to write on this storage account.
 To do so we will have to declare the following bracelet in our Terraform tf file.
@@ -80,8 +74,8 @@ terraform {
 
 | Description | Screenshot |
 | ------------- | ------------- |
-| Our object have been created on Azure  | ![done](image/done.png) |
-| Our remote backend has generated a Terraform tfstate with all our objects specifications | ![tfstate](image/tfstate.png) |
+| Our object have been created on Azure  | ![done](png/done.png) |
+| Our remote backend has generated a Terraform tfstate with all our objects specifications | ![tfstate](png/tfstate.png) |
 
 
 What shouldn't we do?
@@ -122,8 +116,8 @@ terraform {
 
 | Description | Screenshot |
 | ------------- | ------------- |
-| Our object are still on Azure  | ![done](image/done.png) |
-| The Terraform fails because for some resource like "azurerm_role_assignment" we can’t automatically <br> update our tfstate telling that the resource is already created as we wished. <br> Note that it wasn’t <br> the case for the resource "azurerm_virtual_network" | ![tfstate](image/error.png) |
+| Our object are still on Azure  | ![done](png/done.png) |
+| The Terraform fails because for some resource like "azurerm_role_assignment" we can’t automatically <br> update our tfstate telling that the resource is already created as we wished. <br> Note that it wasn’t <br> the case for the resource "azurerm_virtual_network" | ![tfstate](png/error.png) |
 
 
 

@@ -12,6 +12,12 @@ Share Terraform custom modules with the community with the following guidelines 
 -	a module doesn't contain any static values
 -	a module is called using variables
 
-Share terraform starter toolkit guides that respect a list of good practice (folder "Best-Practice")
 
-Share terraform script that reveal how to create a VPC in Azure and how application client can create their resources (folder "CreateAzureRm-Infra")
+Repository inventory
+------------
+
+| Id  | Description |
+| ------------- | ------------- |
+| ![Best-Practice](Best-Practice) | Share terraform starter toolkit guides that respect a list of good practice  |
+| ![CreateAzureRm-Infra](CreateAzureRm-Infra)  | Share terraform script that reveal how to create a VPC in Azure and how application client can create their resources |
+
