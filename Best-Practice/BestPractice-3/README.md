@@ -2,7 +2,7 @@
 
 Best Practice 3 *UNDER CONSTRUCTION*
 ------------
-Implicit dependencies should be used whenever possible, see [this article from terraform.io website](https://www.terraform.io/intro/getting-started/dependencies.html) for more information.
+Implicit dependencies should be used whenever possible, see [this article](https://www.terraform.io/intro/getting-started/dependencies.html) from terraform.io website for more information.
 In this article we will perform the following action with implicit dependencies and with explicit dependencies : 
 1. blala
 2. blala
@@ -17,7 +17,7 @@ In this article we will perform the following action with implicit dependencies 
 | Resource Group | An Azure resource group is available |
 | Storage Account | An Azure storage account is available and is located in the upper resource group, it contains a container named `tfstate` |
 | Service Principal | An Azure service principal is available and has the `owner` privilege on the upper resource group |
-| Terraform file | Clone this repository and fill in the following files with the upper prerequisite items : <br> Variable used for the Terraform `init` : secret/backend-jdld.tf <br> Variable used for the Terraform `plan` and `apply` : [main-jdld.tf](main-jdld.tf) & secret/main-jdld.tf |
+| Terraform file | Clone this repository and fill in the following files with the upper prerequisite items : <br> Variable used for the Terraform `init` : secret/backend-jdld.tf <br> Variable used for the Terraform `plan` and `apply` : [main-jdld.tfvars](main-jdld.tfvars) & [main-jdld.tf](main-jdld.tf) & secret/main-jdld.tf |
 
 
 
@@ -48,26 +48,20 @@ terraform {
 -----
 
     This step ensures that Terraform has all the prerequisites to build your template in Azure.
+```hcl
+terraform init -backend-config="secret/backend-jdld.tfvars" -reconfigure
+```
 
-    ```hcl
-
-    terraform init -backend-config="secret/backend-jdld.tfvars" -reconfigure
-
-    ```
     The next step is to have Terraform review and validate the template. 
     This step compares the requested resources to the state information saved by Terraform and then outputs the planned execution. Resources are not created in Azure.
-    ```hcl
-
-    terraform plan -var-file="secret/main-jdld.tfvars"
-
-    ```
+```hcl
+terraform plan -var-file="secret/main-jdld.tfvars" -var-file="main-jdld.tfvars"
+```
 
     If all is ok with the proposal you can now apply the configuration.
-    ```hcl
-
-    terraform apply -var-file="secret/main-jdld.tfvars"
-
-    ```
+```hcl
+terraform apply -var-file="secret/main-jdld.tfvars" -var-file="main-jdld.tfvars"
+```
 
 ### 2. Analysis
 -----
@@ -95,21 +89,21 @@ terraform {
 -----
 
     This step ensures that Terraform has all the prerequisites to build your template in Azure.
+```hcl
+terraform init -backend-config="secret/backend-jdld.tfvars" -reconfigure
+```
 
-    ```hcl
+    The next step is to have Terraform review and validate the template. 
+    This step compares the requested resources to the state information saved by Terraform and then outputs the planned execution. Resources are not created in Azure.
+```hcl
+terraform plan -var-file="secret/main-jdld.tfvars" -var-file="main-jdld.tfvars"
+```
 
-    terraform init 
+    If all is ok with the proposal you can now apply the configuration.
+```hcl
+terraform apply -var-file="secret/main-jdld.tfvars" -var-file="main-jdld.tfvars"
+```
 
-    ```
-    > When the prompt `Do you want to copy existing state to the new backend?` appears enter `no` and press enter.
-
-
-    You can now apply the configuration.
-    ```hcl
-
-    terraform apply -var-file="secret/main-jdld.tfvars"
-
-    ```
 
 ### 2. Analysis
 -----
