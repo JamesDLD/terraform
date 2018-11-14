@@ -5,7 +5,7 @@ terraform {
   backend "azurerm" {
     storage_account_name = "infrsand1vpodjdlddiagsa1"
     container_name       = "tfstate"
-    key                  = "BestPractice-2.tfstate"
+    key                  = "BestPractice-3.tfstate"
     resource_group_name  = "infr-jdld-noprd-rg1"
   }
 }
@@ -54,38 +54,36 @@ module "Create-AzureRmSubnet" {
   subnet_route_table_ids     = ["null"]
 }
 
-/*
-module "Create-AzureRmLoadBalancer-Apps" {
-    version                  = "~> 0.1"
+module "Create-AzureRmLoadBalancer" {
+  version                = "~> 0.1"
   source                 = "github.com/JamesDLD/terraform/module/Create-AzureRmLoadBalancer"
   Lbs                    = ["${var.Lbs}"]
-  lb_prefix              = "${var.app_name}-${var.env_name}-"
+  lb_prefix              = "bp3-"
   lb_suffix              = "-lb1"
   lb_location            = "${module.Get-AzureRmResourceGroup.rg_location}"
   lb_resource_group_name = "${module.Get-AzureRmResourceGroup.rg_name}"
-  Lb_sku                 = "${var.Lb_sku}"
+  Lb_sku                 = "Standard"
   subnets_ids            = "${module.Create-AzureRmSubnet.subnets_ids}"
-  lb_tags                = "${module.Get-AzureRmResourceGroup-MyApps.rg_tags}"
-  LbRules                = ["${var.LbRules}"]
+  lb_tags                = "${module.Get-AzureRmResourceGroup.rg_tags}"
+  LbRules                = []
 }
 
+module "Create-AzureRmNetworkInterface" {
+  version                 = "~> 0.1"
+  source                  = "github.com/JamesDLD/terraform/module/Create-AzureRmNetworkInterface"
+  Linux_Vms               = []                                                                    #If no need just fill "Linux_Vms = []" in the tfvars file
+  Windows_Vms             = ["${var.Windows_Vms}"]                                                #If no need just fill "Windows_Vms = []" in the tfvars file
+  nic_prefix              = "bp3-"
+  nic_suffix              = "-nic1"
+  nic_location            = "${module.Get-AzureRmResourceGroup.rg_location}"
+  nic_resource_group_name = "${module.Get-AzureRmResourceGroup.rg_name}"
+  subnets_ids             = "${module.Create-AzureRmSubnet.subnets_ids}"
+  nic_tags                = "${module.Get-AzureRmResourceGroup.rg_tags}"
+  nsgs_ids                = [""]
 
-module "Create-AzureRmVm-Apps" {
-    version                  = "~> 0.1"
-  source                  = "github.com/JamesDLD/terraform/module/Create-AzureRmVm"
-  sa_bootdiag_storage_uri = "${module.Create-AzureRmStorageAccount-Apps.sa_primary_blob_endpoint}"
-  Linux_Vms               = [""]                                                                   #If no need just fill "Linux_Vms = []" in the tfvars file
-  Windows_Vms             = ["${var.Windows_Vms}"]                                                 #If no need just fill "Windows_Vms = []" in the tfvars file
-  vm_location             = "${module.Get-AzureRmResourceGroup.rg_location}"
-  vm_resource_group_name  = "${module.Get-AzureRmResourceGroup.rg_name}"
-  vm_prefix               = "demo-"
-  vm_tags                 = "${module.Get-AzureRmResourceGroup.rg_tags}"
-  app_admin               = "${var.app_admin}"
-  pass                    = "${var.pass}"
-  ssh_key                 = "${var.ssh_key}"
-  ava_set_ids             = "${module.Create-AzureRmAvailabilitySet-Apps.ava_set_ids}"
-  Linux_nics_ids          = "${module.Create-AzureRmNetworkInterface-Apps.Linux_nics_ids}"
-  Windows_nics_ids        = "${module.Create-AzureRmNetworkInterface-Apps.Windows_nics_ids}"
+  #This an implicit dependency
+  lb_backend_ids = "${module.Create-AzureRmLoadBalancer.lb_backend_ids}"
+
+  #This an explicit dependency                 
+  #lb_backend_ids = ["/subscriptions/${var.subscription_id}/resourceGroups/infr-jdld-noprd-rg1/providers/Microsoft.Network/loadBalancers/bp3-internal-lb1/backendAddressPools/bp3-internal-bckpool1"]
 }
-*/
-

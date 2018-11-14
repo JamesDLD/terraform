@@ -1,11 +1,11 @@
 
 
-Best Practice 3 *UNDER CONSTRUCTION*
+Best Practice 3
 ------------
 Implicit dependencies should be used whenever possible, see [this article](https://www.terraform.io/intro/getting-started/dependencies.html) from terraform.io website for more information.
-In this article we will perform the following action with implicit dependencies and with explicit dependencies : 
-1. blala
-2. blala
+In this article we will perform the following action with *implicit* dependencies and with *explicit* dependencies : 
+1. Create 1 load balancer
+2. Create 2 network interfaces linked as backend of this load balancer
 
 
 ### Prerequisite
@@ -25,20 +25,26 @@ What should we do?
 ------------
 We will create the upper mentioned element using remote backend (see the previous article [BestPractice-1](../BestPractice-1) for more information about remote backend).
 
-In the following article our remote backend will be located on an Azure Storage Account and we will use a service principal to write on this storage account.
-To do so we will have to declare the following bracelet in our Terraform tf file.
+Review the code [main-jdld.tf](main-jdld.tf), as illustrated in the following bracelet, the *implicit* and the *explicit* method are highlighted.
 ```hcl
-terraform {
-  backend "azurerm" {
-    storage_account_name = "infrsand1vpodjdlddiagsa1"
-    container_name       = "tfstate"
-    key                  = "test.tfstate"
-    resource_group_name  = "infr-jdld-noprd-rg1"
-    arm_subscription_id  = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-    arm_client_id        = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-    arm_client_secret    = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-    arm_tenant_id        = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-  }
+module "Create-AzureRmNetworkInterface" {
+  version                 = "~> 0.1"
+  source                  = "github.com/JamesDLD/terraform/module/Create-AzureRmNetworkInterface"
+  Linux_Vms               = []                                                                    
+  Windows_Vms             = ["${var.Windows_Vms}"]                                                
+  nic_prefix              = "bp3-"
+  nic_suffix              = "-nic1"
+  nic_location            = "${module.Get-AzureRmResourceGroup.rg_location}"
+  nic_resource_group_name = "${module.Get-AzureRmResourceGroup.rg_name}"
+  subnets_ids             = "${module.Create-AzureRmSubnet.subnets_ids}"
+  nic_tags                = "${module.Get-AzureRmResourceGroup.rg_tags}"
+  nsgs_ids                = [""]
+
+  #This an implicit dependency
+  #lb_backend_ids = "${module.Create-AzureRmLoadBalancer.lb_backend_ids}"
+
+  #This an explicit dependency                 
+  lb_backend_ids = ["/subscriptions/${var.subscription_id}/resourceGroups/infr-jdld-noprd-rg1/providers/Microsoft.Network/loadBalancers/bp3-internal-lb1/backendAddressPools/bp3-internal-bckpool1"]
 }
 ```
 
@@ -63,56 +69,19 @@ If all is ok with the proposal you can now apply the configuration.
 terraform apply -var-file="secret/main-jdld.tfvars" -var-file="main-jdld.tfvars"
 ```
 
-### 2. Analysis
------
-
-| Description | Screenshot |
-| ------------- | ------------- |
-| Our object have been created on Azure  | ![done](png/done.png) |
-| Our remote backend has generated a Terraform tfstate with all our objects specifications | ![tfstate](png/tfstate.png) |
-
-
-What shouldn't we do?
-------------
-We will now omit the backend specification, this will imply that we will no longer depend on a remote backend, in other word we will not be aware of any other deployment that have already be done by another person.
-
-We will demonstrate here that remote backend encourage collaboration.
-
-Let's remove the following bracelet : backend "azurerm" {}.
-The top part of our [main-jdld.tf](main-jdld.tf) script will look like the following : 
+We will now destroy what we have done with both method (implicit and explicit) to track the impact.
 ```hcl
-terraform {
-}
+terraform destroy -var-file="secret/main-jdld.tfvars" -var-file="main-jdld.tfvars"
 ```
-
-### 1. Usage
------
-
-This step ensures that Terraform has all the prerequisites to build your template in Azure.
-```hcl
-terraform init -backend-config="secret/backend-jdld.tfvars" -reconfigure
-```
-
-The next step is to have Terraform review and validate the template. 
-This step compares the requested resources to the state information saved by Terraform and then outputs the planned execution. Resources are not created in Azure.
-```hcl
-terraform plan -var-file="secret/main-jdld.tfvars" -var-file="main-jdld.tfvars"
-```
-
-If all is ok with the proposal you can now apply the configuration.
-```hcl
-terraform apply -var-file="secret/main-jdld.tfvars" -var-file="main-jdld.tfvars"
-```
-
 
 ### 2. Analysis
 -----
 
 | Description | Screenshot |
 | ------------- | ------------- |
-| Our object are still on Azure  | ![done](png/done.png) |
-| The Terraform fails because for some resource like "azurerm_role_assignment" we can’t automatically <br> update our tfstate telling that the resource is already created as we wished. <br> Note that it wasn’t <br> the case for the resource "azurerm_virtual_network" | ![tfstate](png/error.png) |
-
+| Our nic are linked as backend of our Load Balancer | ![done](image/done.png) |
+| When using implicit dependencies all is working like a charm | ![implicit](image/implicit.png) |
+| When using explicit dependencies we got error as some resources doesn't wait for other to be created <br>(a workaround consists in using the variable `depend on` but this will still cause error when you will proceed Terraform `destroy`) | ![explicit](image/explicit.png) |
 
 
 See you!

@@ -1,0 +1,366 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.13",
+  "parameters": {
+    "tags": {
+      "type": "string",
+      "defaultValue": "{\"APP\":\"XXX\",\"BUD\":\"XXX\",\"CTC\":\"XXX@XXX\",\"ENV\":\"XXX\"}",
+      "metadata": {
+        "description": "Tags of the Vault"
+      }
+    },
+    "vmAvailabilityZone": {
+      "type": "string",
+      "allowedValues": [
+        "1",
+        "2",
+        "3"
+      ],
+      "metadata": {
+        "description": "Availability zone"
+      }
+    },
+    "vmName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of VM-Series FW in the Azure portal"
+      }
+    },
+    "managed_disk_type": {
+      "type": "string",
+      "metadata": {
+        "description": "Managed disk type"
+      }
+    },
+    "vmSize": {
+      "type": "string",
+      "allowedValues": [
+        "Standard_D3",
+        "Standard_D4",
+        "Standard_D3_v2",
+        "Standard_D4_v2",
+        "Standard_A4",
+        "Standard_DS3_v2",
+        "Standard_DS4_v2"
+      ],
+      "metadata": {
+        "description": "Azure VM size for VM-Series"
+      }
+    },
+    "imageVersion": {
+      "type": "string",
+      "allowedValues": [
+        "7.1.1",
+        "latest"
+      ],
+      "metadata": {
+        "description": "PAN OS Version"
+      }
+    },
+    "imageSku": {
+      "type": "string",
+      "allowedValues": [
+        "byol",
+        "bundle1",
+        "bundle2"
+      ],
+      "metadata": {
+        "description": "Firewall License Model"
+      },
+      "defaultValue": "bundle2"
+    },
+    "imagePublisher": {
+      "type": "string",
+      "allowedValues": [
+        "paloaltonetworks"
+      ],
+      "metadata": {
+        "description": "Firewall image publisher"
+      },
+      "defaultValue": "paloaltonetworks"
+    },
+    "imageOffer": {
+      "type": "string",
+      "allowedValues": [
+        "vmseries1"
+      ],
+      "metadata": {
+        "description": "Firewall image offer"
+      },
+      "defaultValue": "vmseries1"
+    },
+    "enable_accelerated_networking": {
+      "type": "string",
+      "allowedValues": [
+        "true",
+        "false"
+      ],
+      "metadata": {
+        "description": "Enable accelerated networking at the nic level"
+      }
+    },
+    "virtualNetworkName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the EXISTING Virtual Network (VNET)"
+      }
+    },
+    "virtualNetworkRGName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of resource group of EXISTING VNET"
+      }
+    },
+    "subnet0Name": {
+      "type": "string",
+      "defaultValue": "Mgmt",
+      "metadata": {
+        "description": "EXISTING Subnet for Management"
+      }
+    },
+    "subnet1Name": {
+      "type": "string",
+      "defaultValue": "Untrust",
+      "metadata": {
+        "description": "EXISTING Subnet for Untrust"
+      }
+    },
+    "subnet2Name": {
+      "type": "string",
+      "defaultValue": "Trust",
+      "metadata": {
+        "description": "EXISTING Subnet for Trust"
+      }
+    },
+    "subnet0StartAddress": {
+      "type": "string",
+      "metadata": {
+        "description": "Mgmt subnet static address"
+      }
+    },
+    "subnet1StartAddress": {
+      "type": "string",
+      "metadata": {
+        "description": "Untrust subnet static address"
+      }
+    },
+    "subnet2StartAddress": {
+      "type": "string",
+      "metadata": {
+        "description": "Trust subnet static address"
+      }
+    },
+    "adminUsername": {
+      "type": "string",
+      "metadata": {
+        "description": "Username of the administrator account of VM-Series"
+      }
+    },
+    "adminPassword": {
+      "type": "securestring",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Password for the administrator account of VM-Series"
+      }
+    },
+    "nsgName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of existing Network Security Group for MGMT FW interface"
+      }
+    },
+    "pip_domainNameLabel": {
+      "type": "string",
+      "metadata": {
+        "description": "Domain name label of the FQDN of the mgmt public interface"
+      }
+    },
+    "boot_diag_storage_account_name": {
+      "type": "string",
+      "metadata": {
+        "description": "Storage account where will be stored the boot diagnostic files"
+      }
+    }
+  },
+  "variables": {
+    "tagsbase64": "[base64(parameters('tags'))]",
+    "nicName": "[concat(parameters('vmName'), '-eth')]",
+    "vnetID": "[resourceId(parameters('virtualNetworkRGName'),concat('Microsoft.Network','/','virtualNetworks'),parameters('virtualNetworkName'))]",
+    "subnet0Ref": "[concat(variables('vnetID'),'/subnets/',parameters('subnet0Name'))]",
+    "subnet1Ref": "[concat(variables('vnetID'),'/subnets/',parameters('subnet1Name'))]",
+    "subnet2Ref": "[concat(variables('vnetID'),'/subnets/',parameters('subnet2Name'))]",
+    "publicIPAddressType": "Static",
+    "publicIPSku": "Standard",
+    "enable_accelerated_networking": "[contains(parameters('enable_accelerated_networking'), 'true')]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-04-01",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[concat(parameters('vmName'), '-pip')]",
+      "location": "[resourceGroup().location]",
+      "tags": "[base64ToJson(variables('tagsbase64'))]",
+      "sku": {
+        "name": "[variables('publicIPSku')]"
+      },
+      "properties": {
+        "publicIPAllocationMethod": "[variables('publicIPAddressType')]",
+        "dnsSettings": {
+          "domainNameLabel": "[parameters('pip_domainNameLabel')]"
+        }
+      }
+    },
+    {
+      "name": "[concat(variables('nicName'), 'mgmt')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[resourceGroup().location]",
+      "tags": "[base64ToJson(variables('tagsbase64'))]",
+      "apiVersion": "2018-04-01",
+      "dependsOn": [
+        "[concat('Microsoft.Network/publicIPAddresses/', concat(parameters('vmName'), '-pip'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig-mgmt",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[parameters('subnet0StartAddress')]",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(parameters('vmName'), '-pip'))]"
+              },
+              "subnet": {
+                "id": "[variables('subnet0Ref')]"
+              }
+            }
+          }
+        ],
+        "enableAcceleratedNetworking": "[variables('enable_accelerated_networking')]",
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgName'))]"
+        }
+      }
+    },
+    {
+      "name": "[concat(variables('nicName'), 'untrust')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[resourceGroup().location]",
+      "tags": "[base64ToJson(variables('tagsbase64'))]",
+      "dependsOn": [],
+      "apiVersion": "2018-04-01",
+      "properties": {
+        "enableIPForwarding": true,
+        "ipConfigurations": [
+          {
+            "name": "ipconfig-untrust",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[parameters('subnet1StartAddress')]",
+              "subnet": {
+                "id": "[variables('subnet1Ref')]"
+              }
+            }
+          }
+        ],
+        "enableAcceleratedNetworking": "[variables('enable_accelerated_networking')]"
+      }
+    },
+    {
+      "name": "[concat(variables('nicName'), 'trust')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[resourceGroup().location]",
+      "tags": "[base64ToJson(variables('tagsbase64'))]",
+      "apiVersion": "2018-04-01",
+      "properties": {
+        "enableIPForwarding": true,
+        "ipConfigurations": [
+          {
+            "name": "ipconfig-trust",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[parameters('subnet2StartAddress')]",
+              "subnet": {
+                "id": "[variables('subnet2Ref')]"
+              }
+            }
+          }
+        ],
+        "enableAcceleratedNetworking": "[variables('enable_accelerated_networking')]"
+      }
+    },
+    {
+      "apiVersion": "2018-04-01",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[parameters('vmName')]",
+      "zones": [
+        "[parameters('vmAvailabilityZone')]"
+      ],
+      "location": "[resourceGroup().location]",
+      "tags": "[base64ToJson(variables('tagsbase64'))]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'), 'mgmt')]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'), 'untrust')]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'), 'trust')]"
+      ],
+      "plan": {
+        "name": "[parameters('imageSku')]",
+        "product": "[parameters('imageOffer')]",
+        "publisher": "[parameters('imagePublisher')]"
+      },
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('vmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[parameters('vmName')]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[parameters('imagePublisher')]",
+            "offer": "[parameters('imageOffer')]",
+            "sku": "[parameters('imageSku')]",
+            "version": "[parameters('imageVersion')]"
+          },
+          "osDisk": {
+            "name": "[concat(parameters('vmName'), '-osdisk')]",
+            "caching": "ReadWrite",
+            "createOption": "FromImage",
+            "managedDisk": {
+              "storageAccountType": "[parameters('managed_disk_type')]"
+            }
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('nicName'), 'mgmt'))]",
+              "properties": {
+                "primary": true
+              }
+            },
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('nicName'),'untrust'))]",
+              "properties": {
+                "primary": false
+              }
+            },
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('nicName'),'trust'))]",
+              "properties": {
+                "primary": false
+              }
+            }
+          ]
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": "true",
+            "storageUri": "[concat('http://', parameters('boot_diag_storage_account_name'), '.blob.core.windows.net')]"
+          }
+        }
+      }
+    }
+  ]
+}
