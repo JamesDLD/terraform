@@ -30,8 +30,8 @@ terraform init -backend-config="backend-jdld-sand1.tfvars" -backend-config="secr
 
 ```
 
-The next step is to have Terraform review and validate the template. 
-This step compares the requested resources to the state information saved by Terraform and then outputs the planned execution. Resources are not created in Azure.
+The terraform plan command is used to create an execution plan.
+This step compares the requested resources to the state information saved by Terraform and then gives as an output the planned execution. Resources are not created in Azure.
 ```hcl
 
 terraform plan -var-file="main-jdld-sand1.tfvars" -var-file="secret/main-jdld-sand1.tfvars"
@@ -77,4 +77,4 @@ Solved issues
 -   Use multiple Azure service principal through the provider AzureRm, [ticket raised here](https://github.com/terraform-providers/terraform-provider-azurerm/issues/1308)
     - Solution : usage of provider.azurerm v1.6.0
 -   Use condition to decide wether or not a NIC should be linked to a Load Balancer, [ticket raised here](https://github.com/terraform-providers/terraform-provider-azurerm/issues/1318)
-    - Solution : usage of function "compact" & bracelet to send empty list
+    - Solution : usage of function "compact" & bracket to send empty list

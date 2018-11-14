@@ -1,6 +1,6 @@
 Best Practice 2
 ------------
-In this article we will see how to set terraform, our provider and modules version, see [this article](https://www.terraform.io/docs/configuration/terraform.html) from terraform.io website to learn more about managing terraform version.
+In this article we will see how to set Terraform, provider and modules version (see [this article](https://www.terraform.io/docs/configuration/terraform.html) from terraform.io website to learn more about managing Terraform version).
 
 In this article we will perform the following action  : 
 1. Get a Virtual Network
@@ -24,10 +24,10 @@ What should we do?
 ------------
 We will create the upper mentioned element using remote backend (see the previous article [BestPractice-1](../BestPractice-1) for more information about remote backend).
 
-The terraform executable file, the AzureRm provider and our modules version will be set as described in the following bracelet (also available in our [main-jdld.tf](main-jdld.tf) terraform file).
+The Terraform executable file, the AzureRm provider and our modules version will be set as described in the following bracket (also available in our [main-jdld.tf](main-jdld.tf) Terraform file).
 
 
-Declare terraform required version 
+Declare Terraform required version 
 ```hcl
 terraform {
   required_version = "0.11.8"
@@ -72,8 +72,8 @@ This step ensures that Terraform has all the prerequisites to build your templat
 terraform init -backend-config="secret/backend-jdld.tfvars" -reconfigure
 ```
 
-The next step is to have Terraform review and validate the template. 
-This step compares the requested resources to the state information saved by Terraform and then outputs the planned execution. Resources are not created in Azure.
+The terraform plan command is used to create an execution plan.
+This step compares the requested resources to the state information saved by Terraform and then gives as an output the planned execution. Resources are not created in Azure.
 ```hcl
 terraform plan -var-file="secret/main-jdld.tfvars" -var-file="main-jdld.tfvars"
 ```
@@ -89,7 +89,7 @@ terraform apply -var-file="secret/main-jdld.tfvars" -var-file="main-jdld.tfvars"
 | Description | Screenshot |
 | ------------- | ------------- |
 | The Terraform `init` highlights our version | ![version](image/version.png) |
-| Check out the Terraform init when you remove the version | ![noversion](image/noversion.png) |
+| Check the Terraform init when you remove the version | ![noversion](image/noversion.png) |
 
 
 See you!

@@ -2,10 +2,10 @@
 
 Best Practice 3
 ------------
-Implicit dependencies should be used whenever possible, see [this article](https://www.terraform.io/intro/getting-started/dependencies.html) from terraform.io website for more information.
+Implicit dependencies should be used whenever possible (see [this article](https://www.terraform.io/intro/getting-started/dependencies.html) from terraform.io website for more information).
 In this article we will perform the following action with *implicit* dependencies and with *explicit* dependencies : 
 1. Create 1 load balancer
-2. Create 2 network interfaces linked as backend of this load balancer
+2. Create 2 network interfaces and link them to a load balancer
 
 
 ### Prerequisite
@@ -25,7 +25,7 @@ What should we do?
 ------------
 We will create the upper mentioned element using remote backend (see the previous article [BestPractice-1](../BestPractice-1) for more information about remote backend).
 
-Review the code [main-jdld.tf](main-jdld.tf), as illustrated in the following bracelet, the *implicit* and the *explicit* method are highlighted.
+Review the code [main-jdld.tf](main-jdld.tf), as illustrated in the following bracket, the *implicit* and the *explicit* methods are highlighted.
 ```hcl
 module "Create-AzureRmNetworkInterface" {
   version                 = "~> 0.1"
@@ -58,18 +58,18 @@ This step ensures that Terraform has all the prerequisites to build your templat
 terraform init -backend-config="secret/backend-jdld.tfvars" -reconfigure
 ```
 
-The next step is to have Terraform review and validate the template. 
-This step compares the requested resources to the state information saved by Terraform and then outputs the planned execution. Resources are not created in Azure.
+The Terraform plan command is used to create an execution plan.
+This step compares the requested resources to the state information saved by Terraform and then gives as an output the planned execution. Resources are not created in Azure.
 ```hcl
 terraform plan -var-file="secret/main-jdld.tfvars" -var-file="main-jdld.tfvars"
 ```
 
-If all is ok with the proposal you can now apply the configuration.
+If all is ok with the proposal you can now apply the configuration with both methods (implicit and explicit) to track the impact.
 ```hcl
 terraform apply -var-file="secret/main-jdld.tfvars" -var-file="main-jdld.tfvars"
 ```
 
-We will now destroy what we have done with both method (implicit and explicit) to track the impact.
+We will now destroy what we have done with both methods (implicit and explicit) to track the impact.
 ```hcl
 terraform destroy -var-file="secret/main-jdld.tfvars" -var-file="main-jdld.tfvars"
 ```
@@ -79,9 +79,9 @@ terraform destroy -var-file="secret/main-jdld.tfvars" -var-file="main-jdld.tfvar
 
 | Description | Screenshot |
 | ------------- | ------------- |
-| Our nic are linked as backend of our Load Balancer | ![done](image/done.png) |
+| Our 2 network interfaces are linked to the Load Balancer | ![done](image/done.png) |
 | When using implicit dependencies all is working like a charm | ![implicit](image/implicit.png) |
-| When using explicit dependencies we got error as some resources doesn't wait for other to be created <br>(a workaround consists in using the variable `depend on` but this will still cause error when you will proceed Terraform `destroy`) | ![explicit](image/explicit.png) |
+| When using explicit dependencies we receive error(s) because some resources doesn't wait for <br> other to be created (a workaround consists in using the variable `depend on` but this will still <br> cause error when you will proceed Terraform `destroy`) | ![explicit](image/explicit.png) |
 
 
 See you!
