@@ -2,7 +2,7 @@ Azure and Terraform
 ------------
 Simple and Powerful
 
-HashiCorp Terraform enables you to safely and predictably create, change, and improve infrastructure. It is an open source tool that codifies APIs into declarative configuration files that can be shared amongst team members, treated as code, edited, reviewed, and versioned.
+HashiCorp Terraform enables you to safely and predictably create, change, and improve infrastructure. It is an open source tool that codifies APIs into declarative configuration files that can be shared among team members, treated as code, edited, reviewed, and versioned.
 
 
 Objective
@@ -18,6 +18,6 @@ Repository inventory
 
 | Id  | Description |
 | ------------- | ------------- |
-| [Best-Practice](Best-Practice) | Share terraform starter toolkit guides that respect a list of good practice  |
-| [CreateAzureRm-Infra](CreateAzureRm-Infra)  | Share terraform script that reveal how to create a VPC in Azure and how application client can create their resources |
+| [Best-Practice](Best-Practice) | Share Terraform starter toolkit guides that respect a list of good practice  |
+| [CreateAzureRm-Infra](CreateAzureRm-Infra)  | Share Terraform script that reveal how to create a VPC in Azure and how application client can create their resources |
 

@@ -16,7 +16,7 @@ In this article we will perform the following action  :
 | Resource Group | An Azure resource group is available |
 | Storage Account | An Azure storage account is available and is located in the upper resource group, it contains a container named `tfstate` |
 | Service Principal | An Azure service principal is available and has the `owner` privilege on the upper resource group |
-| Terraform file | Clone this repository and fill in the following files with the upper prerequisite items : <br> Variable used for the Terraform `init` : secret/backend-jdld.tf <br> Variable used for the Terraform `plan` and `apply` : [main-jdld.tfvars](main-jdld.tfvars) & [main-jdld.tf](main-jdld.tf) & secret/main-jdld.tf |
+| Terraform file | Clone this repository and fill in the following files with the upper prerequisite items : <br> Variable used for the Terraform `init` : secret/backend-jdld.tfvars <br> Variable used for the Terraform `plan` and `apply` : [main.tf](main.tf) & [main-jdld.tfvars](main-jdld.tfvars) & secret/main-jdld.tfvars |
 
 
 

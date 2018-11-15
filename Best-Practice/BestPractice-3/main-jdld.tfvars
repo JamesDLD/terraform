@@ -2,8 +2,8 @@
 
 subnets = [
   {
-    subnet_suffix_name = "front-demo"
-    cidr               = "10.0.2.0/24"
+    subnet_suffix_name = "front"
+    cidr               = "10.0.3.0/24"
     Id_Nsg             = "777"                                                                                                         #Id of the Network Security Group, set to 777 if there is no Network Security Groups
     Id_route_table     = "777"                                                                                                         #Id of the Route, set to 777 if there is no Routes
     Id_Vnet            = "0"                                                                                                           #Id of the vnet
@@ -15,7 +15,7 @@ Lbs = [
   {
     suffix_name = "internal"
     Id_Subnet   = "0"        #Id of the Subnet
-    static_ip   = "10.0.2.4"
+    static_ip   = "10.0.3.4"
   },
 ]
 
@@ -28,8 +28,8 @@ Windows_Vms = [
     Id_Ava            = "777"                    #Id of the Availabilitysets, set to 777 if there is no Availabilitysets
     Id_Nsg            = "777"                    #Id of the Network Security Group, set to 777 if there is no Network Security Groups
     BackupPolicyName  = "BackupPolicy-Schedule1"
-    static_ip         = "10.0.2.5"
-    vm_size           = "Standard_DS2_v2"
+    static_ip         = "10.0.3.5"
+    vm_size           = "Standard_DS1_v2"
     managed_disk_type = "Premium_LRS"
     publisher         = "MicrosoftWindowsServer"
     offer             = "WindowsServer"
@@ -45,8 +45,8 @@ Windows_Vms = [
     Id_Ava            = "777"                    #Id of the Availabilitysets, set to 777 if there is no Availabilitysets
     Id_Nsg            = "777"                    #Id of the Network Security Group, set to 777 if there is no Network Security Groups
     BackupPolicyName  = "BackupPolicy-Schedule1"
-    static_ip         = "10.0.2.6"
-    vm_size           = "Standard_DS2_v2"
+    static_ip         = "10.0.3.6"
+    vm_size           = "Standard_DS1_v2"
     managed_disk_type = "Premium_LRS"
     publisher         = "MicrosoftWindowsServer"
     offer             = "WindowsServer"

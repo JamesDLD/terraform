@@ -24,7 +24,7 @@ provider "azurerm" {
 module "Get-AzureRmVirtualNetwork" {
   version                  = "~> 0.1"
   source                   = "github.com/JamesDLD/terraform/module/Get-AzureRmVirtualNetwork"
-  vnets                    = ["demo-vnet1"]
+  vnets                    = ["bp1-vnet1"]
   vnet_resource_group_name = "infr-jdld-noprd-rg1"
 }
 

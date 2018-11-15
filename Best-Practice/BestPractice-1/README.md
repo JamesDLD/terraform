@@ -23,7 +23,7 @@ In other words ... if you don't have the tfstate, your Terraform `apply` could f
 | Resource Group | An Azure resource group is available |
 | Storage Account | An Azure storage account is available and is located in the upper resource group, it contains a container named `tfstate` |
 | Service Principal | An Azure service principal is available and has the `owner` privilege on the upper resource group |
-| Terraform file | Clone this repository and fill in the following files with the upper prerequisite items : <br> Variable used for the Terraform `init` : secret/backend-jdld.tf <br> Variable used for the Terraform `plan` and `apply` : [main-jdld.tf](main-jdld.tf) & secret/main-jdld.tf |
+| Terraform file | Clone this repository and fill in the following files with the upper prerequisite items : <br> Variable used for the Terraform `init` : secret/backend-jdld.tfvars <br> Variable used for the Terraform `plan` and `apply` : [main.tf](main.tf) & secret/main-jdld.tfvars |
 
 
 
@@ -38,7 +38,7 @@ terraform {
   backend "azurerm" {
     storage_account_name = "infrsand1vpodjdlddiagsa1"
     container_name       = "tfstate"
-    key                  = "test.tfstate"
+    key                  = "BestPractice-1.tfstate"
     resource_group_name  = "infr-jdld-noprd-rg1"
     arm_subscription_id  = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
     arm_client_id        = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
@@ -86,7 +86,7 @@ This will imply that we will no longer depend on a remote backend, in other word
 In here we will demonstrate that remote backend encourage collaboration.
 
 Let's remove the following bracket : backend "azurerm" {}.
-The top part of our [main-jdld.tf](main-jdld.tf) script will look like the following : 
+The top part of our [main.tf](main.tf) script will look like the following : 
 ```hcl
 terraform {
 }
@@ -97,7 +97,7 @@ terraform {
 
 This step ensures that Terraform has all the prerequisites to build your template in Azure.
 ```hcl
-terraform init 
+terraform init -backend-config="secret/backend-jdld.tfvars" -reconfigure
 ```
 > When the message `Do you want to copy existing state to the new backend?` appears enter `no` and press enter.
 

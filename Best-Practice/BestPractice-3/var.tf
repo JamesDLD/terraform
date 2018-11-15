@@ -30,3 +30,11 @@ variable "Windows_Vms" {
   type        = "list"
   description = "Windows VM list"
 }
+
+variable "app_admin" {
+  description = "Specifies the name of the administrator account on the VM."
+}
+
+variable "pass" {
+  description = "Specifies the password of the administrator account on the VM."
+}
