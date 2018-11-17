@@ -18,6 +18,6 @@ Repository inventory
 
 | Id  | Description |
 | ------------- | ------------- |
-| [Best-Practice](Best-Practice) | Share Terraform starter toolkit guides that respect a list of good practice  |
+| [Best-Practice](Best-Practice) | Share a list of best practices and tutoriels when using Terraform on Azure |
 | [CreateAzureRm-Infra](CreateAzureRm-Infra)  | Share Terraform script that reveal how to create a VPC in Azure and how application client can create their resources |
 
