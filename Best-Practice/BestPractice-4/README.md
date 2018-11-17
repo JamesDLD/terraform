@@ -1,17 +1,19 @@
 
 
-Best Practice 4 **UNDER CONSTRUCTION**
+Best Practice 4
 ------------
-These are my recommandation concerning the usage of the `azurerm_template_deployment` Terraform resource :
+These are my recommandations concerning the usage of the `azurerm_template_deployment` Terraform resource :
 1. Don't use the `azurerm_template_deployment` Terraform resource
 2. If you don't have the choice because one Terraform resource doesn't exist 
-  * Create a feature request [here on github](https://github.com/terraform-providers/terraform-provider-azurerm/issues/new/choose)
+  * Create a feature request [here on GitHub](https://github.com/terraform-providers/terraform-provider-azurerm/issues/new/choose)
   * Use the `azurerm_template_deployment` Terraform resource (a demo will be shown in this article)
   
-Terraform can only manage the deployment of the ARM Template - and not any resources which are created by it. It's highly recommended using the Native Resources where possible instead rather than an ARM Template (see [this article](https://www.terraform.io/docs/providers/azurerm/r/template_deployment.html from terraform.io website for more information).
+"Terraform can only manage the deployment of the ARM Template - and not any resources which are created by it. It's highly recommended using the Native Resources where possible instead rather than an ARM Template" (see [this article](https://www.terraform.io/docs/providers/azurerm/r/template_deployment.html) from terraform.io website for more information).
 
 In this article we will perform the following action with : 
 1. Create a Standard Public Load Balancer with outbound rules
+  * Microsoft associated documentation : [Azure Load balancer outbound rules overview](https://docs.microsoft.com/en-us/azure/load-balancer/load-balancer-outbound-rules-overview)
+  * Azure Rm Template : [azuredeploy.json](https://github.com/JamesDLD/AzureRm-Template/tree/master/Create-AzureRmLoadBalancerOutboundRules)
 
 
 ### Prerequisite
@@ -31,15 +33,27 @@ What should we do?
 ------------
 We will create the upper mentioned element using remote backend (see the previous article [BestPractice-1](../BestPractice-1) for more information about remote backend).
 
-Review the code [main.tf](main.tf), as illustrated in the following bracket we are calling
+Review the [main.tf file of the module here](https://github.com/JamesDLD/terraform/tree/master/module/Add-AzureRmLoadBalancerOutboundRules).
+As illustrated in the following bracket that's how we can push parameters into an AzureRm template (this file template is located here : [azuredeploy.json](https://github.com/JamesDLD/AzureRm-Template/tree/master/Create-AzureRmLoadBalancerOutboundRules) 
 ```hcl
-module 
+resource "azurerm_template_deployment" "lb_to_addOutboundRule" {
+  count               = "${length(var.lbs_out)}"
+  name                = "${lookup(var.lbs_out[count.index], "suffix_name")}-bck-DEP"
+  resource_group_name = "${var.lb_out_resource_group_name}"
+  template_body       = "${file("${path.module}/AzureRmLoadBalancerOutboundRules_template.json")}"
+  deployment_mode     = "Incremental"
+
+  parameters = {
+    lbName                 = "${var.lb_out_prefix}${lookup(var.lbs_out[count.index], "suffix_name")}${var.lb_out_suffix}"
+    tags                   = "${jsonencode(var.lbs_tags)}"
+    sku                    = "${lookup(var.lbs_out[count.index], "sku")}"
+    allocatedOutboundPorts = "${lookup(var.lbs_out[count.index], "allocatedOutboundPorts")}"
+    idleTimeoutInMinutes   = "${lookup(var.lbs_out[count.index], "idleTimeoutInMinutes")}"
+    enableTcpReset         = "${lookup(var.lbs_out[count.index], "enableTcpReset")}"
+    protocol               = "${lookup(var.lbs_out[count.index], "protocol")}"
+  }
+}
 ```
-
-https://github.com/JamesDLD/AzureRm-Template/tree/master/Create-AzureRmLoadBalancerOutboundRules
-
-https://github.com/JamesDLD/terraform/tree/master/module/Add-AzureRmLoadBalancerOutboundRules
-
 
 ### 1. Usage
 -----
@@ -55,12 +69,12 @@ This step compares the requested resources to the state information saved by Ter
 terraform plan -var-file="secret/main-jdld.tfvars" -var-file="main-jdld.tfvars"
 ```
 
-If all is ok with the proposal you can now apply the configuration with both methods (implicit and explicit) to track the impact.
+If all is ok with the proposal you can now apply the configuration.
 ```hcl
 terraform apply -var-file="secret/main-jdld.tfvars" -var-file="main-jdld.tfvars"
 ```
 
-We will now destroy what we have done with both methods (implicit and explicit) to track the impact.
+We will now destroy what we have done and you will see that our load balancer will not be deleted.
 ```hcl
 terraform destroy -var-file="secret/main-jdld.tfvars" -var-file="main-jdld.tfvars"
 ```
@@ -70,9 +84,9 @@ terraform destroy -var-file="secret/main-jdld.tfvars" -var-file="main-jdld.tfvar
 
 | Description | Screenshot |
 | ------------- | ------------- |
-| Our 2 network interfaces are linked to the Load Balancer | ![done](image/done.png) |
-| When using implicit dependencies all is working like a charm | ![implicit](image/implicit.png) |
-| When using explicit dependencies we receive error(s) because some resources doesn't wait for <br> other to be created (a workaround consists in using the variable `depend on` but this will still <br> cause error when you will proceed Terraform `destroy`) | ![explicit](image/explicit.png) |
+| Have a look on the deployment on Azure | ![depl](image/depl.png) |
+| When processing a Terraform `destroy` our deployment object is being deleted | ![destroy](image/destroy.png) |
+| After processing a Terraform `destroy` our load balancer is still available in Azure | ![nodestroy](image/nodestroy.png) |
 
 
 See you!
