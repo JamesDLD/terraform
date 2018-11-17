@@ -1,3 +1,5 @@
+[Previous page >](../)
+
 Best Practice 2
 ------------
 In this article we will see how to set Terraform, provider and modules version (see [this article](https://www.terraform.io/docs/configuration/terraform.html) from terraform.io website to learn more about managing Terraform version).
