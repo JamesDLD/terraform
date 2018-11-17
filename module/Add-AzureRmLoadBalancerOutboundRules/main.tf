@@ -2,7 +2,7 @@ resource "azurerm_template_deployment" "lb_to_addOutboundRule" {
   count               = "${length(var.lbs_out)}"
   name                = "${lookup(var.lbs_out[count.index], "suffix_name")}-bck-DEP"
   resource_group_name = "${var.lb_out_resource_group_name}"
-  template_body       = "${file("../module/Add-AzureRmLoadBalancerOutboundRules/AzureRmLoadBalancerOutboundRules_template.json")}"
+  template_body       = "${file("${path.module}/AzureRmLoadBalancerOutboundRules_template.json")}"
   deployment_mode     = "Incremental"
 
   parameters = {

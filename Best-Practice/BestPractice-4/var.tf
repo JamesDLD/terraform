@@ -1,0 +1,22 @@
+#Variables declaration
+
+variable "subscription_id" {
+  description = "Azure subscription Id."
+}
+
+variable "tenant_id" {
+  description = "Azure tenant Id."
+}
+
+variable "client_id" {
+  description = "Azure service principal application Id"
+}
+
+variable "client_secret" {
+  description = "Azure service principal application Secret"
+}
+
+variable "lbs_public" {
+  type        = "list"
+  description = "Public Load Balancer list containing the following values :suffix_name, sku, allocatedOutboundPorts, idleTimeoutInMinutes, enableTcpReset, protocol."
+}
