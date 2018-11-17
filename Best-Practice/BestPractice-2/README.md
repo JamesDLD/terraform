@@ -94,4 +94,4 @@ terraform apply -var-file="secret/main-jdld.tfvars" -var-file="main-jdld.tfvars"
 
 See you!
 
-Jamesdld
+JamesDLD

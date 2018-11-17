@@ -86,4 +86,4 @@ terraform destroy -var-file="secret/main-jdld.tfvars" -var-file="main-jdld.tfvar
 
 See you!
 
-Jamesdld
+JamesDLD
