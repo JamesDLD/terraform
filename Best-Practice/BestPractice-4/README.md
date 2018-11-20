@@ -13,7 +13,7 @@ These are my recommandations concerning the usage of the `azurerm_template_deplo
 In this article we will perform the following action with : 
 1. Create a Standard Public Load Balancer with outbound rules
   * Microsoft associated documentation : [Azure Load balancer outbound rules overview](https://docs.microsoft.com/en-us/azure/load-balancer/load-balancer-outbound-rules-overview)
-  * Azure Rm Template : [azuredeploy.json](https://github.com/JamesDLD/AzureRm-Template/tree/master/Create-AzureRmLoadBalancerOutboundRules)
+  * Azure Rm Template : [azuredeploy.json](https://jamesdld.github.io/AzureRm-Template/Create-AzureRmLoadBalancerOutboundRules/)
 
 
 ### Prerequisite
