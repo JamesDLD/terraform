@@ -1,17 +1,17 @@
 resource "azurerm_template_deployment" "lb_to_addOutboundRule" {
-  count               = "${length(var.lbs_out)}"
-  name                = "${lookup(var.lbs_out[count.index], "suffix_name")}-bck-DEP"
+  name                = "${lookup(var.lbs_out[0], "suffix_name")}-bck-DEP"
   resource_group_name = "${var.lb_out_resource_group_name}"
   template_body       = "${file("${path.module}/AzureRmLoadBalancerOutboundRules_template.json")}"
   deployment_mode     = "Incremental"
 
   parameters = {
-    lbName                 = "${var.lb_out_prefix}${lookup(var.lbs_out[count.index], "suffix_name")}${var.lb_out_suffix}"
+    lbName                 = "${var.lb_out_prefix}${lookup(var.lbs_out[0], "suffix_name")}${var.lb_out_suffix}"
     tags                   = "${jsonencode(var.lbs_tags)}"
-    sku                    = "${lookup(var.lbs_out[count.index], "sku")}"
-    allocatedOutboundPorts = "${lookup(var.lbs_out[count.index], "allocatedOutboundPorts")}"
-    idleTimeoutInMinutes   = "${lookup(var.lbs_out[count.index], "idleTimeoutInMinutes")}"
-    enableTcpReset         = "${lookup(var.lbs_out[count.index], "enableTcpReset")}"
-    protocol               = "${lookup(var.lbs_out[count.index], "protocol")}"
+    sku                    = "${lookup(var.lbs_out[0], "sku")}"
+    allocatedOutboundPorts = "${lookup(var.lbs_out[0], "allocatedOutboundPorts")}"
+    idleTimeoutInMinutes   = "${lookup(var.lbs_out[0], "idleTimeoutInMinutes")}"
+    enableTcpReset         = "${lookup(var.lbs_out[0], "enableTcpReset")}"
+    protocol               = "${lookup(var.lbs_out[0], "protocol")}"
+    lb_public_ip_id        = "${var.lb_public_ip_id}"
   }
 }

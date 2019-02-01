@@ -67,6 +67,13 @@
                 "Udp",
                 "All"
             ]
+        },
+        "lb_public_ip_id": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Id of an existing public ip."
+            }
         }
     },
     "variables": {
@@ -77,6 +84,7 @@
         "backendAddressPoolName": "[concat(parameters('lbName'), '_bckpool1')]",
         "lbID": "[resourceId('Microsoft.Network/loadBalancers',parameters('lbName'))]",
         "publicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]",
+        "condition_publicIPAddressID": "[if(empty(parameters('lb_public_ip_id')), variables('publicIPAddressID'), parameters('lb_public_ip_id'))]",
         "outboundRuleID": "[concat(variables('lbID'), '/outboundRules/', variables('outboundRuleName'))]",
         "frontendIPConfigurationID": "[concat(variables('lbID'), '/frontendIPConfigurations/', variables('frontend_ip_configuration_name'))]",
         "backendAddressPoolId": "[concat(variables('lbID'),'/backendAddressPools/', variables('backendAddressPoolName'))]",
@@ -88,6 +96,7 @@
             "type": "Microsoft.Network/publicIPAddresses",
             "name": "[variables('publicIPAddressName')]",
             "location": "[resourceGroup().location]",
+            "condition": "[empty(parameters('lb_public_ip_id'))]",
             "tags": "[base64ToJson(variables('tagsbase64'))]",
             "sku": {
                 "name": "[parameters('sku')]"
@@ -114,7 +123,7 @@
                         "name": "[variables('frontend_ip_configuration_name')]",
                         "properties": {
                             "publicIPAddress": {
-                                "id": "[variables('publicIPAddressID')]"
+                                "id": "[variables('condition_publicIPAddressID')]"
                             }
                         }
                     }

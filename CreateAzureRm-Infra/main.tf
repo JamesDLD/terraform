@@ -345,6 +345,7 @@ module "Create-AzureRmVmss-Apps" {
 }
 
 # Infra cross services for Apps
+/*
 module "Enable-AzureRmRecoveryServicesBackupProtection-Apps" {
   source                      = "../module/Enable-AzureRmRecoveryServicesBackupProtection"
   resource_names              = "${concat(module.Create-AzureRmVm-Apps.Linux_Vms_names,module.Create-AzureRmVm-Apps.Windows_Vms_names)}"     #Names of the resources to backup
@@ -360,6 +361,7 @@ module "Enable-AzureRmRecoveryServicesBackupProtection-Apps" {
     "azurerm" = "azurerm.service_principal_apps"
   }
 }
+*/
 
 ## Infra common services
 module "Create-AzureRmAutomationAccount-Apps" {
