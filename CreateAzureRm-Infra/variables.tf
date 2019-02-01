@@ -7,11 +7,11 @@ terraform {
 }
 
 provider "azurerm" {
-  version = "1.15"
+  version = "1.21"
 }
 
 provider "random" {
-  version = "1.3"
+  version = "2.0"
 }
 
 variable "subscription_id" {

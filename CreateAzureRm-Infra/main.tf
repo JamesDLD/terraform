@@ -330,6 +330,8 @@ module "Create-AzureRmVm-Apps" {
   }
 }
 
+/*
+#Need improvment 1 : NEED MAJOR UPDATE to fit with AzureRM provider 1.21.0
 module "Create-AzureRmVmss-Apps" {
   source                   = "../module/Create-AzureRmVmss"
   sa_bootdiag_storage_uri  = "${module.Create-AzureRmStorageAccount-Apps.sa_primary_blob_endpoint}"
@@ -351,8 +353,8 @@ module "Create-AzureRmVmss-Apps" {
   }
 }
 
+#Need improvment 1 : NEED MAJOR UPDATE to use the native terraform resource
 # Infra cross services for Apps
-/*
 module "Enable-AzureRmRecoveryServicesBackupProtection-Apps" {
   source                      = "../module/Enable-AzureRmRecoveryServicesBackupProtection"
   resource_names              = "${concat(module.Create-AzureRmVm-Apps.Linux_Vms_names,module.Create-AzureRmVm-Apps.Windows_Vms_names)}"     #Names of the resources to backup

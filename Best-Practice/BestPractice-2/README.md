@@ -46,7 +46,7 @@ terraform {
 Specify the AzureRm version 
 ```hcl
 provider "azurerm" {
-  version         = "1.15"
+  version         = "1.21"
   subscription_id = "${var.subscription_id}"
   client_id       = "${var.client_id}"
   client_secret   = "${var.client_secret}"
