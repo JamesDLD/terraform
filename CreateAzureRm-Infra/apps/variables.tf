@@ -41,20 +41,8 @@ variable "default_tags" {
   description = "Tag map that will be pushed on all Azure resources."
 }
 
-variable "sa_account_replication_type" {
-  description = "Defines the type of replication to use for this storage account. Valid options are LRS, GRS, RAGRS and ZRS."
-}
-
-variable "sa_account_tier" {
-  description = "Defines the access tier for BlobStorage and StorageV2 accounts. Valid options are Hot and Cool, defaults to Hot."
-}
-
 variable "rg_apps_name" {
   description = "Apps resource group name."
-}
-
-variable "sa_apps_name" {
-  description = "Apps storage account name."
 }
 
 variable "rg_infr_name" {
@@ -65,60 +53,16 @@ variable "sa_infr_name" {
   description = "Infra storage account name."
 }
 
-variable "kv_sku" {
-  description = "An SKU block as described below."
-}
-
-variable "key_vaults" {
-  type        = "list"
-  description = "Azure Key vault list containing the following keys : suffix_name, policy1_tenant_id, policy1_object_id, policy1_application_id."
-}
-
-variable "policies" {
-  type        = "list"
-  description = "Azure Policy list containing the following keys : suffix_name, policy_type, mode."
-}
-
-variable "roles" {
-  type        = "list"
-  description = "Azure Custom role list containing the following keys : suffix_name, actions, not_actions."
-}
-
-#Backup
-variable "backup_policies" {
-  type        = "list"
-  description = "Azure Recovery Services Vault policies list."
-}
-
-#Vnet & Subnet & Network Security group
-variable "vnets" {
-  type        = "list"
-  description = "Virtual Network list."
-}
+#Subnet & Network Security group
 
 variable "apps_snets" {
   type        = "list"
   description = "Subnet list."
 }
 
-variable "route_tables" {
+variable "infr_nsg_names" {
   type        = "list"
-  description = "Route table list containing the following keys : route_suffix_name."
-}
-
-variable "routes" {
-  type        = "list"
-  description = "Route list containing the following keys : name, Id_rt, address_prefix, next_hop_type, next_hop_in_ip_address."
-}
-
-variable "infra_nsgs" {
-  type        = "list"
-  description = "Infra Network Security Groups list containing the following keys : suffix_name."
-}
-
-variable "infra_nsgrules" {
-  type        = "list"
-  description = "Infra Network Security Groups Rules list."
+  description = "Infra Network Security Group names list"
 }
 
 variable "apps_nsgs" {

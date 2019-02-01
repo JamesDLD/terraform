@@ -2,7 +2,7 @@ resource "azurerm_template_deployment" "resources_to_backup" {
   count               = "${length(var.resource_names)}"
   name                = "${element(var.resource_names,count.index)}-bck-DEP"
   resource_group_name = "${var.bck_rsv_resource_group_name}"
-  template_body       = "${file("../module/Enable-AzureRmRecoveryServicesBackupProtection/AzureRmRecoveryServicesBackupProtection_template.json")}"
+  template_body       = "${file("${path.module}/AzureRmRecoveryServicesBackupProtection_template.json")}"
   deployment_mode     = "Incremental"
 
   parameters = {

@@ -20,39 +20,16 @@ Workflow
 
 Usage
 -----
-The following sample will launch all the modules to show the reader how they are called.
-My advice is that the reader pick up the module he wants and calls it how it's shown in the root "main.tf" file.
 
-[Clone this repository](https://github.com/JamesDLD/terraform/tree/master/CreateAzureRm-Infra)
-
-With your Terraform template created, the first step is to initialize Terraform. 
-This step ensures that Terraform has all the prerequisites to build your template in Azure.
-
-```hcl
-
-terraform init -backend-config="backend-jdld-sand1.tfvars" -backend-config="secret/backend-jdld-sand1.tfvars" -reconfigure
-
-```
-
-The terraform plan command is used to create an execution plan.
-This step compares the requested resources to the state information saved by Terraform and then gives as an output the planned execution. Resources are not created in Azure.
-```hcl
-
-terraform plan -var-file="main-jdld-sand1.tfvars" -var-file="secret/main-jdld-sand1.tfvars"
-
-```
-
-If all is ok with the proposal you can now apply the configuration.
-```hcl
-
-terraform apply -var-file="main-jdld-sand1.tfvars" -var-file="secret/main-jdld-sand1.tfvars"
-
-```
+| Step  | Description |
+| ------------- | ------------- |
+| [1 - Infra](infra) | Deliver the Infra |
+| [2 - Apps](apps)  | Deliver an Apps environment |
 
 General Requirements
 ------------
 
--	[Terraform](https://www.Terraform.io/downloads.html) 0.11.7
+-	[Terraform](https://www.Terraform.io/downloads.html) 0.11.10
 -	[AzureRM Terraform Provider](https://github.com/Terraform-providers/Terraform-provider-azurerm/blob/master/README.md)
 -	[AzureRM Terraform Provider - Authentication](https://www.Terraform.io/docs/providers/azurerm/)
 -   The called "Infra" Azure Service Principal has the following privileges :
