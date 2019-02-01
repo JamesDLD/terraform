@@ -294,6 +294,7 @@ module "Create-AzureRmNetworkInterface-Apps" {
   nic_resource_group_name = "${data.azurerm_resource_group.MyApps.name}"
   subnets_ids             = "${module.Create-AzureRmSubnet-Apps.subnets_ids}"
   lb_backend_ids          = "${module.Create-AzureRmLoadBalancer-Apps.lb_backend_ids}"
+  lb_backend_Public_ids   = []
   nic_tags                = "${data.azurerm_resource_group.MyApps.tags}"
   nsgs_ids                = "${module.Create-AzureRmNetworkSecurityGroup-Apps.nsgs_ids}"
 
@@ -305,18 +306,24 @@ module "Create-AzureRmNetworkInterface-Apps" {
 module "Create-AzureRmVm-Apps" {
   source                  = "../module/Create-AzureRmVm"
   sa_bootdiag_storage_uri = "${module.Create-AzureRmStorageAccount-Apps.sa_primary_blob_endpoint}"
-  Linux_Vms               = ["${var.Linux_Vms}"]                                                   #If no need just fill "Linux_Vms = []" in the tfvars file
-  Windows_Vms             = ["${var.Windows_Vms}"]                                                 #If no need just fill "Windows_Vms = []" in the tfvars file
-  vm_location             = "${data.azurerm_resource_group.MyApps.location}"
-  vm_resource_group_name  = "${data.azurerm_resource_group.MyApps.name}"
-  vm_prefix               = "${var.app_name}-${var.env_name}-"
-  vm_tags                 = "${data.azurerm_resource_group.MyApps.tags}"
-  app_admin               = "${var.app_admin}"
-  pass                    = "${var.pass}"
-  ssh_key                 = "${var.ssh_key}"
-  ava_set_ids             = "${module.Create-AzureRmAvailabilitySet-Apps.ava_set_ids}"
-  Linux_nics_ids          = "${module.Create-AzureRmNetworkInterface-Apps.Linux_nics_ids}"
-  Windows_nics_ids        = "${module.Create-AzureRmNetworkInterface-Apps.Windows_nics_ids}"
+
+  Linux_Vms                     = ["${var.Linux_Vms}"]                                           #If no need just fill "Linux_Vms = []" in the tfvars file
+  Linux_nics_ids                = "${module.Create-AzureRmNetworkInterface-Apps.Linux_nics_ids}"
+  Linux_storage_image_reference = "${var.Linux_storage_image_reference}"
+  Linux_DataDisks               = ["${var.Linux_DataDisks}"]
+  ssh_key                       = "${var.ssh_key}"
+
+  Windows_Vms                     = ["${var.Windows_Vms}"]                                           #If no need just fill "Windows_Vms = []" in the tfvars file
+  Windows_nics_ids                = "${module.Create-AzureRmNetworkInterface-Apps.Windows_nics_ids}"
+  Windows_storage_image_reference = "${var.Windows_storage_image_reference}"                         #If no need just fill "Windows_storage_image_reference = []" in the tfvars file
+  Windows_DataDisks               = ["${var.Windows_DataDisks}"]
+
+  vm_location            = "${data.azurerm_resource_group.MyApps.location}"
+  vm_resource_group_name = "${data.azurerm_resource_group.MyApps.name}"
+  vm_prefix              = "${var.app_name}-${var.env_name}-"
+  vm_tags                = "${data.azurerm_resource_group.MyApps.tags}"
+  app_admin              = "${var.app_admin}"
+  pass                   = "${var.pass}"
 
   providers {
     "azurerm" = "azurerm.service_principal_apps"

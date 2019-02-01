@@ -161,9 +161,27 @@ variable "Linux_Vms" {
   description = "Linux VM list"
 }
 
+variable "Linux_DataDisks" {
+  type = "list"
+}
+
+variable "Linux_storage_image_reference" {
+  type        = "list"
+  description = "Could containt an 'id' of a custom image or the following parameters for an Azure public 'image publisher','offer','sku', 'version'"
+}
+
 variable "Windows_Vms" {
   type        = "list"
   description = "Windows VM list"
+}
+
+variable "Windows_DataDisks" {
+  type = "list"
+}
+
+variable "Windows_storage_image_reference" {
+  type        = "list"
+  description = "Could containt an 'id' of a custom image or the following parameters for an Azure public 'image publisher','offer','sku', 'version'"
 }
 
 variable "Linux_Ss_Vms" {
