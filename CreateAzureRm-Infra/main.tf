@@ -22,30 +22,22 @@ provider "azurerm" {
 ####################################################
 
 ## Prerequisistes Inventory
-module "Get-AzureRmResourceGroup-Infr" {
-  source  = "../module/Get-AzureRmResourceGroup"
-  rg_name = "${var.rg_infr_name}"
-
-  providers {
-    "azurerm" = "azurerm.service_principal_infra"
-  }
+data "azurerm_resource_group" "Infr" {
+  name     = "${var.rg_infr_name}"
+  provider = "azurerm.service_principal_infra"
 }
 
-module "Get-AzureRmResourceGroup-Apps" {
-  source  = "../module/Get-AzureRmResourceGroup"
-  rg_name = "${var.rg_apps_name}"
-
-  providers {
-    "azurerm" = "azurerm.service_principal_infra"
-  }
+data "azurerm_resource_group" "Apps" {
+  name     = "${var.rg_apps_name}"
+  provider = "azurerm.service_principal_infra"
 }
 
 ## Core Infra components
 module "Create-AzureRmRecoveryServicesVault-Infr" {
   source                  = "../module/Create-AzureRmRecoveryServicesVault"
   rsv_name                = "infra-${var.app_name}-${var.env_name}-rsv1"
-  rsv_resource_group_name = "${module.Get-AzureRmResourceGroup-Infr.rg_name}"
-  rsv_tags                = "${module.Get-AzureRmResourceGroup-Infr.rg_tags}"
+  rsv_resource_group_name = "${data.azurerm_resource_group.Infr.name}"
+  rsv_tags                = "${data.azurerm_resource_group.Infr.tags}"
   rsv_backup_policies     = ["${var.backup_policies}"]
 
   providers {
@@ -59,10 +51,10 @@ module "Create-AzureRmKeyVault-Infr" {
   kv_tenant_id           = "${var.tenant_id}"
   kv_prefix              = "${var.app_name}-${var.env_name}-"
   kv_suffix              = "-kv1"
-  kv_location            = "${module.Get-AzureRmResourceGroup-Infr.rg_location}"
-  kv_resource_group_name = "${module.Get-AzureRmResourceGroup-Infr.rg_name}"
+  kv_location            = "${data.azurerm_resource_group.Infr.location}"
+  kv_resource_group_name = "${data.azurerm_resource_group.Infr.name}"
   kv_sku                 = "${var.kv_sku}"
-  kv_tags                = "${module.Get-AzureRmResourceGroup-Infr.rg_tags}"
+  kv_tags                = "${data.azurerm_resource_group.Infr.tags}"
 
   providers {
     "azurerm" = "azurerm.service_principal_infra"
@@ -71,7 +63,7 @@ module "Create-AzureRmKeyVault-Infr" {
 
 data "azurerm_storage_account" "Infr" {
   name                = "${var.sa_infr_name}"
-  resource_group_name = "${module.Get-AzureRmResourceGroup-Infr.rg_name}"
+  resource_group_name = "${data.azurerm_resource_group.Infr.name}"
   provider            = "azurerm.service_principal_infra"
 }
 
@@ -81,9 +73,9 @@ module "Create-AzureRmVirtualNetwork-Infra" {
   vnets                    = ["${var.vnets}"]
   vnet_prefix              = "infra-${var.app_name}-${var.env_name}-"
   vnet_suffix              = "-net1"
-  vnet_resource_group_name = "${module.Get-AzureRmResourceGroup-Infr.rg_name}"
-  vnet_location            = "${module.Get-AzureRmResourceGroup-Infr.rg_location}"
-  vnet_tags                = "${module.Get-AzureRmResourceGroup-Infr.rg_tags}"
+  vnet_resource_group_name = "${data.azurerm_resource_group.Infr.name}"
+  vnet_location            = "${data.azurerm_resource_group.Infr.location}"
+  vnet_tags                = "${data.azurerm_resource_group.Infr.tags}"
 
   providers {
     "azurerm" = "azurerm.service_principal_infra"
@@ -95,9 +87,9 @@ module "Create-AzureRmNetworkSecurityGroup-Infra" {
   nsgs                    = ["${var.infra_nsgs}"]
   nsg_prefix              = "${var.app_name}-${var.env_name}-"
   nsg_suffix              = "-nsg1"
-  nsg_location            = "${module.Get-AzureRmResourceGroup-Infr.rg_location}"
-  nsg_resource_group_name = "${module.Get-AzureRmResourceGroup-Infr.rg_name}"
-  nsg_tags                = "${module.Get-AzureRmResourceGroup-Infr.rg_tags}"
+  nsg_location            = "${data.azurerm_resource_group.Infr.location}"
+  nsg_resource_group_name = "${data.azurerm_resource_group.Infr.name}"
+  nsg_tags                = "${data.azurerm_resource_group.Infr.tags}"
   nsgrules                = ["${var.infra_nsgrules}"]
 
   providers {
@@ -107,13 +99,13 @@ module "Create-AzureRmNetworkSecurityGroup-Infra" {
 
 module "Create-AzureRmRoute-Infra" {
   source                 = "../module/Create-AzureRmRoute"
-  rt_resource_group_name = "${module.Get-AzureRmResourceGroup-Infr.rg_name}"
-  rt_location            = "${module.Get-AzureRmResourceGroup-Infr.rg_location}"
+  rt_resource_group_name = "${data.azurerm_resource_group.Infr.name}"
+  rt_location            = "${data.azurerm_resource_group.Infr.location}"
   routes                 = ["${var.routes}"]
   route_tables           = ["${var.route_tables}"]
   rt_prefix              = "${var.app_name}-${var.env_name}-"
   rt_suffix              = "-rt1"
-  rt_tags                = "${module.Get-AzureRmResourceGroup-Infr.rg_tags}"
+  rt_tags                = "${data.azurerm_resource_group.Infr.tags}"
 
   providers {
     "azurerm" = "azurerm.service_principal_infra"
@@ -173,11 +165,11 @@ module "Enable-AzureRmRoleAssignment" {
   source                  = "../module/Enable-AzureRmRoleAssignment"
   ass_countRoleAssignment = "${length(var.roles)}"
 
-  ass_scopes = ["${module.Get-AzureRmResourceGroup-Apps.rg_id}",
+  ass_scopes = ["${data.azurerm_resource_group.Apps.id}",
     "${element(module.Create-AzureRmVirtualNetwork-Infra.vnet_ids,0)}",
     "${element(module.Create-AzureRmRoute-Infra.rt_ids,0)}",
     "${element(module.Create-AzureRmNetworkSecurityGroup-Infra.nsgs_ids,0)}",
-    "${module.Get-AzureRmResourceGroup-Infr.rg_id}",
+    "${data.azurerm_resource_group.Infr.id}",
     "${module.Create-AzureRmRecoveryServicesVault-Infr.backup_vault_id}",
     "${data.azurerm_storage_account.Infr.id}",
   ]
@@ -195,24 +187,20 @@ module "Enable-AzureRmRoleAssignment" {
 ####################################################
 
 ## Prerequisistes Inventory
-module "Get-AzureRmResourceGroup-MyApps" {
-  source  = "../module/Get-AzureRmResourceGroup"
-  rg_name = "${element(split("/",element(module.Enable-AzureRmRoleAssignment.role_assignment_scopes,0)),4)}"
-
-  providers {
-    "azurerm" = "azurerm.service_principal_apps"
-  }
+data "azurerm_resource_group" "MyApps" {
+  name     = "${element(split("/",element(module.Enable-AzureRmRoleAssignment.role_assignment_scopes,0)),4)}"
+  provider = "azurerm.service_principal_apps"
 }
 
 ## Core Apps components
 module "Create-AzureRmStorageAccount-Apps" {
   source                      = "../module/Create-AzureRmStorageAccount"
   sa_name                     = "${var.sa_apps_name}"
-  sa_resource_group_name      = "${module.Get-AzureRmResourceGroup-MyApps.rg_name}"
-  sa_location                 = "${module.Get-AzureRmResourceGroup-MyApps.rg_location}"
+  sa_resource_group_name      = "${data.azurerm_resource_group.MyApps.name}"
+  sa_location                 = "${data.azurerm_resource_group.MyApps.location}"
   sa_account_replication_type = "${var.sa_account_replication_type}"
   sa_account_tier             = "${var.sa_account_tier}"
-  sa_tags                     = "${module.Get-AzureRmResourceGroup-MyApps.rg_tags}"
+  sa_tags                     = "${data.azurerm_resource_group.MyApps.tags}"
 
   providers {
     "azurerm" = "azurerm.service_principal_apps"
@@ -225,9 +213,9 @@ module "Create-AzureRmNetworkSecurityGroup-Apps" {
   nsgs                    = ["${var.apps_nsgs}"]
   nsg_prefix              = "${var.app_name}-${var.env_name}-"
   nsg_suffix              = "-nsg1"
-  nsg_location            = "${module.Get-AzureRmResourceGroup-MyApps.rg_location}"
-  nsg_resource_group_name = "${module.Get-AzureRmResourceGroup-MyApps.rg_name}"
-  nsg_tags                = "${module.Get-AzureRmResourceGroup-MyApps.rg_tags}"
+  nsg_location            = "${data.azurerm_resource_group.MyApps.location}"
+  nsg_resource_group_name = "${data.azurerm_resource_group.MyApps.name}"
+  nsg_tags                = "${data.azurerm_resource_group.MyApps.tags}"
   nsgrules                = ["${var.apps_nsgrules}"]
 
   providers {
@@ -240,9 +228,9 @@ module "Create-AzureRmApplicationkSecurityGroup-Apps" {
   asgs                    = ["${var.asgs}"]
   asg_prefix              = "${var.app_name}-${var.env_name}-"
   asg_suffix              = "-asg1"
-  asg_location            = "${module.Get-AzureRmResourceGroup-MyApps.rg_location}"
-  asg_resource_group_name = "${module.Get-AzureRmResourceGroup-MyApps.rg_name}"
-  asg_tags                = "${module.Get-AzureRmResourceGroup-MyApps.rg_tags}"
+  asg_location            = "${data.azurerm_resource_group.MyApps.location}"
+  asg_resource_group_name = "${data.azurerm_resource_group.MyApps.name}"
+  asg_tags                = "${data.azurerm_resource_group.MyApps.tags}"
 
   providers {
     "azurerm" = "azurerm.service_principal_apps"
@@ -270,9 +258,9 @@ module "Create-AzureRmAvailabilitySet-Apps" {
   ava_availabilitysets    = ["${var.Availabilitysets}"]
   ava_prefix              = "${var.app_name}-${var.env_name}-"
   ava_suffix              = "-avs1"
-  ava_location            = "${module.Get-AzureRmResourceGroup-MyApps.rg_location}"
-  ava_resource_group_name = "${module.Get-AzureRmResourceGroup-MyApps.rg_name}"
-  ava_tags                = "${module.Get-AzureRmResourceGroup-MyApps.rg_tags}"
+  ava_location            = "${data.azurerm_resource_group.MyApps.location}"
+  ava_resource_group_name = "${data.azurerm_resource_group.MyApps.name}"
+  ava_tags                = "${data.azurerm_resource_group.MyApps.tags}"
 
   providers {
     "azurerm" = "azurerm.service_principal_apps"
@@ -284,11 +272,11 @@ module "Create-AzureRmLoadBalancer-Apps" {
   Lbs                    = ["${var.Lbs}"]
   lb_prefix              = "${var.app_name}-${var.env_name}-"
   lb_suffix              = "-lb1"
-  lb_location            = "${module.Get-AzureRmResourceGroup-MyApps.rg_location}"
-  lb_resource_group_name = "${module.Get-AzureRmResourceGroup-MyApps.rg_name}"
+  lb_location            = "${data.azurerm_resource_group.MyApps.location}"
+  lb_resource_group_name = "${data.azurerm_resource_group.MyApps.name}"
   Lb_sku                 = "${var.Lb_sku}"
   subnets_ids            = "${module.Create-AzureRmSubnet-Apps.subnets_ids}"
-  lb_tags                = "${module.Get-AzureRmResourceGroup-MyApps.rg_tags}"
+  lb_tags                = "${data.azurerm_resource_group.MyApps.tags}"
   LbRules                = ["${var.LbRules}"]
 
   providers {
@@ -302,11 +290,11 @@ module "Create-AzureRmNetworkInterface-Apps" {
   Windows_Vms             = ["${var.Windows_Vms}"]                                       #If no need just fill "Windows_Vms = []" in the tfvars file
   nic_prefix              = "${var.app_name}-${var.env_name}-"
   nic_suffix              = "-nic1"
-  nic_location            = "${module.Get-AzureRmResourceGroup-MyApps.rg_location}"
-  nic_resource_group_name = "${module.Get-AzureRmResourceGroup-MyApps.rg_name}"
+  nic_location            = "${data.azurerm_resource_group.MyApps.location}"
+  nic_resource_group_name = "${data.azurerm_resource_group.MyApps.name}"
   subnets_ids             = "${module.Create-AzureRmSubnet-Apps.subnets_ids}"
   lb_backend_ids          = "${module.Create-AzureRmLoadBalancer-Apps.lb_backend_ids}"
-  nic_tags                = "${module.Get-AzureRmResourceGroup-MyApps.rg_tags}"
+  nic_tags                = "${data.azurerm_resource_group.MyApps.tags}"
   nsgs_ids                = "${module.Create-AzureRmNetworkSecurityGroup-Apps.nsgs_ids}"
 
   providers {
@@ -319,10 +307,10 @@ module "Create-AzureRmVm-Apps" {
   sa_bootdiag_storage_uri = "${module.Create-AzureRmStorageAccount-Apps.sa_primary_blob_endpoint}"
   Linux_Vms               = ["${var.Linux_Vms}"]                                                   #If no need just fill "Linux_Vms = []" in the tfvars file
   Windows_Vms             = ["${var.Windows_Vms}"]                                                 #If no need just fill "Windows_Vms = []" in the tfvars file
-  vm_location             = "${module.Get-AzureRmResourceGroup-MyApps.rg_location}"
-  vm_resource_group_name  = "${module.Get-AzureRmResourceGroup-MyApps.rg_name}"
+  vm_location             = "${data.azurerm_resource_group.MyApps.location}"
+  vm_resource_group_name  = "${data.azurerm_resource_group.MyApps.name}"
   vm_prefix               = "${var.app_name}-${var.env_name}-"
-  vm_tags                 = "${module.Get-AzureRmResourceGroup-MyApps.rg_tags}"
+  vm_tags                 = "${data.azurerm_resource_group.MyApps.tags}"
   app_admin               = "${var.app_admin}"
   pass                    = "${var.pass}"
   ssh_key                 = "${var.ssh_key}"
@@ -340,10 +328,10 @@ module "Create-AzureRmVmss-Apps" {
   sa_bootdiag_storage_uri  = "${module.Create-AzureRmStorageAccount-Apps.sa_primary_blob_endpoint}"
   Linux_Ss_Vms             = ["${var.Linux_Ss_Vms}"]                                                #If no need just fill "Linux_Vms = []" in the tfvars file
   Windows_Ss_Vms           = ["${var.Windows_Ss_Vms}"]                                              #If no need just fill "Linux_Vms = []" in the tfvars file
-  vmss_location            = "${module.Get-AzureRmResourceGroup-MyApps.rg_location}"
-  vmss_resource_group_name = "${module.Get-AzureRmResourceGroup-MyApps.rg_name}"
+  vmss_location            = "${data.azurerm_resource_group.MyApps.location}"
+  vmss_resource_group_name = "${data.azurerm_resource_group.MyApps.name}"
   vmss_prefix              = "${var.app_name}-${var.env_name}-"
-  vmss_tags                = "${module.Get-AzureRmResourceGroup-MyApps.rg_tags}"
+  vmss_tags                = "${data.azurerm_resource_group.MyApps.tags}"
   app_admin                = "${var.app_admin}"
   pass                     = "${var.pass}"
   ssh_key                  = "${var.ssh_key}"
@@ -366,7 +354,7 @@ module "Enable-AzureRmRecoveryServicesBackupProtection-Apps" {
   bck_rsv_resource_group_name = "${module.Create-AzureRmRecoveryServicesVault-Infr.backup_vault_rgname}"
   bck_ProtectedItemType       = "Microsoft.ClassicCompute/virtualMachines"
   bck_BackupPolicyName        = "BackupPolicy-Schedule1"
-  bck_location                = "${module.Get-AzureRmResourceGroup-Infr.rg_location}"
+  bck_location                = "${data.azurerm_resource_group.Infr.location}"
 
   providers {
     "azurerm" = "azurerm.service_principal_apps"
@@ -377,11 +365,11 @@ module "Enable-AzureRmRecoveryServicesBackupProtection-Apps" {
 module "Create-AzureRmAutomationAccount-Apps" {
   source                   = "../module/Create-AzureRmAutomationAccount"
   auto_name                = "${var.app_name}-${var.env_name}-auto1"
-  auto_location            = "${module.Get-AzureRmResourceGroup-MyApps.rg_location}"
-  auto_resource_group_name = "${module.Get-AzureRmResourceGroup-MyApps.rg_name}"
+  auto_location            = "${data.azurerm_resource_group.MyApps.location}"
+  auto_resource_group_name = "${data.azurerm_resource_group.MyApps.name}"
   auto_sku                 = "${var.auto_sku}"
-  auto_tags                = "${module.Get-AzureRmResourceGroup-MyApps.rg_tags}"
-  auto_credentials         = ["${var.service_principals}"]                           #If no need just set to []
+  auto_tags                = "${data.azurerm_resource_group.MyApps.tags}"
+  auto_credentials         = ["${var.service_principals}"]                    #If no need just set to []
 
   providers {
     "azurerm" = "azurerm.service_principal_apps"
