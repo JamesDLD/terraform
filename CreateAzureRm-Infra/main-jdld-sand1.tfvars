@@ -75,9 +75,9 @@ sa_account_replication_type = "LRS"
 
 sa_account_tier = "Standard"
 
-sa_apps_name = "appssand1vpodjdlddiagsa2"
+sa_apps_name = "appssand1vpcjdld1"
 
-sa_infr_name = "infrsand1vpodjdlddiagsa1"
+sa_infr_name = "infrsand1vpcjdld1"
 
 #Backup 
 backup_policies = [
@@ -107,19 +107,19 @@ route_tables = [
 
 routes = [
   {
-    name                   = "sec-via-routeurcusto"
+    name                   = "all_to_firewall"
     Id_rt                  = "0"
-    address_prefix         = "192.168.2.0/24"
+    address_prefix         = "192.168.2.0/24"   #"0.0.0.0/0"
     next_hop_type          = "VirtualAppliance"
-    next_hop_in_ip_address = "10.0.5.5"
+    next_hop_in_ip_address = "10.0.5.4"
   },
 ]
 
 vnets = [
   {
     vnet_suffix_name = "tech"
-    address_spaces   = "198.18.1.0/24"           #For multiple values add spaces between values
-    dns_servers      = "198.18.1.23 198.18.1.24" #For multiple values add spaces between values
+    address_spaces   = "198.18.1.0/24" #For multiple values add spaces between values
+    dns_servers      = ""              #For multiple values add spaces between values
   },
 ]
 
@@ -145,6 +145,9 @@ apps_snets = [
 infra_nsgs = [
   {
     suffix_name = "snet-frontend"
+  },
+  {
+    suffix_name = "snet-backend"
   },
 ]
 
@@ -242,7 +245,7 @@ asgs = [
 ]
 
 # Virtual Machines components : Load Balancer & Availability Set & Nic & VM
-Lb_sku = "Basic" #"Standard" 
+Lb_sku = "Standard" #"Basic" 
 
 Lbs = [
   {
@@ -299,7 +302,9 @@ LbRules = [
 
 Availabilitysets = [
   {
-    suffix_name = "rdg" #It must equals the Vm suffix_name
+    suffix_name                  = "rdg" #It must equals the Vm suffix_name
+    platform_fault_domain_count  = 2
+    platform_update_domain_count = 5
   },
 ]
 

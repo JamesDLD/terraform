@@ -69,18 +69,10 @@ module "Create-AzureRmKeyVault-Infr" {
   }
 }
 
-module "Create-AzureRmStorageAccount-Infr" {
-  source                      = "../module/Create-AzureRmStorageAccount"
-  sa_name                     = "${var.sa_infr_name}"
-  sa_resource_group_name      = "${module.Get-AzureRmResourceGroup-Infr.rg_name}"
-  sa_location                 = "${module.Get-AzureRmResourceGroup-Infr.rg_location}"
-  sa_account_replication_type = "${var.sa_account_replication_type}"
-  sa_account_tier             = "${var.sa_account_tier}"
-  sa_tags                     = "${module.Get-AzureRmResourceGroup-Infr.rg_tags}"
-
-  providers {
-    "azurerm" = "azurerm.service_principal_infra"
-  }
+data "azurerm_storage_account" "Infr" {
+  name                = "${var.sa_infr_name}"
+  resource_group_name = "${module.Get-AzureRmResourceGroup-Infr.rg_name}"
+  provider            = "azurerm.service_principal_infra"
 }
 
 ## Core Network components
@@ -169,7 +161,7 @@ module "Enable-AzureRmPolicyAssignment-Infra-udr-on-subnet" {
 module "Create-AzureRmRoleDefinition-Apps" {
   source      = "../module/Create-AzureRmRoleDefinition"
   roles       = ["${var.roles}"]
-  role_prefix = "${var.env_name}-"
+  role_prefix = "${var.app_name}-${var.env_name}-"
   role_suffix = "-role1"
 
   providers {
@@ -187,7 +179,7 @@ module "Enable-AzureRmRoleAssignment" {
     "${element(module.Create-AzureRmNetworkSecurityGroup-Infra.nsgs_ids,0)}",
     "${module.Get-AzureRmResourceGroup-Infr.rg_id}",
     "${module.Create-AzureRmRecoveryServicesVault-Infr.backup_vault_id}",
-    "${module.Create-AzureRmStorageAccount-Infr.sa_id}",
+    "${data.azurerm_storage_account.Infr.id}",
   ]
 
   ass_role_definition_ids = "${module.Create-AzureRmRoleDefinition-Apps.role_ids}"
@@ -343,7 +335,6 @@ module "Create-AzureRmVm-Apps" {
   }
 }
 
-/*
 module "Create-AzureRmVmss-Apps" {
   source                   = "../module/Create-AzureRmVmss"
   sa_bootdiag_storage_uri  = "${module.Create-AzureRmStorageAccount-Apps.sa_primary_blob_endpoint}"
@@ -364,7 +355,6 @@ module "Create-AzureRmVmss-Apps" {
     "azurerm" = "azurerm.service_principal_apps"
   }
 }
-*/
 
 # Infra cross services for Apps
 module "Enable-AzureRmRecoveryServicesBackupProtection-Apps" {
@@ -383,7 +373,6 @@ module "Enable-AzureRmRecoveryServicesBackupProtection-Apps" {
   }
 }
 
-/*
 ## Infra common services
 module "Create-AzureRmAutomationAccount-Apps" {
   source                   = "../module/Create-AzureRmAutomationAccount"
@@ -392,7 +381,9 @@ module "Create-AzureRmAutomationAccount-Apps" {
   auto_resource_group_name = "${module.Get-AzureRmResourceGroup-MyApps.rg_name}"
   auto_sku                 = "${var.auto_sku}"
   auto_tags                = "${module.Get-AzureRmResourceGroup-MyApps.rg_tags}"
-  auto_credentials         = ["${var.service_principals}"]                         #If no need just set to []
-}
-*/
+  auto_credentials         = ["${var.service_principals}"]                           #If no need just set to []
 
+  providers {
+    "azurerm" = "azurerm.service_principal_apps"
+  }
+}

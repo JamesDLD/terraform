@@ -3,7 +3,7 @@
 #Authentication
 terraform {
   backend          "azurerm"        {}
-  required_version = "0.11.8"
+  required_version = "0.11.10"
 }
 
 provider "azurerm" {
@@ -153,7 +153,7 @@ variable "LbRules" {
 
 variable "Availabilitysets" {
   type        = "list"
-  description = "Availability Set list containing the following keys : suffix_name."
+  description = "Availability Set list containing the following keys : suffix_name, platform_fault_domain_count and platform_update_domain_count"
 }
 
 variable "Linux_Vms" {
