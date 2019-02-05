@@ -1,4 +1,5 @@
-#Need improvment 1 : Fusion Windows and Linux
+#Need improvment 1 : NEED MAJOR UPDATE to fit with AzureRM provider 1.21.0
+#Need improvment 2 : Fusion Windows and Linux
 resource "azurerm_virtual_machine_scale_set" "Linux_Ss_Vms" {
   count               = "${length(var.Linux_Ss_Vms)}"
   name                = "${var.vmss_prefix}${lookup(var.Linux_Ss_Vms[count.index], "suffix_name")}${lookup(var.Linux_Ss_Vms[count.index], "id")}"

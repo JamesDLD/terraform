@@ -1,0 +1,53 @@
+{
+    "fw_rules": [
+        {
+            "network_rule_collection": [
+                {
+                    "network_rule_collection_name": "infra_common_services-ncol1",
+                    "priority": 100,
+                    "action": "Allow",
+                    "rules": [
+                        {
+                            "name": "dns-rule1",
+                            "source_addresses": "[\"198.18.2.0/24\"]",
+                            "destination_ports": "[\"53\"]",
+                            "destination_addresses": "[\"*\"]",
+                            "protocols": "[\"TCP\", \"UDP\"]"
+                        }
+                    ]
+                }
+            ],
+            "application_rule_collection": [
+                {
+                    "application_rule_collection_name": "infra_common_services-acol1",
+                    "priority": 100,
+                    "action": "Allow",
+                    "rules_for_fqdn_tags": [
+                        {
+                            "name": "AzureTags-All-rule1",
+                            "source_addresses": "[\"198.18.2.0/24\"]",
+                            "fqdn_tags": "[\"MicrosoftActiveProtectionService\", \"WindowsDiagnostics\", \"WindowsUpdate\", \"AppServiceEnvironment\", \"AzureBackup\"]"
+                        }
+                    ],
+                    "rules_for_target_fqdns": [
+                        {
+                            "name": "SecopsFqdn-rule1",
+                            "source_addresses": "[\"198.18.2.0/24\"]",
+                            "target_fqdns": "[\"*.google.com\", \"*.bing.com\"]",
+                            "protocol": [
+                                {
+                                    "port": 443,
+                                    "type": "Https"
+                                },
+                                {
+                                    "port": 80,
+                                    "type": "Http"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

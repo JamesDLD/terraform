@@ -45,5 +45,8 @@ module "Add-AzureRmLoadBalancerOutboundRules-Apps" {
   lb_out_suffix              = "-publiclb1"
   lb_out_resource_group_name = "myrg"
   lbs_tags                   = ["${var.lbs_tags}"]
+
+  #Optional : you can use an existing public ip, otherwise it will create one 
+  lb_public_ip_id = "/subscriptions/mysubid/resourceGroups/tenant-testi-prd-rg/providers/Microsoft.Network/publicIPAddresses/scinfra-testi-prd-pip-0"
 }
 ```

@@ -1,7 +1,7 @@
-output "lb_to_addOutboundRule_deployment_names" {
-  value = ["${azurerm_template_deployment.lb_to_addOutboundRule.*.name}"]
+output "lb_to_addOutboundRule_deployment_name" {
+  value = "${azurerm_template_deployment.lb_to_addOutboundRule.name}"
 }
 
-output "lb_backend_outputs" {
-  value = ["${azurerm_template_deployment.lb_to_addOutboundRule.*.outputs}"]
+output "lb_backend_id" {
+  value = "${lookup(azurerm_template_deployment.lb_to_addOutboundRule.outputs, "load_balancer_backend_address_pools_id")}"
 }

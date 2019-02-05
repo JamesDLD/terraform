@@ -63,7 +63,7 @@ variable "pgsql_db" {
 }
 
 variable "pgsql_location" {
-  default = "northeurope"
+  default = "francecentral"
 }
 
 variable "pgsql_rg" {
@@ -82,7 +82,7 @@ module "Create-AzureRmPostgreSqlDatabase-Apps" {
   pgsql_db_firewall         = ["${var.pgsql_db_firewall}"]
   pgsql_db                  = ["${var.pgsql_db}"]
   pgsql_resource_group_name = "MyRgName"
-  pgsql_location            = "northeurope"
+  pgsql_location            = "francecentral"
   pgsql_subnet_id           = "/subscriptions/xxxxxxxxx/resourceGroups/MyRgName/providers/Microsoft.Network/virtualNetworks/MyVnetName/subnets/MySubnetName""
 }
 

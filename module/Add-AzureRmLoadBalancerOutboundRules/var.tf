@@ -19,3 +19,8 @@ variable "lbs_tags" {
   type        = "map"
   description = "Load balancer tags."
 }
+
+variable "lb_public_ip_id" {
+  description = "Id of an existing public ip"
+  default     = ""
+}

@@ -4,6 +4,14 @@ variable "Linux_Vms" {
   type = "list"
 }
 
+variable "Linux_DataDisks" {
+  type = "list"
+}
+
+variable "Windows_DataDisks" {
+  type = "list"
+}
+
 variable "Windows_Vms" {
   type = "list"
 }
@@ -20,14 +28,20 @@ variable "app_admin" {}
 variable "pass" {}
 variable "ssh_key" {}
 
-variable "ava_set_ids" {
-  type = "list"
-}
-
 variable "Linux_nics_ids" {
   type = "list"
 }
 
 variable "Windows_nics_ids" {
   type = "list"
+}
+
+variable "Linux_storage_image_reference" {
+  type        = "list"
+  description = "Could containt an 'id' of a custom image or the following parameters for an Azure public 'image publisher','offer','sku', 'version'"
+}
+
+variable "Windows_storage_image_reference" {
+  type        = "list"
+  description = "Could containt an 'id' of a custom image or the following parameters for an Azure public 'image publisher','offer','sku', 'version'"
 }

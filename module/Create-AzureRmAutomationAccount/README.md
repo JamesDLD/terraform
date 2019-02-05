@@ -16,7 +16,7 @@ variable "auto_sku" {
 }
 
 variable "location" {
-  default = "northeurope"
+  default = "francecentral"
 }
 
 variable "rg_apps_name" {
