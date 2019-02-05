@@ -1,7 +1,7 @@
 #Set the terraform backend
 terraform {
   backend "azurerm" {
-    storage_account_name = "infrsand1vpodjdlddiagsa1"
+    storage_account_name = "infrsand1vpcjdld1"
     container_name       = "tfstate"
     key                  = "BestPractice-1.tfstate"
     resource_group_name  = "infr-jdld-noprd-rg1"
@@ -19,7 +19,7 @@ provider "azurerm" {
 #Call module/resource
 resource "azurerm_virtual_network" "bp1-vnet1" {
   name                = "bp1-vnet1"
-  location            = "northeurope"
+  location            = "francecentral"
   resource_group_name = "infr-jdld-noprd-rg1"
   address_space       = ["10.0.0.0/16"]
 

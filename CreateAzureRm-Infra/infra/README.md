@@ -30,3 +30,10 @@ If all is ok with the proposal you can now apply the configuration.
 terraform apply -var-file="infra-main-jdld.tfvars" -var-file="../secret/main-jdld.tfvars"
 
 ```
+
+To destroy the associated resources.
+```hcl
+
+terraform destroy -var-file="infra-main-jdld.tfvars" -var-file="../secret/main-jdld.tfvars"
+
+```

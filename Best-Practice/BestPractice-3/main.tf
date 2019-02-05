@@ -3,7 +3,7 @@ terraform {
   required_version = "0.11.10"
 
   backend "azurerm" {
-    storage_account_name = "infrsand1vpodjdlddiagsa1"
+    storage_account_name = "infrsand1vpcjdld1"
     container_name       = "tfstate"
     key                  = "BestPractice-3.tfstate"
     resource_group_name  = "infr-jdld-noprd-rg1"
@@ -38,7 +38,7 @@ module "Get-AzureRmStorageAccount" {
   version    = "~> 0.1"
   source     = "github.com/JamesDLD/terraform/module/Get-AzureRmStorageAccount"
   sa_rg_name = "${module.Get-AzureRmResourceGroup.rg_name}"
-  sa_name    = "infrsand1vpodjdlddiagsa1"
+  sa_name    = "infrsand1vpcjdld1"
 }
 
 #Action
