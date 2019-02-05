@@ -2,6 +2,6 @@
 
 container_name = "tfstate"
 
-key = "jdld-sand1.tfstate"
+key = "apps.tfstate"
 
 resource_group_name = "infr-jdld-noprd-rg1"

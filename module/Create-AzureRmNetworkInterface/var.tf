@@ -19,6 +19,10 @@ variable "lb_backend_ids" {
   type = "list"
 }
 
+variable "lb_backend_Public_ids" {
+  type = "list"
+}
+
 variable "nic_tags" {
   type = "map"
 }

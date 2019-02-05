@@ -3,15 +3,15 @@
 #Authentication
 terraform {
   backend          "azurerm"        {}
-  required_version = "0.11.8"
+  required_version = "0.11.10"
 }
 
 provider "azurerm" {
-  version = "1.15"
+  version = "1.21"
 }
 
 provider "random" {
-  version = "1.3"
+  version = "2.0"
 }
 
 variable "subscription_id" {
@@ -41,20 +41,8 @@ variable "default_tags" {
   description = "Tag map that will be pushed on all Azure resources."
 }
 
-variable "sa_account_replication_type" {
-  description = "Defines the type of replication to use for this storage account. Valid options are LRS, GRS, RAGRS and ZRS."
-}
-
-variable "sa_account_tier" {
-  description = "Defines the access tier for BlobStorage and StorageV2 accounts. Valid options are Hot and Cool, defaults to Hot."
-}
-
 variable "rg_apps_name" {
   description = "Apps resource group name."
-}
-
-variable "sa_apps_name" {
-  description = "Apps storage account name."
 }
 
 variable "rg_infr_name" {
@@ -96,7 +84,7 @@ variable "vnets" {
   description = "Virtual Network list."
 }
 
-variable "apps_snets" {
+variable "snets" {
   type        = "list"
   description = "Subnet list."
 }
@@ -119,75 +107,4 @@ variable "infra_nsgs" {
 variable "infra_nsgrules" {
   type        = "list"
   description = "Infra Network Security Groups Rules list."
-}
-
-variable "apps_nsgs" {
-  type        = "list"
-  description = "Apps Network Security Groups list containing the following keys : suffix_name."
-}
-
-variable "apps_nsgrules" {
-  type        = "list"
-  description = "Apps Network Security Groups Rules list."
-}
-
-variable "asgs" {
-  type        = "list"
-  description = "Application Security Groups list containing the following keys : suffix_name."
-}
-
-#Load Balancers & Availability Set & Virtual Machines
-variable "Lb_sku" {
-  description = "The SKU of the Azure Load Balancer. Accepted values are Basic and Standard. Defaults to Basic."
-}
-
-variable "Lbs" {
-  type        = "list"
-  description = "Load Balancer list containing the following keys : suffix_name, Id_Subnet, static_ip."
-}
-
-variable "LbRules" {
-  type        = "list"
-  description = "Load Balancer rules list."
-}
-
-variable "Availabilitysets" {
-  type        = "list"
-  description = "Availability Set list containing the following keys : suffix_name."
-}
-
-variable "Linux_Vms" {
-  type        = "list"
-  description = "Linux VM list"
-}
-
-variable "Windows_Vms" {
-  type        = "list"
-  description = "Windows VM list"
-}
-
-variable "Linux_Ss_Vms" {
-  type        = "list"
-  description = "Linux VM Scale Set list"
-}
-
-variable "Windows_Ss_Vms" {
-  type        = "list"
-  description = "Windows VM Scale Set list"
-}
-
-variable "app_admin" {
-  description = "Specifies the name of the administrator account on the VM."
-}
-
-variable "pass" {
-  description = "Specifies the password of the administrator account on the VM."
-}
-
-variable "ssh_key" {
-  description = "Specifies the ssh public key to login on Linux VM."
-}
-
-variable "auto_sku" {
-  description = "Specifies the automation account SKU."
 }

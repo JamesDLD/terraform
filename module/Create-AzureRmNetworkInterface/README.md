@@ -18,7 +18,6 @@ variable "Linux_Vms" {
     id                = "1"                      #Id of the VM
     Id_Lb             = "777"                    #Id of the Load Balancer
     Id_Subnet         = "0"                      #Id of the Subnet
-    Id_Ava            = "777"                    #Id of the Availabilitysets, set to 777 if there is no Availabilitysets
     Id_Nsg            = "1"                      #Id of the Network Security Group, set to 777 if there is no Network Security Groups
     BackupPolicyName  = "BackupPolicy-Schedule1"
     static_ip         = "198.18.1.228"
@@ -33,7 +32,7 @@ variable "Linux_Vms" {
 }
 
 variable "nic_location" {
-  default = "northeurope"
+  default = "francecentral"
 }
 
 variable "nic_resource_group_name" {

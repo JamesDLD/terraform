@@ -35,7 +35,7 @@ variable "env_name" {
 }
 
 variable "location" {
-  default = "northeurope"
+  default = "francecentral"
 }
 
 variable "rg_infr_name" {
