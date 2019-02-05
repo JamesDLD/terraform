@@ -24,6 +24,7 @@ Usage
 | Step  | Description |
 | ------------- | ------------- |
 | [1 - Infra](infra) | Deliver the Infra |
+| [1 Bis - Infra vnet peering](infra_peering) | Virtual Network peering |
 | [2 - Apps](apps)  | Deliver an Apps environment |
 
 General Requirements

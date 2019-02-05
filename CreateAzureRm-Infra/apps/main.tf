@@ -5,7 +5,7 @@ provider "azurerm" {
   client_id       = "${lookup(var.service_principals[1], "Application_Id")}"
   client_secret   = "${lookup(var.service_principals[1], "Application_Secret")}"
   tenant_id       = "${var.tenant_id}"
-  alias           = "service_principal_apps"
+  version         = "1.21"
 }
 
 # Module
@@ -16,14 +16,12 @@ provider "azurerm" {
 
 ## Prerequisistes Inventory
 data "azurerm_resource_group" "Infr" {
-  name     = "${var.rg_infr_name}"
-  provider = "azurerm.service_principal_apps"
+  name = "${var.rg_infr_name}"
 }
 
 data "azurerm_storage_account" "Infr" {
   name                = "${var.sa_infr_name}"
   resource_group_name = "${var.rg_infr_name}"
-  provider            = "azurerm.service_principal_apps"
 }
 
 ####################################################
@@ -32,24 +30,18 @@ data "azurerm_storage_account" "Infr" {
 
 ## Prerequisistes Inventory
 data "azurerm_resource_group" "MyApps" {
-  name     = "${var.rg_apps_name}"
-  provider = "azurerm.service_principal_apps"
+  name = "${var.rg_apps_name}"
 }
 
 data "azurerm_route_table" "Infr" {
   name                = "jdld-infr-core-rt1"
   resource_group_name = "${data.azurerm_resource_group.Infr.name}"
-  provider            = "azurerm.service_principal_apps"
 }
 
 data "azurerm_network_security_group" "Infr" {
-  count               = "${length(var.infr_nsg_names)}"
-  name                = "${element(var.infr_nsg_names,count.index)}"
+  name                = "jdld-infr-snet-apps-nsg1"
   resource_group_name = "${var.rg_infr_name}"
-  provider            = "azurerm.service_principal_apps"
 }
-
-## Core Apps components
 
 ## Core Network components
 module "Create-AzureRmNetworkSecurityGroup-Apps" {
@@ -61,10 +53,6 @@ module "Create-AzureRmNetworkSecurityGroup-Apps" {
   nsg_resource_group_name = "${data.azurerm_resource_group.MyApps.name}"
   nsg_tags                = "${data.azurerm_resource_group.MyApps.tags}"
   nsgrules                = ["${var.apps_nsgrules}"]
-
-  providers {
-    "azurerm" = "azurerm.service_principal_apps"
-  }
 }
 
 module "Create-AzureRmApplicationkSecurityGroup-Apps" {
@@ -75,10 +63,6 @@ module "Create-AzureRmApplicationkSecurityGroup-Apps" {
   asg_location            = "${data.azurerm_resource_group.MyApps.location}"
   asg_resource_group_name = "${data.azurerm_resource_group.MyApps.name}"
   asg_tags                = "${data.azurerm_resource_group.MyApps.tags}"
-
-  providers {
-    "azurerm" = "azurerm.service_principal_apps"
-  }
 }
 
 module "Create-AzureRmSubnet-Apps" {
@@ -88,12 +72,8 @@ module "Create-AzureRmSubnet-Apps" {
   subnet_suffix              = "-snet1"
   snets                      = ["${var.apps_snets}"]
   vnets                      = ["infra-jdld-infr-apps-net1"]
-  nsgs_ids                   = "${data.azurerm_network_security_group.Infr.*.id}"
+  nsgs_ids                   = ["${data.azurerm_network_security_group.Infr.id}"]
   subnet_route_table_ids     = ["${data.azurerm_route_table.Infr.id}"]
-
-  providers {
-    "azurerm" = "azurerm.service_principal_apps"
-  }
 }
 
 ## Virtual Machines components
@@ -105,10 +85,6 @@ module "Create-AzureRmAvailabilitySet-Apps" {
   ava_location            = "${data.azurerm_resource_group.MyApps.location}"
   ava_resource_group_name = "${data.azurerm_resource_group.MyApps.name}"
   ava_tags                = "${data.azurerm_resource_group.MyApps.tags}"
-
-  providers {
-    "azurerm" = "azurerm.service_principal_apps"
-  }
 }
 
 module "Create-AzureRmLoadBalancer-Apps" {
@@ -122,10 +98,6 @@ module "Create-AzureRmLoadBalancer-Apps" {
   subnets_ids            = "${module.Create-AzureRmSubnet-Apps.subnets_ids}"
   lb_tags                = "${data.azurerm_resource_group.MyApps.tags}"
   LbRules                = ["${var.LbRules}"]
-
-  providers {
-    "azurerm" = "azurerm.service_principal_apps"
-  }
 }
 
 module "Create-AzureRmNetworkInterface-Apps" {
@@ -141,10 +113,6 @@ module "Create-AzureRmNetworkInterface-Apps" {
   lb_backend_Public_ids   = []
   nic_tags                = "${data.azurerm_resource_group.MyApps.tags}"
   nsgs_ids                = "${module.Create-AzureRmNetworkSecurityGroup-Apps.nsgs_ids}"
-
-  providers {
-    "azurerm" = "azurerm.service_principal_apps"
-  }
 }
 
 module "Create-AzureRmVm-Apps" {
@@ -168,10 +136,6 @@ module "Create-AzureRmVm-Apps" {
   vm_tags                = "${data.azurerm_resource_group.MyApps.tags}"
   app_admin              = "${var.app_admin}"
   pass                   = "${var.pass}"
-
-  providers {
-    "azurerm" = "azurerm.service_principal_apps"
-  }
 }
 
 /*
@@ -191,10 +155,6 @@ module "Create-AzureRmVmss-Apps" {
   subnets_ids              = "${module.Create-AzureRmSubnet-Apps.subnets_ids}"
   lb_backend_ids           = "${module.Create-AzureRmLoadBalancer-Apps.lb_backend_ids}"
   nsgs_ids                 = "${module.Create-AzureRmNetworkSecurityGroup-Apps.nsgs_ids}"
-
-  providers {
-    "azurerm" = "azurerm.service_principal_apps"
-  }
 }
 
 #Need improvment 1 : NEED MAJOR UPDATE to use the native terraform resource
@@ -209,10 +169,6 @@ module "Enable-AzureRmRecoveryServicesBackupProtection-Apps" {
   bck_ProtectedItemType       = "Microsoft.ClassicCompute/virtualMachines"
   bck_BackupPolicyName        = "BackupPolicy-Schedule1"
   bck_location                = "${data.azurerm_resource_group.Infr.location}"
-
-  providers {
-    "azurerm" = "azurerm.service_principal_apps"
-  }
 }
 */
 
@@ -225,8 +181,4 @@ module "Create-AzureRmAutomationAccount-Apps" {
   auto_sku                 = "${var.auto_sku}"
   auto_tags                = "${data.azurerm_resource_group.MyApps.tags}"
   auto_credentials         = ["${var.service_principals}"]                    #If no need just set to []
-
-  providers {
-    "azurerm" = "azurerm.service_principal_apps"
-  }
 }

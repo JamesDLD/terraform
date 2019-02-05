@@ -10,3 +10,8 @@ variable "vnet_location" {}
 variable "vnet_tags" {
   type = "map"
 }
+
+variable "emptylist" {
+  type    = "list"
+  default = ["null", "null"]
+}

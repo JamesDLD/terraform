@@ -134,31 +134,9 @@ snets = [
   },
 ]
 
-/*
-  {
-    subnet_suffix_name = "frontend"
-    cidr               = "198.18.2.224/28"
-    Id_Nsg             = "0"               #Id of the Network Security Group, set to 777 if there is no Network Security Groups
-    Id_route_table     = "0"               #Id of the Route table, set to 777 if there is no Route table
-    Id_Vnet            = "1"               #Id of the vnet
-    service_endpoints  = ""                #Service Endpoints list sperated by an espace, if you don't need to set it to "" or "777"
-  },
-  {
-    subnet_suffix_name = "backend"
-    cidr               = "198.18.2.240/28"
-    Id_Nsg             = "0"               #Id of the Network Security Group, set to 777 if there is no Network Security Groups
-    Id_route_table     = "0"               #Id of the Route table, set to 777 if there is no Route table
-    Id_Vnet            = "1"               #Id of the vnet
-    service_endpoints  = ""                #Service Endpoints list sperated by an espace, if you don't need to set it to "" or "777"
-  },
-  */
-
 infra_nsgs = [
   {
-    suffix_name = "snet-frontend"
-  },
-  {
-    suffix_name = "snet-backend"
+    suffix_name = "snet-apps"
   },
 ]
 

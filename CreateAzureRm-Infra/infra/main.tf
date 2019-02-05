@@ -80,41 +80,6 @@ module "Create-AzureRmVirtualNetwork-Infra" {
   }
 }
 
-module "Enable-AzureRmVirtualNetworkPeering-vnet-sec-insub1" {
-  source               = "../../module/Enable-AzureRmVirtualNetworkPeering"
-  vnet_src_name        = "${element(module.Create-AzureRmVirtualNetwork-Infra.vnet_names,0)}"
-  vnet_rg_src_name     = "${element(module.Create-AzureRmVirtualNetwork-Infra.vnet_rgnames,0)}"
-  vnet_src_id          = "${element(module.Create-AzureRmVirtualNetwork-Infra.vnet_ids,0)}"
-  Disable_Vnet_Peering = "no"
-
-  list_one = [
-    {
-      name                = "${element(module.Create-AzureRmVirtualNetwork-Infra.vnet_names,1)}"
-      resource_group_name = "${element(module.Create-AzureRmVirtualNetwork-Infra.vnet_rgnames,1)}"
-    },
-  ]
-
-  list_two   = []
-  list_three = []
-  list_four  = []
-  list_five  = []
-  list_six   = []
-  list_seven = []
-  list_eight = []
-
-  providers = {
-    azurerm.src            = "azurerm.service_principal_infra"
-    azurerm.provider_one   = "azurerm.service_principal_infra"
-    azurerm.provider_two   = "azurerm.service_principal_infra"
-    azurerm.provider_three = "azurerm.service_principal_infra"
-    azurerm.provider_four  = "azurerm.service_principal_infra"
-    azurerm.provider_five  = "azurerm.service_principal_infra"
-    azurerm.provider_six   = "azurerm.service_principal_infra"
-    azurerm.provider_seven = "azurerm.service_principal_infra"
-    azurerm.provider_eight = "azurerm.service_principal_infra"
-  }
-}
-
 module "Create-AzureRmSubnet-Infra" {
   source                     = "../../module/Create-AzureRmSubnet"
   subnet_resource_group_name = "${element(module.Create-AzureRmVirtualNetwork-Infra.vnet_rgnames,0)}"
@@ -224,6 +189,19 @@ module "Enable-AzureRmRoleAssignment" {
 
   ass_role_definition_ids = "${module.Create-AzureRmRoleDefinition-Apps.role_ids}"
   ass_principal_id        = "${lookup(var.service_principals[1], "Application_object_id")}"
+
+  providers {
+    "azurerm" = "azurerm.service_principal_infra"
+  }
+}
+
+module "Create-AzureRmFirewall-Infr" {
+  source                 = "../../module/Create-AzureRmFirewall"
+  fw_resource_group_name = "${data.azurerm_resource_group.Infr.name}"
+  fw_location            = "${data.azurerm_resource_group.Infr.location}"
+  fw_prefix              = "${var.app_name}-${var.env_name}-fw1"
+  fw_subnet_id           = "${element(module.Create-AzureRmSubnet-Infra.subnets_ids,0)}"
+  fw_tags                = "${data.azurerm_resource_group.Infr.tags}"
 
   providers {
     "azurerm" = "azurerm.service_principal_infra"

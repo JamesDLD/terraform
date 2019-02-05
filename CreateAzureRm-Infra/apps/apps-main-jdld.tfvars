@@ -42,8 +42,6 @@ apps_snets = [
   },
 ]
 
-infr_nsg_names = ["jdld-infr-snet-frontend-nsg1", "jdld-infr-snet-backend-nsg1"]
-
 apps_nsgs = [
   {
     suffix_name = "nic-all"

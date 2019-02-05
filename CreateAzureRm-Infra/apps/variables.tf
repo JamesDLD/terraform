@@ -6,10 +6,6 @@ terraform {
   required_version = "0.11.10"
 }
 
-provider "azurerm" {
-  version = "1.21"
-}
-
 provider "random" {
   version = "2.0"
 }
@@ -58,11 +54,6 @@ variable "sa_infr_name" {
 variable "apps_snets" {
   type        = "list"
   description = "Subnet list."
-}
-
-variable "infr_nsg_names" {
-  type        = "list"
-  description = "Infra Network Security Group names list"
 }
 
 variable "apps_nsgs" {
