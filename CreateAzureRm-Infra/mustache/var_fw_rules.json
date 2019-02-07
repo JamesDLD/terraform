@@ -15,6 +15,62 @@
                             "protocols": "[\"TCP\", \"UDP\"]"
                         }
                     ]
+                },
+                {
+                    "network_rule_collection_name": "sec_common_services-ncol1",
+                    "priority": 200,
+                    "action": "Allow",
+                    "rules": [
+                        {
+                            "name": "sampe-rule1",
+                            "source_addresses": "[\"198.18.2.1/32\"]",
+                            "destination_ports": "[\"53\"]",
+                            "destination_addresses": "[\"*\"]",
+                            "protocols": "[\"TCP\", \"UDP\"]"
+                        }
+                    ]
+                },
+                {
+                    "network_rule_collection_name": "apps_common_services-ncol1",
+                    "priority": 300,
+                    "action": "Allow",
+                    "rules": [
+                        {
+                            "name": "sampe-rule1",
+                            "source_addresses": "[\"198.18.2.1/32\"]",
+                            "destination_ports": "[\"53\"]",
+                            "destination_addresses": "[\"*\"]",
+                            "protocols": "[\"TCP\", \"UDP\"]"
+                        }
+                    ]
+                },
+                {
+                    "network_rule_collection_name": "bounce_common_services-ncol1",
+                    "priority": 400,
+                    "action": "Allow",
+                    "rules": [
+                        {
+                            "name": "sampe-rule1",
+                            "source_addresses": "[\"198.18.2.1/32\"]",
+                            "destination_ports": "[\"53\"]",
+                            "destination_addresses": "[\"*\"]",
+                            "protocols": "[\"TCP\", \"UDP\"]"
+                        }
+                    ]
+                },
+                {
+                    "network_rule_collection_name": "apps_services-ncol1",
+                    "priority": 1000,
+                    "action": "Allow",
+                    "rules": [
+                        {
+                            "name": "sampe-rule1",
+                            "source_addresses": "[\"198.18.2.1/32\"]",
+                            "destination_ports": "[\"53\"]",
+                            "destination_addresses": "[\"*\"]",
+                            "protocols": "[\"TCP\", \"UDP\"]"
+                        }
+                    ]
                 }
             ],
             "application_rule_collection": [
@@ -24,16 +80,16 @@
                     "action": "Allow",
                     "rules_for_fqdn_tags": [
                         {
-                            "name": "AzureTags-All-rule1",
+                            "name": "AllAzureTags-rule1",
                             "source_addresses": "[\"198.18.2.0/24\"]",
                             "fqdn_tags": "[\"MicrosoftActiveProtectionService\", \"WindowsDiagnostics\", \"WindowsUpdate\", \"AppServiceEnvironment\", \"AzureBackup\"]"
                         }
                     ],
                     "rules_for_target_fqdns": [
                         {
-                            "name": "SecopsFqdn-rule1",
+                            "name": "OsMgmt-rule1",
                             "source_addresses": "[\"198.18.2.0/24\"]",
-                            "target_fqdns": "[\"*.google.com\", \"*.bing.com\"]",
+                            "target_fqdns": "[\"google.com\",\"debian.anexia.at\",\"debian.asis.io\",\"debian.balt.net\",\"debian.bhs.mirrors.ovh.net\",\"debian.blizoo.mk\",\"debian.bononia.it\",\"debian.c3sl.ufpr.br\",\"debian.carnet.hr\",\"debian.cc.lehigh.edu\",\"debian.charite.de\",\"debian.co.il\",\"debian.connesi.it\",\"debian.cs.binghamton.edu\",\"debian.csail.mit.edu\",\"debian.cse.msu.edu\"]",
                             "protocol": [
                                 {
                                     "port": 443,
@@ -42,6 +98,78 @@
                                 {
                                     "port": 80,
                                     "type": "Http"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "application_rule_collection_name": "sec_common_services-acol1",
+                    "priority": 200,
+                    "action": "Allow",
+                    "rules_for_target_fqdns": [
+                        {
+                            "name": "sample-rule1",
+                            "source_addresses": "[\"*\"]",
+                            "target_fqdns": "[\"*.mydomain.com\"]",
+                            "protocol": [
+                                {
+                                    "port": 443,
+                                    "type": "Https"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "application_rule_collection_name": "apps_common_services-acol1",
+                    "priority": 300,
+                    "action": "Allow",
+                    "rules_for_target_fqdns": [
+                        {
+                            "name": "sample-rule1",
+                            "source_addresses": "[\"*\"]",
+                            "target_fqdns": "[\"*.mydomain.com\"]",
+                            "protocol": [
+                                {
+                                    "port": 443,
+                                    "type": "Https"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "application_rule_collection_name": "bounce_common_services-acol1",
+                    "priority": 400,
+                    "action": "Allow",
+                    "rules_for_target_fqdns": [
+                        {
+                            "name": "sample-rule1",
+                            "source_addresses": "[\"*\"]",
+                            "target_fqdns": "[\"*.mydomain.com\"]",
+                            "protocol": [
+                                {
+                                    "port": 443,
+                                    "type": "Https"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "application_rule_collection_name": "apps_services-acol1",
+                    "priority": 1000,
+                    "action": "Allow",
+                    "rules_for_target_fqdns": [
+                        {
+                            "name": "sample-rule1",
+                            "source_addresses": "[\"*\"]",
+                            "target_fqdns": "[\"*.mydomain.com\"]",
+                            "protocol": [
+                                {
+                                    "port": 443,
+                                    "type": "Https"
                                 }
                             ]
                         }

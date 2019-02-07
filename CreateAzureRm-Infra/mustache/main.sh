@@ -5,7 +5,11 @@
 #
 
 #Sample
-#./main.sh ./main_fw_rules.template.tf ./var_fw_rules.json ../../module/Create-AzureRmFirewall/main_fw_rules.tf
+#Variable init
+#template_file_location="./main_fw_rules.template"
+#variable_file_location="./var_fw_rules.json"
+#target_file_location="../../module/Create-AzureRmFirewall/main_fw_rules.tf"
+#./main.sh $template_file_location $variable_file_location $target_file_location
 
 #Variable initialisation
 template_file_location=$1
