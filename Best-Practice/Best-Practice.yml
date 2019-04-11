@@ -50,7 +50,7 @@ steps:
 - template: pipeline/terraform.yml@terraform
   parameters:
     version: $(terraform_version)
-    path: './BestPractice-1/'
+    path: './Best-Practice/BestPractice-1/'
     ArtifactName: 'BestPractice1'
     backend_secret_file_id: $(backend_secret_file_id12)
     main_secret_file_id: $(main_secret_file_id12)
@@ -60,7 +60,7 @@ steps:
 - template: pipeline/terraform.yml@terraform
   parameters:
     version: $(terraform_version)
-    path: './BestPractice-2/'
+    path: './Best-Practice/BestPractice-2/'
     ArtifactName: 'BestPractice2'
     backend_secret_file_id: $(backend_secret_file_id12)
     main_secret_file_id: $(main_secret_file_id12)
