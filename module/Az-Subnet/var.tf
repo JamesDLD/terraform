@@ -1,17 +1,15 @@
+variable "subscription_id" {}
 variable "subnet_resource_group_name" {}
 
-variable "vnets" {
+variable "vnet_names" {
   type = "list"
 }
 
-variable "subnet_prefix" {}
-variable "subnet_suffix" {}
-
-variable "snets" {
+variable "snet_list" {
   type = "list"
 }
 
-variable "subnet_route_table_ids" {
+variable "route_table_ids" {
   type = "list"
 }
 

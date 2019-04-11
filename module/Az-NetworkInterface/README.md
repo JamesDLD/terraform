@@ -32,7 +32,7 @@ variable "Linux_Vms" {
 }
 
 variable "nic_location" {
-  default = "francecentral"
+  default = "northeurope"
 }
 
 variable "nic_resource_group_name" {

@@ -1,3 +1,9 @@
+provider "null" {
+  version = "2.0"
+}
+
+variable "subscription_id" {}
+
 variable "Linux_Vms" {
   type = "list"
 }
@@ -29,4 +35,9 @@ variable "nic_tags" {
 
 variable "nsgs_ids" {
   type = "list"
+}
+
+variable "use_old_ip_configuration_name" {
+  default     = "false"
+  description = "Only used by the vpod team for retro compatibility with old model"
 }

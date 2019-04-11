@@ -30,7 +30,7 @@ variable "env_name" {
 }
 
 variable "location" {
-  default = "francecentral"
+  default = "northeurope"
 }
 
 variable "rg_apps_name" {
@@ -53,6 +53,7 @@ variable "LbRules" {
     Id_Lb          = "0"    #Id of the Load Balancer
     suffix_name    = "bou"  #It must equals the Lbs suffix_name
     lb_port        = "80"
+    probe_port     = "80"
     probe_protocol = "Http"
     request_path   = "/"
   }
