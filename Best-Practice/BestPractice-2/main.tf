@@ -42,5 +42,5 @@ module "Create-AzureRmSubnet" {
   snet_list                  = ["${var.subnets}"]
   vnet_names                 = "${module.Get-AzureRmVirtualNetwork.vnet_names}"
   nsgs_ids                   = ["null"]
-  subnet_route_table_ids     = ["null"]
+  route_table_ids            = ["null"]
 }
