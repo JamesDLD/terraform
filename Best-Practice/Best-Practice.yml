@@ -46,6 +46,11 @@ steps:
   inputs:
     secureFile: $(main_secret_file_id12)
 
+- task: DownloadSecureFile@1
+  displayName: 'Download secure file $(main_secret_file_id34)'
+  inputs:
+    secureFile: $(main_secret_file_id34)
+
 - template: pipeline/terraform.yml@terraform
   parameters:
     version: $(terraform_version)
