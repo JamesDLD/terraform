@@ -17,6 +17,8 @@ steps:
 - script: |
     #Action
     terraform init -backend-config="$(Agent.TempDirectory)/${{ parameters.backend_secret_file_id }}" -reconfigure
+    pwd
+    ls
 
     if [ "${{ parameters.main_file_path }}" != "" ] ; 
     then
