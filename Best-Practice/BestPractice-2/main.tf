@@ -36,13 +36,11 @@ module "Get-AzureRmResourceGroup" {
 
 #Action
 module "Create-AzureRmSubnet" {
-  version                    = "~> 0.1"
   source                     = "github.com/JamesDLD/terraform/module/Create-AzureRmSubnet"
+  subscription_id            = "${var.subscription_id}"
   subnet_resource_group_name = "${module.Get-AzureRmResourceGroup.rg_name}"
-  subnet_prefix              = "bp2-"
-  subnet_suffix              = "-snet1"
-  snets                      = ["${var.subnets}"]
-  vnets                      = "${module.Get-AzureRmVirtualNetwork.vnet_names}"
+  snet_list                  = ["${var.subnets}"]
+  vnet_names                 = "${module.Get-AzureRmVirtualNetwork.vnet_names}"
   nsgs_ids                   = ["null"]
   subnet_route_table_ids     = ["null"]
 }

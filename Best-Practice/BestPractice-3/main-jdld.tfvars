@@ -2,7 +2,7 @@
 
 subnets = [
   {
-    name              = "front"
+    name              = "bp3-front-snet1"
     cidr_block        = "10.0.3.0/24"
     nsg_id            = "777"                                                                                                         #Id of the Network Security Group, set to 777 if there is no Network Security Groups
     route_table_id    = "777"                                                                                                         #Id of the Route, set to 777 if there is no Routes
