@@ -1,72 +1,10 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml 
-# https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema?view=azure-devops&tabs=schema&viewFallbackFrom=vsts
-# GitHub service connection : https://docs.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops#sep-github
-
-name: $(BuildDefinitionName).$(DayOfYear)$(Rev:.r)
-
-variables:
-- group: terraform_test  # variable group
-- name: backend_secret_file_id12
-  value: 'bp1_backend.tfvars'
-- name: main_secret_file_id12
-  value: 'bp1_main.tfvars'
-
-resources:
-  repositories:
-    - repository: terraform # identifier (A-Z, a-z, 0-9, and underscore)
-      type: github
-      endpoint: JamesDLD  # name of the service connection to use (for non-Azure Repos types)
-      name: JamesDLD/terraform
-      
-pool:
-  vmImage: 'Ubuntu-16.04'
-      
-trigger:
-  batch: true
-  branches:
-    include:
-      - master
-      - feature/*
+# Publish Build Artifact
+parameters:
+  ArtifactName: ''
 
 steps:
-
-- checkout: self
-  clean: true
-  persistCredentials: true
-
-- task: DownloadSecureFile@1
-  displayName: 'Download secure file $(backend_secret_file_id12)'
+- task: PublishBuildArtifacts@1
+  displayName: '${{ parameters.ArtifactName }} - Publish Artifact: ${{ parameters.ArtifactName }}'
   inputs:
-    secureFile: $(backend_secret_file_id12)
-
-- task: DownloadSecureFile@1
-  displayName: 'Download secure file $(main_secret_file_id12)'
-  inputs:
-    secureFile: $(main_secret_file_id12)
-
-- template: pipeline/terraform.yml@terraform
-  parameters:
-    version: $(terraform_version)
-    path: './BestPractice-1/'
-    ArtifactName: 'BestPractice1'
-    backend_secret_file_id: $(backend_secret_file_id12)
-    main_secret_file_id: $(main_secret_file_id12)
-    main_file_path: ''
-    terraform_apply: true
-
-- template: pipeline/terraform.yml@terraform
-  parameters:
-    version: $(terraform_version)
-    path: './BestPractice-2/'
-    ArtifactName: 'BestPractice2'
-    backend_secret_file_id: $(backend_secret_file_id12)
-    main_secret_file_id: $(main_secret_file_id12)
-    main_file_path: './main-jdld.tfvars'
-    terraform_apply: true
-
-- template: pipeline/PublishBuildArtifacts.yml@terraform
-  parameters:
-    ArtifactName: 'BestPractice'
+    PathtoPublish: './ArtifactPublishLocation'
+    ArtifactName: '${{ parameters.ArtifactName }}'
