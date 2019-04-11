@@ -36,7 +36,7 @@ module "Get-AzureRmResourceGroup" {
 
 #Action
 module "Create-AzureRmSubnet" {
-  source                     = "github.com/JamesDLD/terraform/module/Create-AzureRmSubnet"
+  source                     = "github.com/JamesDLD/terraform/module/Az-Subnet"
   subscription_id            = "${var.subscription_id}"
   subnet_resource_group_name = "${module.Get-AzureRmResourceGroup.rg_name}"
   snet_list                  = ["${var.subnets}"]
