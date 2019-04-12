@@ -1,5 +1,7 @@
 [Previous page >](../)
 
+[![Build Status](https://dev.azure.com/jamesdld23/vpc_lab/_apis/build/status/JamesDLD.terraform%20VPC?branchName=master)](https://dev.azure.com/jamesdld23/vpc_lab/_build/latest?definitionId=6&branchName=master)
+
 Azure and Terraform
 ------------
 Simple and Powerful
