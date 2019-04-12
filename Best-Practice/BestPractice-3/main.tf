@@ -104,6 +104,4 @@ module "Create-AzureRmVms" {
   vm_tags                = "${module.Get-AzureRmResourceGroup.rg_tags}"
   app_admin              = "${var.app_admin}"
   pass                   = "${var.pass}"
-
-  Linux_nics_ids = []
 }
