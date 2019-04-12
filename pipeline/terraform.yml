@@ -47,7 +47,7 @@ steps:
 - script: terraform apply "./secret/out_plan_file"
   displayName: '${{ parameters.ArtifactName }} - Terraform Apply'
   workingDirectory: ${{ parameters.path }}
-  condition: and( ${{ parameters.terraform_apply }}, eq(variables['terraform_plan_exitcode'], '2')) # this task will only run if terrafrom has prompted for changes and a terraform apply has been asked
+  condition: and(succeeded(), ${{ parameters.terraform_apply }}, eq(variables['terraform_plan_exitcode'], '2')) # this task will only run if terrafrom has prompted for changes and a terraform apply has been asked
   
 - script: |
     echo "Compressing ${{ parameters.path }} directory and move it to ./ArtifactPublishLocation..."
