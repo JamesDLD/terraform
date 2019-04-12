@@ -24,11 +24,14 @@ pool:
   vmImage: 'Ubuntu-16.04'
       
 trigger:
-  batch: true
+  batch: true #when a build is running, the system waits until the build is completed
   branches:
     include:
       - master
       - feature/*
+  paths:
+    include:
+    - Best-Practice/*
 
 steps:
 
