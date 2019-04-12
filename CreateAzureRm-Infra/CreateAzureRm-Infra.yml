@@ -58,6 +58,17 @@ steps:
     main_file_path: './infra-main-jdld.tfvars'
     terraform_apply: true
 
+- template: pipeline/terraform.yml@terraform
+  parameters:
+    version: $(terraform_version)
+    path: './CreateAzureRm-Infra/infra_peering/'
+    ArtifactName: 'infra_peering'
+    backend_secret_file_id: $(backend_secret_file_id1)
+    backend_file_path: './infra-backend-jdld.tfvars'
+    main_secret_file_id: $(main_secret_file_id1)
+    main_file_path: './infra-main-jdld.tfvars'
+    terraform_apply: true
+
 # - template: pipeline/PublishBuildArtifacts.yml@terraform
 #   parameters:
 #     ArtifactName: 'CreateAzureRmInfra'
