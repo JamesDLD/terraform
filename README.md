@@ -1,3 +1,12 @@
+Repository inventory
+------------
+
+| Id  | Description | Build Status |
+| ------------- | ------------- | ------------- |
+| [Best-Practice](Best-Practice) | Share a list of best practices and tutoriels when using Terraform on Azure | [![Build Status](https://dev.azure.com/jamesdld23/vpc_lab/_apis/build/status/JamesDLD.terraform?branchName=master)](https://dev.azure.com/jamesdld23/vpc_lab/_build/latest?definitionId=5&branchName=master) |
+| [CreateAzureRm-Infra](CreateAzureRm-Infra)  | Share Terraform script that reveal how to create a VPC in Azure and how application client can create their resources | [![Build Status](https://dev.azure.com/jamesdld23/vpc_lab/_apis/build/status/JamesDLD.terraform%20VPC?branchName=master)](https://dev.azure.com/jamesdld23/vpc_lab/_build/latest?definitionId=6&branchName=master) |
+
+
 Azure and Terraform
 ------------
 Simple and Powerful
@@ -19,13 +28,4 @@ Share Terraform custom modules with the community with the following guidelines 
 -	a module is dedicated to one action : create network interfaces, create an Azure recovery vault, ...
 -	a module doesn't contain any static values
 -	a module is called using variables
-
-
-Repository inventory
-------------
-
-| Id  | Description | Build Status |
-| ------------- | ------------- | ------------- |
-| [Best-Practice](Best-Practice) | Share a list of best practices and tutoriels when using Terraform on Azure | [![Build Status](https://dev.azure.com/jamesdld23/vpc_lab/_apis/build/status/JamesDLD.terraform?branchName=master)](https://dev.azure.com/jamesdld23/vpc_lab/_build/latest?definitionId=5&branchName=master) |
-| [CreateAzureRm-Infra](CreateAzureRm-Infra)  | Share Terraform script that reveal how to create a VPC in Azure and how application client can create their resources | [![Build Status](https://dev.azure.com/jamesdld23/vpc_lab/_apis/build/status/JamesDLD.terraform%20VPC?branchName=master)](https://dev.azure.com/jamesdld23/vpc_lab/_build/latest?definitionId=6&branchName=master) |
 

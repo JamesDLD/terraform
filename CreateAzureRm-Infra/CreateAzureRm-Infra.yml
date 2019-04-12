@@ -80,12 +80,6 @@ steps:
     main_file_path: './apps-main-jdld.tfvars'
     terraform_apply: true
 
-# - template: pipeline/PublishBuildArtifacts.yml@terraform
-#   parameters:
-#     ArtifactName: 'CreateAzureRmInfra'
-
-# | Step  | Description |
-# | ------------- | ------------- |
-# | [1 - Infra](infra) | Deliver the Infra |
-# | [1 Bis - Infra vnet peering](infra_peering) | Virtual Network peering |
-# | [2 - Apps](apps)  | Deliver an Apps environment |
+- template: pipeline/PublishBuildArtifacts.yml@terraform
+  parameters:
+    ArtifactName: 'CreateAzureRmInfra'
