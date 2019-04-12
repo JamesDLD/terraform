@@ -4,6 +4,7 @@ parameters:
   path: ''
   ArtifactName: ''
   backend_secret_file_id: ''
+  backend_file_path: ''
   main_secret_file_id: ''
   main_file_path: ''
   terraform_apply: false
@@ -15,9 +16,17 @@ steps:
     terraformVersion: ${{ parameters.version }}
 
 - script: |
-    #Action
-    terraform init -backend-config="$(Agent.TempDirectory)/${{ parameters.backend_secret_file_id }}" -reconfigure
+    #Terraform Init
+    
 
+    if [ "${{ parameters.main_file_path }}" != "" ] ; 
+    then
+      terraform init -backend-config="${{ parameters.backend_file_path }}" -backend-config="$(Agent.TempDirectory)/${{ parameters.backend_secret_file_id }}" -reconfigure
+    else
+      terraform init -backend-config="$(Agent.TempDirectory)/${{ parameters.backend_secret_file_id }}" -reconfigure
+    fi
+
+    #Terraform Plan
     if [ "${{ parameters.main_file_path }}" != "" ] ; 
     then
       terraform plan -var-file="${{ parameters.main_file_path }}" -var-file="$(Agent.TempDirectory)/${{ parameters.main_secret_file_id }}" -out="./secret/out_plan_file" -input=false -detailed-exitcode > /dev/null
