@@ -17,21 +17,19 @@ steps:
 
 - script: |
     #Terraform Init
-    
-
-    if [ "${{ parameters.main_file_path }}" != "" ] ; 
+    if [ "${{ parameters.backend_file_path }}" != "" ] ; 
     then
-      terraform init -backend-config="${{ parameters.backend_file_path }}" -backend-config="$(Agent.TempDirectory)/${{ parameters.backend_secret_file_id }}" -reconfigure
+      terraform init -backend-config="${{ parameters.backend_file_path }}" -backend-config="$(Agent.TempDirectory)/${{ parameters.backend_secret_file_id }}" -input=false -reconfigure
     else
-      terraform init -backend-config="$(Agent.TempDirectory)/${{ parameters.backend_secret_file_id }}" -reconfigure
+      terraform init -backend-config="$(Agent.TempDirectory)/${{ parameters.backend_secret_file_id }}" -input=false -reconfigure
     fi
 
     #Terraform Plan
     if [ "${{ parameters.main_file_path }}" != "" ] ; 
     then
-      terraform plan -var-file="${{ parameters.main_file_path }}" -var-file="$(Agent.TempDirectory)/${{ parameters.main_secret_file_id }}" -out="./secret/out_plan_file" -input=false -detailed-exitcode > /dev/null
+      terraform plan -var-file="${{ parameters.main_file_path }}" -var-file="$(Agent.TempDirectory)/${{ parameters.main_secret_file_id }}" -out="./out_plan_file" -input=false -detailed-exitcode > /dev/null
     else
-      terraform plan -var-file="$(Agent.TempDirectory)/${{ parameters.main_secret_file_id }}" -out="./secret/out_plan_file" -input=false -detailed-exitcode > /dev/null
+      terraform plan -var-file="$(Agent.TempDirectory)/${{ parameters.main_secret_file_id }}" -out="./out_plan_file" -input=false -detailed-exitcode > /dev/null
     fi
 
     OUT=$?
@@ -45,7 +43,7 @@ steps:
     elif [ $OUT -eq 2 ];then
         echo '##vso[task.setvariable variable=terraform_plan_exitcode]2'
         echo "${Warning}Changes have been noticed!"
-        terraform show ./secret/out_plan_file
+        terraform show ./out_plan_file
     else
         echo "Terraform planned has failed!"
         exit 1
@@ -53,7 +51,7 @@ steps:
   displayName: '${{ parameters.ArtifactName }} - Terraform Plan'
   workingDirectory: ${{ parameters.path }}
 
-- script: terraform apply "./secret/out_plan_file"
+- script: terraform apply "./out_plan_file"
   displayName: '${{ parameters.ArtifactName }} - Terraform Apply'
   workingDirectory: ${{ parameters.path }}
   condition: and(succeeded(), ${{ parameters.terraform_apply }}, eq(variables['terraform_plan_exitcode'], '2')) # this task will only run if terrafrom has prompted for changes and a terraform apply has been asked

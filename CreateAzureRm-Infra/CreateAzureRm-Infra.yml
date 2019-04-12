@@ -58,7 +58,6 @@ steps:
     main_file_path: './infra-main-jdld.tfvars'
     terraform_apply: true
 
-
 # - template: pipeline/PublishBuildArtifacts.yml@terraform
 #   parameters:
 #     ArtifactName: 'CreateAzureRmInfra'
