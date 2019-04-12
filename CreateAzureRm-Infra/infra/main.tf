@@ -32,7 +32,7 @@ data "azurerm_resource_group" "Apps" {
 
 ## Core Infra components
 module "Create-AzureRmRecoveryServicesVault-Infr" {
-  source                  = "../../module/Create-AzureRmRecoveryServicesVault"
+  source                  = "github.com/JamesDLD/terraform/module/Create-AzureRmRecoveryServicesVault"
   rsv_name                = "infra-${var.app_name}-${var.env_name}-rsv1"
   rsv_resource_group_name = "${data.azurerm_resource_group.Infr.name}"
   rsv_tags                = "${data.azurerm_resource_group.Infr.tags}"
@@ -44,7 +44,7 @@ module "Create-AzureRmRecoveryServicesVault-Infr" {
 }
 
 module "Create-AzureRmKeyVault-Infr" {
-  source                 = "../../module/Create-AzureRmKeyVault"
+  source                 = "github.com/JamesDLD/terraform/module/Create-AzureRmKeyVault"
   key_vaults             = ["${var.key_vaults}"]
   kv_tenant_id           = "${var.tenant_id}"
   kv_prefix              = "${var.app_name}-${var.env_name}-"
@@ -67,7 +67,7 @@ data "azurerm_storage_account" "Infr" {
 
 ## Core Network components
 module "Create-AzureRmVirtualNetwork-Infra" {
-  source                   = "../../module/Create-AzureRmVirtualNetwork"
+  source                   = "github.com/JamesDLD/terraform/module/Create-AzureRmVirtualNetwork"
   vnets                    = ["${var.vnets}"]
   vnet_prefix              = "infra-${var.app_name}-${var.env_name}-"
   vnet_suffix              = "-net1"
@@ -95,7 +95,7 @@ module "Create-AzureRmSubnet-Infra" {
 }
 
 module "Create-AzureRmNetworkSecurityGroup-Infra" {
-  source                  = "../../module/Create-AzureRmNetworkSecurityGroup"
+  source                  = "github.com/JamesDLD/terraform/module/Create-AzureRmNetworkSecurityGroup"
   nsgs                    = ["${var.infra_nsgs}"]
   nsg_prefix              = "${var.app_name}-${var.env_name}-"
   nsg_suffix              = "-nsg1"
@@ -110,7 +110,7 @@ module "Create-AzureRmNetworkSecurityGroup-Infra" {
 }
 
 module "Create-AzureRmRoute-Infra" {
-  source                 = "../../module/Create-AzureRmRoute"
+  source                 = "github.com/JamesDLD/terraform/module/Create-AzureRmRoute"
   rt_resource_group_name = "${data.azurerm_resource_group.Infr.name}"
   rt_location            = "${data.azurerm_resource_group.Infr.location}"
   routes                 = ["${var.routes}"]
@@ -126,7 +126,7 @@ module "Create-AzureRmRoute-Infra" {
 
 ## Secops policies & RBAC roles
 module "Create-AzureRmPolicyDefinition" {
-  source     = "../../module/Create-AzureRmPolicyDefinition"
+  source     = "github.com/JamesDLD/terraform/module/Create-AzureRmPolicyDefinition"
   policies   = ["${var.policies}"]
   pol_prefix = "${var.app_name}-${var.env_name}-"
   pol_suffix = "-pol1"
@@ -137,7 +137,7 @@ module "Create-AzureRmPolicyDefinition" {
 }
 
 module "Enable-AzureRmPolicyAssignment-Infra-nsg-on-apps-subnet" {
-  source                     = "../../module/Enable-AzureRmPolicyAssignment"
+  source                     = "github.com/JamesDLD/terraform/module/Enable-AzureRmPolicyAssignment"
   p_ass_name                 = "enforce-nsg-under-vnet-${element(module.Create-AzureRmVirtualNetwork-Infra.vnet_names,1)}"
   p_ass_scope                = "${element(module.Create-AzureRmVirtualNetwork-Infra.vnet_ids,1)}"
   p_ass_policy_definition_id = "${element(module.Create-AzureRmPolicyDefinition.policy_ids,0)}"
@@ -150,7 +150,7 @@ module "Enable-AzureRmPolicyAssignment-Infra-nsg-on-apps-subnet" {
 }
 
 module "Enable-AzureRmPolicyAssignment-Infra-udr-on-subnet" {
-  source                     = "../../module/Enable-AzureRmPolicyAssignment"
+  source                     = "github.com/JamesDLD/terraform/module/Enable-AzureRmPolicyAssignment"
   p_ass_name                 = "enforce-udr-under-vnet-${element(module.Create-AzureRmVirtualNetwork-Infra.vnet_names,1)}"
   p_ass_scope                = "${element(module.Create-AzureRmVirtualNetwork-Infra.vnet_ids,1)}"
   p_ass_policy_definition_id = "${element(module.Create-AzureRmPolicyDefinition.policy_ids,1)}"
@@ -163,7 +163,7 @@ module "Enable-AzureRmPolicyAssignment-Infra-udr-on-subnet" {
 }
 
 module "Create-AzureRmRoleDefinition-Apps" {
-  source      = "../../module/Create-AzureRmRoleDefinition"
+  source      = "github.com/JamesDLD/terraform/module/Create-AzureRmRoleDefinition"
   roles       = ["${var.roles}"]
   role_prefix = "${var.app_name}-${var.env_name}-"
   role_suffix = "-role1"
@@ -174,7 +174,7 @@ module "Create-AzureRmRoleDefinition-Apps" {
 }
 
 module "Enable-AzureRmRoleAssignment" {
-  source                  = "../../module/Enable-AzureRmRoleAssignment"
+  source                  = "github.com/JamesDLD/terraform/module/Enable-AzureRmRoleAssignment"
   ass_countRoleAssignment = "${length(var.roles)}"
 
   ass_scopes = ["${data.azurerm_resource_group.Apps.id}",
@@ -195,7 +195,7 @@ module "Enable-AzureRmRoleAssignment" {
 }
 
 module "Create-AzureRmFirewall-Infr" {
-  source                 = "../../module/Create-AzureRmFirewall"
+  source                 = "github.com/JamesDLD/terraform/module/Create-AzureRmFirewall"
   fw_resource_group_name = "${data.azurerm_resource_group.Infr.name}"
   fw_location            = "${data.azurerm_resource_group.Infr.location}"
   fw_prefix              = "${var.app_name}-${var.env_name}-fw1"
