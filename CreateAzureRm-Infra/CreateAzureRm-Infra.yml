@@ -47,45 +47,16 @@ steps:
   inputs:
     secureFile: $(main_secret_file_id1)
 
-# - template: pipeline/terraform.yml@terraform
-#   parameters:
-#     version: $(terraform_version)
-#     path: './Best-Practice/BestPractice-1/'
-#     ArtifactName: 'BestPractice1'
-#     backend_secret_file_id: $(backend_secret_file_id1234)
-#     main_secret_file_id: $(main_secret_file_id12)
-#     main_file_path: ''
-#     terraform_apply: true
+- template: pipeline/terraform.yml@terraform
+  parameters:
+    version: $(terraform_version)
+    path: './CreateAzureRm-Infra/infra/'
+    ArtifactName: 'infra'
+    backend_secret_file_id: $(backend_secret_file_id1)
+    main_secret_file_id: $(main_secret_file_id1)
+    main_file_path: './main-jdld.tfvars'
+    terraform_apply: true
 
-# - template: pipeline/terraform.yml@terraform
-#   parameters:
-#     version: $(terraform_version)
-#     path: './Best-Practice/BestPractice-2/'
-#     ArtifactName: 'BestPractice2'
-#     backend_secret_file_id: $(backend_secret_file_id1234)
-#     main_secret_file_id: $(main_secret_file_id12)
-#     main_file_path: './main-jdld.tfvars'
-#     terraform_apply: true
-
-# - template: pipeline/terraform.yml@terraform
-#   parameters:
-#     version: $(terraform_version)
-#     path: './Best-Practice/BestPractice-3/'
-#     ArtifactName: 'BestPractice3'
-#     backend_secret_file_id: $(backend_secret_file_id1234)
-#     main_secret_file_id: $(main_secret_file_id34)
-#     main_file_path: './main-jdld.tfvars'
-#     terraform_apply: true
-
-# - template: pipeline/terraform.yml@terraform
-#   parameters:
-#     version: $(terraform_version)
-#     path: './Best-Practice/BestPractice-4/'
-#     ArtifactName: 'BestPractice4'
-#     backend_secret_file_id: $(backend_secret_file_id1234)
-#     main_secret_file_id: $(main_secret_file_id34)
-#     main_file_path: './main-jdld.tfvars'
-#     terraform_apply: true
 
 # - template: pipeline/PublishBuildArtifacts.yml@terraform
 #   parameters:
@@ -96,5 +67,3 @@ steps:
 # | [1 - Infra](infra) | Deliver the Infra |
 # | [1 Bis - Infra vnet peering](infra_peering) | Virtual Network peering |
 # | [2 - Apps](apps)  | Deliver an Apps environment |
-# $(backend_secret_file_id1)
-# $(main_secret_file_id1)

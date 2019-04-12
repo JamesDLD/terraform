@@ -125,12 +125,12 @@ vnets = [
 
 snets = [
   {
-    subnet_suffix_name = "AzureFirewallSubnet"
-    cidr               = "198.18.1.0/26"
-    Id_Nsg             = "777"                                                                                                                                               #Id of the Network Security Group, set to 777 if there is no Network Security Groups
-    Id_route_table     = "777"                                                                                                                                               #Id of the Route table, set to 777 if there is no Route table
-    Id_Vnet            = "0"                                                                                                                                                 #Id of the vnet
-    service_endpoints  = "Microsoft.AzureActiveDirectory Microsoft.AzureCosmosDB Microsoft.EventHub Microsoft.KeyVault Microsoft.ServiceBus Microsoft.Sql Microsoft.Storage" #Service Endpoints list sperated by an espace, if you don't need to set it to "" or "777"
+    name              = "AzureFirewallSubnet"
+    cidr_block        = "198.18.1.0/26"
+    nsg_id            = "777"                                                                                                                                               #Id of the Network Security Group, set to 777 if there is no Network Security Groups
+    route_table_id    = "777"                                                                                                                                               #Id of the Route table, set to 777 if there is no Route table
+    vnet_name_id      = "0"                                                                                                                                                 #Id of the vnet
+    service_endpoints = "Microsoft.AzureActiveDirectory Microsoft.AzureCosmosDB Microsoft.EventHub Microsoft.KeyVault Microsoft.ServiceBus Microsoft.Sql Microsoft.Storage" #Service Endpoints list sperated by an espace, if you don't need to set it to "" or "777"
   },
 ]
 

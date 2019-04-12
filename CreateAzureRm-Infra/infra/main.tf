@@ -81,14 +81,13 @@ module "Create-AzureRmVirtualNetwork-Infra" {
 }
 
 module "Create-AzureRmSubnet-Infra" {
-  source                     = "../../module/Create-AzureRmSubnet"
+  source                     = "github.com/JamesDLD/terraform/module/Az-Subnet"
+  subscription_id            = "${var.subscription_id}"
   subnet_resource_group_name = "${element(module.Create-AzureRmVirtualNetwork-Infra.vnet_rgnames,0)}"
-  subnet_prefix              = ""
-  subnet_suffix              = ""
-  snets                      = ["${var.snets}"]
-  vnets                      = "${module.Create-AzureRmVirtualNetwork-Infra.vnet_names}"
-  nsgs_ids                   = [""]
-  subnet_route_table_ids     = [""]
+  snet_list                  = ["${var.snets}"]
+  vnet_names                 = "${module.Create-AzureRmVirtualNetwork-Infra.vnet_names}"
+  nsgs_ids                   = ["null"]
+  route_table_ids            = ["null"]
 
   providers {
     "azurerm" = "azurerm.service_principal_infra"

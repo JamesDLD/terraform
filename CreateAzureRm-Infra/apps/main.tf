@@ -66,14 +66,13 @@ module "Create-AzureRmApplicationkSecurityGroup-Apps" {
 }
 
 module "Create-AzureRmSubnet-Apps" {
-  source                     = "../../module/Create-AzureRmSubnet"
+  source                     = "github.com/JamesDLD/terraform/module/Az-Subnet"
+  subscription_id            = "${var.subscription_id}"
   subnet_resource_group_name = "${var.rg_infr_name}"
-  subnet_prefix              = "${var.app_name}-${var.env_name}-"
-  subnet_suffix              = "-snet1"
-  snets                      = ["${var.apps_snets}"]
-  vnets                      = ["infra-jdld-infr-apps-net1"]
+  snet_list                  = ["${var.apps_snets}"]
+  vnet_names                 = ["infra-jdld-infr-apps-net1"]
   nsgs_ids                   = ["${data.azurerm_network_security_group.Infr.id}"]
-  subnet_route_table_ids     = ["${data.azurerm_route_table.Infr.id}"]
+  route_table_ids            = ["${data.azurerm_route_table.Infr.id}"]
 }
 
 ## Virtual Machines components
