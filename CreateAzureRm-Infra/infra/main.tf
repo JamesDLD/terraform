@@ -136,6 +136,8 @@ module "Create-AzureRmPolicyDefinition" {
   }
 }
 
+/*
+Currently generating a bug on Apps
 module "Enable-AzureRmPolicyAssignment-Infra-nsg-on-apps-subnet" {
   source                     = "github.com/JamesDLD/terraform/module/Enable-AzureRmPolicyAssignment"
   p_ass_name                 = "enforce-nsg-under-vnet-${element(module.Create-AzureRmVirtualNetwork-Infra.vnet_names,1)}"
@@ -161,7 +163,7 @@ module "Enable-AzureRmPolicyAssignment-Infra-udr-on-subnet" {
     "azurerm" = "azurerm.service_principal_infra"
   }
 }
-
+*/
 module "Create-AzureRmRoleDefinition-Apps" {
   source      = "github.com/JamesDLD/terraform/module/Create-AzureRmRoleDefinition"
   roles       = ["${var.roles}"]
