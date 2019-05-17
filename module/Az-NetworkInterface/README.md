@@ -21,7 +21,7 @@ variable "Linux_Vms" {
     Id_Nsg            = "1"                      #Id of the Network Security Group, set to 777 if there is no Network Security Groups
     BackupPolicyName  = "BackupPolicy-Schedule1"
     static_ip         = "198.18.1.228"
-    vm_size           = "Standard_DS2_v2"
+    vm_size           = "Standard_DS1_v2"
     managed_disk_type = "Premium_LRS"
     publisher         = "redhat"
     offer             = "RHEL"

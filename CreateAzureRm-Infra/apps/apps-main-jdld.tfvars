@@ -179,7 +179,7 @@ Linux_Vms = [
     BackupPolicyName              = "BackupPolicy-Schedule1" #Set 777 to disable backup (WARNING, this will delete previous backup) otherwise set a backup policy like BackupPolicy-Schedule1
     static_ip                     = "198.18.2.228"
     enable_accelerated_networking = "true"
-    vm_size                       = "Standard_DS2_v2"
+    vm_size                       = "Standard_DS1_v2"
     managed_disk_type             = "Premium_LRS"
   },
   {
@@ -194,7 +194,7 @@ Linux_Vms = [
     BackupPolicyName              = "BackupPolicy-Schedule1" #Set 777 to disable backup (WARNING, this will delete previous backup) otherwise set a backup policy like BackupPolicy-Schedule1
     static_ip                     = "198.18.2.229"
     enable_accelerated_networking = "true"
-    vm_size                       = "Standard_DS2_v2"
+    vm_size                       = "Standard_DS1_v2"
     managed_disk_type             = "Premium_LRS"
   },
 ]
@@ -234,7 +234,7 @@ Windows_Vms = [
     BackupPolicyName              = "777"             #Set 777 to disable backup (WARNING, this will delete previous backup) otherwise set a backup policy like BackupPolicy-Schedule1
     static_ip                     = "198.18.2.230"
     enable_accelerated_networking = "true"
-    vm_size                       = "Standard_DS2_v2"
+    vm_size                       = "Standard_DS1_v2"
     managed_disk_type             = "Premium_LRS"
   },
   {
@@ -249,7 +249,7 @@ Windows_Vms = [
     BackupPolicyName              = "777"             #Set 777 to disable backup (WARNING, this will delete previous backup) otherwise set a backup policy like BackupPolicy-Schedule1
     static_ip                     = "198.18.2.231"
     enable_accelerated_networking = "true"
-    vm_size                       = "Standard_DS2_v2"
+    vm_size                       = "Standard_DS1_v2"
     managed_disk_type             = "Premium_LRS"
   },
 ]
@@ -289,7 +289,7 @@ Linux_Ss_Vms = [
     Id_Subnet           = "1"               #Id of the Subnet
     Id_Nsg              = "1"               #Id of the Network Security Group, set to 777 if there is no Network Security Groups
     upgrade_policy_mode = "Manual"
-    sku_name            = "Standard_DS2_v2"
+    sku_name            = "Standard_DS1_v2"
     sku_tier            = "Standard"
     sku_capacity        = 1
     publisher           = "OpenLogic"
@@ -309,7 +309,7 @@ Windows_Ss_Vms = [
     Id_Subnet           = "1"                      #Id of the Subnet
     Id_Nsg              = "1"                      #Id of the Network Security Group, set to 777 if there is no Network Security Groups
     upgrade_policy_mode = "Manual"
-    sku_name            = "Standard_DS2_v2"
+    sku_name            = "Standard_DS1_v2"
     sku_tier            = "Standard"
     sku_capacity        = 1
     publisher           = "MicrosoftWindowsServer"
