@@ -5,7 +5,7 @@ provider "azurerm" {
   client_id       = "${lookup(var.service_principals[1], "Application_Id")}"
   client_secret   = "${lookup(var.service_principals[1], "Application_Secret")}"
   tenant_id       = "${var.tenant_id}"
-  version         = "1.21"
+  version         = "1.27.1"
 }
 
 # Module
