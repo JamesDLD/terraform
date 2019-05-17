@@ -5,7 +5,7 @@
 name: $(BuildDefinitionName).$(DayOfYear)$(Rev:.r)
 
 variables:
-- group: terraform_test  # variable group
+- group: terraform_binary  # variable group
 - name: backend_secret_file_id1234
   value: 'bp1_backend.tfvars'
 - name: main_secret_file_id12

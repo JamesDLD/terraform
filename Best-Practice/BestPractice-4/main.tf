@@ -1,6 +1,6 @@
 #Set the terraform backend
 terraform {
-  required_version = "0.11.13"
+  required_version = "0.11.14"
 
   backend "azurerm" {
     storage_account_name = "infrsand1vpcjdld1"
