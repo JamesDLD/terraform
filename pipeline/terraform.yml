@@ -57,8 +57,9 @@ steps:
   condition: and(succeeded(), ${{ parameters.terraform_apply }}, eq(variables['terraform_plan_exitcode'], '2')) # this task will only run if terrafrom has prompted for changes and a terraform apply has been asked
   
 - script: |
-    echo "Compressing ${{ parameters.path }} directory and move it to ./ArtifactPublishLocation..."
+    echo "Compressing ${{ parameters.path }} directory ..."
     tar -czf ${{ parameters.ArtifactName }}.tar.gz -C ${{ parameters.path }} .
-    mkdir ./ArtifactPublishLocation
+    mkdir -p ./ArtifactPublishLocation
+    echo "Moving this archive directory to this location ./ArtifactPublishLocation ..."
     mv -f ${{ parameters.ArtifactName }}.tar.gz ./ArtifactPublishLocation/${{ parameters.ArtifactName }}.tar.gz
   displayName: '${{ parameters.ArtifactName }} - Compress ${{ parameters.path }} Artifact'
