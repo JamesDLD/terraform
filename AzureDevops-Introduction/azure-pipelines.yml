@@ -1,8 +1,31 @@
+#Multi-stage YAML pipeline demo.
 name: $(BuildDefinitionName).$(DayOfYear)$(Rev:.r)
 
+variables:
+- group: terraform_binary  # variable containing Terraform information like the Terraform version
+- name: backend_secret_file_id1 # secret file used by the Terraform init cmdlet
+  value: 'backend-jdld.tfvars'
+- name: main_secret_file_id1 # secret file used by the Terraform plan and destroy cmdlet
+  value: 'main-jdld.tfvars'
+
+resources:
+  repositories:
+    - repository: terraform # identifier (A-Z, a-z, 0-9, and underscore)
+      type: github
+      endpoint: JamesDLD  # name of the service connection to use (for non-Azure Repos types)
+      name: JamesDLD/terraform
+
+trigger:
+  batch: true #when a build is running, the system waits until the build is completed
+  branches:
+    include:
+      - feature/*
+  paths:
+    include:
+    - AzureDevops-Introduction/*
+
 stages:
-- stage: Build
-  description: "kkk"
+- stage: Integrate
   jobs:
   - job: Build
     pool:
@@ -10,10 +33,24 @@ stages:
     continueOnError: true
     steps:
     - script: echo my first build job
-- stage: Deploy
+- stage: Deployment
   jobs:
     # track deployments on the environment
-  - deployment: DeployWeb
+  - deployment: Terraform Apply
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    # creates an environment if it doesn’t exist
+    environment: 'Demo1'
+    strategy:
+      # default deployment strategy
+      runOnce:
+        deploy:
+          steps:
+          - script: echo my first deployment
+- stage: Delivery
+  jobs:
+    # track deployments on the environment
+  - deployment: Terraform Destroy
     pool:
       vmImage: 'Ubuntu-16.04'
     # creates an environment if it doesn’t exist
@@ -26,4 +63,3 @@ stages:
           - script: echo my first deployment
 
 #https://devblogs.microsoft.com/devops/whats-new-with-azure-pipelines/
-#Amazing, thanks for all those improvment! I was doing some test and I couldn't figuring out how to set through YAML a run trigger for new Artifacts or for a determined scheduled. Is this someting that we can do during the preview or is this planned?
