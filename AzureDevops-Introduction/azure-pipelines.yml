@@ -1,8 +1,9 @@
+#  description: "kkk" KO : root, stage
+#description: Multi-stage YAML pipeline demo.
 name: $(BuildDefinitionName).$(DayOfYear)$(Rev:.r)
 
 stages:
 - stage: Build
-  description: "kkk"
   jobs:
   - job: Build
     pool:
