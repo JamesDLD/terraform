@@ -36,7 +36,7 @@ stages:
 - stage: Deployment
   jobs:
     # track deployments on the environment
-  - deployment: Terraform Apply
+  - deployment: Terraform_Apply
     pool:
       vmImage: 'Ubuntu-16.04'
     # creates an environment if it doesn’t exist
@@ -50,7 +50,7 @@ stages:
 - stage: Delivery
   jobs:
     # track deployments on the environment
-  - deployment: Terraform Destroy
+  - deployment: Terraform_Destroy
     pool:
       vmImage: 'Ubuntu-16.04'
     # creates an environment if it doesn’t exist
