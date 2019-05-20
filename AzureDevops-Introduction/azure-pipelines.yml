@@ -53,6 +53,8 @@ stages:
   - deployment: Terraform_Destroy
     pool:
       vmImage: 'Ubuntu-16.04'
+    # creates an environment if it doesn’t exist
+    environment: 'Demo1'
     strategy:
       # default deployment strategy
       runOnce:
