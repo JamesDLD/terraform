@@ -8,13 +8,6 @@ variables:
 - name: main_secret_file_id1 # secret file used by the Terraform plan and destroy cmdlet
   value: 'main-jdld.tfvars'
 
-# resources:
-#   repositories:
-#     - repository: terraform # identifier (A-Z, a-z, 0-9, and underscore)
-#       type: github
-#       endpoint: JamesDLD  # name of the service connection to use (for non-Azure Repos types)
-#       name: JamesDLD/terraform
-
 trigger:
   batch: true #when a build is running, the system waits until the build is completed
   branches:
@@ -25,6 +18,12 @@ trigger:
     - AzureDevops-Introduction/*
 
 stages:
+resources:
+  repositories:
+    - repository: terraform # identifier (A-Z, a-z, 0-9, and underscore)
+      type: github
+      endpoint: JamesDLD  # name of the service connection to use (for non-Azure Repos types)
+      name: JamesDLD/terraform
 - stage: Integrate
   jobs:
   - job: Build
