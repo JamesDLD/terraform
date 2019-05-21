@@ -1,17 +1,12 @@
-# Starter pipeline
-# Doc memo : https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema?view=azure-devops&tabs=schema&viewFallbackFrom=vsts
-# GitHub service connection : https://docs.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops#sep-github
-
+#Multi-stage YAML pipeline demo.
 name: $(BuildDefinitionName).$(DayOfYear)$(Rev:.r)
 
 variables:
-- group: terraform_binary  # variable group
-- name: backend_secret_file_id1234
-  value: 'bp1_backend.tfvars'
-- name: main_secret_file_id12
-  value: 'bp1_main.tfvars'
-- name: main_secret_file_id34
-  value: 'bp3_main.tfvars'
+- group: terraform_binary  # variable containing Terraform information like the Terraform version
+- name: backend_secret_file_id1 # secret file used by the Terraform init cmdlet
+  value: 'backend-jdld.tfvars'
+- name: main_secret_file_id1 # secret file used by the Terraform plan and destroy cmdlet
+  value: 'main-jdld.tfvars'
 
 resources:
   repositories:
@@ -19,6 +14,52 @@ resources:
       type: github
       endpoint: JamesDLD  # name of the service connection to use (for non-Azure Repos types)
       name: JamesDLD/terraform
-      
-pool:
-  vmImage: 'Ubuntu-16.04'
+
+trigger:
+  batch: true #when a build is running, the system waits until the build is completed
+  branches:
+    include:
+      - feature/*
+  paths:
+    include:
+    - AzureDevops-Introduction/*
+
+stages:
+- stage: Integrate
+  jobs:
+  - job: Build
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    continueOnError: true
+    steps:
+    - script: echo my first build job
+- stage: Deployment
+  jobs:
+    # track deployments on the environment
+  - deployment: Terraform_Apply
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    # creates an environment if it doesn’t exist
+    environment: 'Demo1'
+    strategy:
+      # default deployment strategy
+      runOnce:
+        deploy:
+          steps:
+          - script: echo my first deployment
+- stage: Delivery
+  jobs:
+    # track deployments on the environment
+  - deployment: Terraform_Destroy
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    # creates an environment if it doesn’t exist
+    environment: 'Demo1'
+    strategy:
+      # default deployment strategy
+      runOnce:
+        deploy:
+          steps:
+          - script: echo my first deployment
+
+#https://devblogs.microsoft.com/devops/whats-new-with-azure-pipelines/
