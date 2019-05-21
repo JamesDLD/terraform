@@ -25,14 +25,6 @@ trigger:
     - AzureDevops-Introduction/*
 
 stages:
-- stage: Integrate
-  jobs:
-  - job: Build
-    pool:
-      vmImage: 'Ubuntu-16.04'
-    continueOnError: true
-    steps:
-    - script: echo my first build job
 - stage: Deployment
   jobs:
     # track deployments on the environment
@@ -40,13 +32,13 @@ stages:
     pool:
       vmImage: 'Ubuntu-16.04'
     # creates an environment if it doesn’t exist
-    environment: 'Demo1'
+    environment: 'staging'
     strategy:
       # default deployment strategy
       runOnce:
         deploy:
           steps:
-          - script: echo my first deployment
+          - script: echo my first deployment in the staging environment
 - stage: Delivery
   jobs:
     # track deployments on the environment
@@ -54,12 +46,10 @@ stages:
     pool:
       vmImage: 'Ubuntu-16.04'
     # creates an environment if it doesn’t exist
-    environment: 'Demo1'
+    environment: 'production'
     strategy:
       # default deployment strategy
       runOnce:
         deploy:
           steps:
-          - script: echo my first deployment
-
-#https://devblogs.microsoft.com/devops/whats-new-with-azure-pipelines/
+          - script: echo my second deployment in the production environment
