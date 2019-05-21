@@ -21,14 +21,14 @@ stages:
 resources:
 - stage: Integrate
   jobs:
-  repositories:
-    - repository: terraform # identifier (A-Z, a-z, 0-9, and underscore)
-      type: github
-      endpoint: JamesDLD  # name of the service connection to use (for non-Azure Repos types)
-      name: JamesDLD/terraform
   - job: Build
     pool:
       vmImage: 'Ubuntu-16.04'
+    repositories:
+      - repository: terraform # identifier (A-Z, a-z, 0-9, and underscore)
+        type: github
+        endpoint: JamesDLD  # name of the service connection to use (for non-Azure Repos types)
+        name: JamesDLD/terraform
     continueOnError: true
     steps:
     - script: echo my first build job
