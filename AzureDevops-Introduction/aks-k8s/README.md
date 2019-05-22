@@ -3,7 +3,9 @@
 Step 1 : Create a Kubernetes cluster with Azure Kubernetes Service and Terraform
 -----
 
-The Terraform code available here has been inspired from this [Microsoft guide](https://docs.microsoft.com/en-us/azure/terraform/terraform-create-k8s-cluster-with-tf-and-aks)
+The Terraform code available here has been inspired from those Microsoft guides:
+1. [Create a Kubernetes cluster with Azure Kubernetes Service and Terraform](https://docs.microsoft.com/en-us/azure/terraform/terraform-create-k8s-cluster-with-tf-and-aks)
+2. [Quickstart: Deploy an Azure Kubernetes Service (AKS) cluster using the Azure CLI](https://docs.microsoft.com/en-us/azure/aks/kubernetes-walkthrough)
 
 With your Terraform template created, the first step is to initialize Terraform. 
 This step ensures that Terraform has all the prerequisites to build your template in Azure.
