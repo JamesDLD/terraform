@@ -4,7 +4,7 @@ resource "azurerm_template_deployment" "backup_vault" {
   template_body       = "${file("${path.module}/AzureRmRecoveryServicesVault_template.json")}"
   deployment_mode     = "Incremental"
 
-  parameters {
+  parameters = {
     vaultName = "${var.rsv_name}"
     rsvtags   = "${jsonencode(var.rsv_tags)}"
   }
