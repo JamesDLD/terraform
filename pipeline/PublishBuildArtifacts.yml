@@ -1,0 +1,10 @@
+# Publish Build Artifact
+parameters:
+  ArtifactName: ''
+
+steps:
+- task: PublishBuildArtifacts@1
+  displayName: '${{ parameters.ArtifactName }} - Publish Artifact: ${{ parameters.ArtifactName }}'
+  inputs:
+    PathtoPublish: './ArtifactPublishLocation'
+    ArtifactName: '${{ parameters.ArtifactName }}'

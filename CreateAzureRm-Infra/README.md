@@ -1,5 +1,7 @@
 [Previous page >](../)
 
+[![Build Status](https://dev.azure.com/jamesdld23/vpc_lab/_apis/build/status/JamesDLD.terraform%20VPC?branchName=master)](https://dev.azure.com/jamesdld23/vpc_lab/_build/latest?definitionId=6&branchName=master)
+
 Azure and Terraform
 ------------
 Simple and Powerful
@@ -30,7 +32,7 @@ Usage
 General Requirements
 ------------
 
--	[Terraform](https://www.Terraform.io/downloads.html) 0.11.10
+-	[Terraform](https://www.Terraform.io/downloads.html) 0.11.14
 -	[AzureRM Terraform Provider](https://github.com/Terraform-providers/Terraform-provider-azurerm/blob/master/README.md)
 -	[AzureRM Terraform Provider - Authentication](https://www.Terraform.io/docs/providers/azurerm/)
 -   The called "Infra" Azure Service Principal has the following privileges :

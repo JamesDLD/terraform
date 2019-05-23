@@ -19,3 +19,8 @@ variable "lb_tags" {
 variable "LbRules" {
   type = "list"
 }
+
+variable "emptylist" {
+  type    = "list"
+  default = ["null", "null"]
+}

@@ -3,11 +3,11 @@
 #Authentication
 terraform {
   backend          "azurerm"        {}
-  required_version = "0.11.10"
+  required_version = "0.11.14"
 }
 
 provider "random" {
-  version = "2.0"
+  version = "2.1.2"
 }
 
 variable "subscription_id" {
@@ -49,6 +49,10 @@ variable "sa_infr_name" {
   description = "Infra storage account name."
 }
 
+variable "bck_rsv_name" {
+  description = "Infra recovery services vault name."
+}
+
 #Subnet & Network Security group
 
 variable "apps_snets" {
@@ -84,11 +88,6 @@ variable "Lbs" {
 variable "LbRules" {
   type        = "list"
   description = "Load Balancer rules list."
-}
-
-variable "Availabilitysets" {
-  type        = "list"
-  description = "Availability Set list containing the following keys : suffix_name, platform_fault_domain_count and platform_update_domain_count"
 }
 
 variable "Linux_Vms" {

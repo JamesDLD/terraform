@@ -3,15 +3,15 @@
 #Authentication
 terraform {
   backend          "azurerm"        {}
-  required_version = "0.11.10"
+  required_version = "0.11.14"
 }
 
 provider "azurerm" {
-  version = "1.21"
+  version = "1.27.1"
 }
 
 provider "random" {
-  version = "2.0"
+  version = "2.1.2"
 }
 
 variable "subscription_id" {

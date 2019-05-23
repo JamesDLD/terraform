@@ -1,6 +1,6 @@
 #Set the terraform backend
 terraform {
-  required_version = "0.11.10"
+  required_version = "0.11.14"
 
   backend "azurerm" {
     storage_account_name = "infrsand1vpcjdld1"
@@ -12,7 +12,7 @@ terraform {
 
 #Set the Provider
 provider "azurerm" {
-  version         = "1.21"
+  version         = "1.27.1"
   subscription_id = "${var.subscription_id}"
   client_id       = "${var.client_id}"
   client_secret   = "${var.client_secret}"
@@ -36,13 +36,11 @@ module "Get-AzureRmResourceGroup" {
 
 #Action
 module "Create-AzureRmSubnet" {
-  version                    = "~> 0.1"
-  source                     = "github.com/JamesDLD/terraform/module/Create-AzureRmSubnet"
+  source                     = "github.com/JamesDLD/terraform/module/Az-Subnet"
+  subscription_id            = "${var.subscription_id}"
   subnet_resource_group_name = "${module.Get-AzureRmResourceGroup.rg_name}"
-  subnet_prefix              = "bp2-"
-  subnet_suffix              = "-snet1"
-  snets                      = ["${var.subnets}"]
-  vnets                      = "${module.Get-AzureRmVirtualNetwork.vnet_names}"
+  snet_list                  = ["${var.subnets}"]
+  vnet_names                 = "${module.Get-AzureRmVirtualNetwork.vnet_names}"
   nsgs_ids                   = ["null"]
-  subnet_route_table_ids     = ["null"]
+  route_table_ids            = ["null"]
 }

@@ -31,6 +31,16 @@ variable "Windows_Vms" {
   description = "Windows VM list"
 }
 
+variable "Windows_DataDisks" {
+  type        = "list"
+  description = "Data disk list."
+}
+
+variable "Windows_storage_image_reference" {
+  type        = "list"
+  description = "Could contain an 'id' of a custom image or the following parameters for an Azure public 'image publisher','offer','sku', 'version'"
+}
+
 variable "app_admin" {
   description = "Specifies the name of the administrator account on the VM."
 }

@@ -1,0 +1,85 @@
+# Starter pipeline
+# Doc memo : https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema?view=azure-devops&tabs=schema&viewFallbackFrom=vsts
+# GitHub service connection : https://docs.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops#sep-github
+
+name: $(BuildDefinitionName).$(DayOfYear)$(Rev:.r)
+
+variables:
+- group: terraform_binary  # variable group
+- name: backend_secret_file_id1
+  value: 'infra1_backend.tfvars'
+- name: main_secret_file_id1
+  value: 'infra1_main.tfvars'
+
+resources:
+  repositories:
+    - repository: terraform # identifier (A-Z, a-z, 0-9, and underscore)
+      type: github
+      endpoint: JamesDLD  # name of the service connection to use (for non-Azure Repos types)
+      name: JamesDLD/terraform
+      
+pool:
+  vmImage: 'Ubuntu-16.04'
+      
+trigger:
+  batch: true #when a build is running, the system waits until the build is completed
+  branches:
+    include:
+      - master
+      - feature/*
+  paths:
+    include:
+    - CreateAzureRm-Infra/*
+
+steps:
+
+- checkout: self
+  clean: true
+  persistCredentials: true
+
+- task: DownloadSecureFile@1
+  displayName: 'Download secure file $(backend_secret_file_id1)'
+  inputs:
+    secureFile: $(backend_secret_file_id1)
+
+- task: DownloadSecureFile@1
+  displayName: 'Download secure file $(main_secret_file_id1)'
+  inputs:
+    secureFile: $(main_secret_file_id1)
+
+- template: pipeline/terraform.yml@terraform
+  parameters:
+    version: $(terraform_version)
+    path: './CreateAzureRm-Infra/infra/'
+    ArtifactName: 'infra'
+    backend_secret_file_id: $(backend_secret_file_id1)
+    backend_file_path: './infra-backend-jdld.tfvars'
+    main_secret_file_id: $(main_secret_file_id1)
+    main_file_path: './infra-main-jdld.tfvars'
+    terraform_apply: true
+
+- template: pipeline/terraform.yml@terraform
+  parameters:
+    version: $(terraform_version)
+    path: './CreateAzureRm-Infra/infra_peering/'
+    ArtifactName: 'infra_peering'
+    backend_secret_file_id: $(backend_secret_file_id1)
+    backend_file_path: './infra-backend-jdld.tfvars'
+    main_secret_file_id: $(main_secret_file_id1)
+    main_file_path: './infra-main-jdld.tfvars'
+    terraform_apply: true
+
+- template: pipeline/terraform.yml@terraform
+  parameters:
+    version: $(terraform_version)
+    path: './CreateAzureRm-Infra/apps/'
+    ArtifactName: 'apps'
+    backend_secret_file_id: $(backend_secret_file_id1)
+    backend_file_path: './apps-backend-jdld.tfvars'
+    main_secret_file_id: $(main_secret_file_id1)
+    main_file_path: './apps-main-jdld.tfvars'
+    terraform_apply: true
+
+- template: pipeline/PublishBuildArtifacts.yml@terraform
+  parameters:
+    ArtifactName: 'CreateAzureRmInfra'

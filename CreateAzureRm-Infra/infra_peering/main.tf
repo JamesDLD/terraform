@@ -35,7 +35,7 @@ data "azurerm_virtual_network" "apps" {
 
 ## Core Network components
 module "Enable-AzureRmVirtualNetworkPeering-vnet-sec-insub1" {
-  source               = "../../module/Enable-AzureRmVirtualNetworkPeering"
+  source               = "github.com/JamesDLD/terraform/module/Enable-AzureRmVirtualNetworkPeering"
   vnet_src_name        = "${data.azurerm_virtual_network.sec.name}"
   vnet_rg_src_name     = "${data.azurerm_virtual_network.sec.resource_group_name}"
   vnet_src_id          = "${data.azurerm_virtual_network.sec.id}"

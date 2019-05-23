@@ -5,7 +5,7 @@ provider "azurerm" {
   client_id       = "${lookup(var.service_principals[1], "Application_Id")}"
   client_secret   = "${lookup(var.service_principals[1], "Application_Secret")}"
   tenant_id       = "${var.tenant_id}"
-  version         = "1.21"
+  version         = "1.27.1"
 }
 
 # Module
@@ -45,7 +45,7 @@ data "azurerm_network_security_group" "Infr" {
 
 ## Core Network components
 module "Create-AzureRmNetworkSecurityGroup-Apps" {
-  source                  = "../../module/Create-AzureRmNetworkSecurityGroup"
+  source                  = "github.com/JamesDLD/terraform/module/Create-AzureRmNetworkSecurityGroup"
   nsgs                    = ["${var.apps_nsgs}"]
   nsg_prefix              = "${var.app_name}-${var.env_name}-"
   nsg_suffix              = "-nsg1"
@@ -56,7 +56,7 @@ module "Create-AzureRmNetworkSecurityGroup-Apps" {
 }
 
 module "Create-AzureRmApplicationkSecurityGroup-Apps" {
-  source                  = "../../module/Create-AzureRmApplicationSecurityGroup"
+  source                  = "github.com/JamesDLD/terraform/module/Create-AzureRmApplicationSecurityGroup"
   asgs                    = ["${var.asgs}"]
   asg_prefix              = "${var.app_name}-${var.env_name}-"
   asg_suffix              = "-asg1"
@@ -66,29 +66,19 @@ module "Create-AzureRmApplicationkSecurityGroup-Apps" {
 }
 
 module "Create-AzureRmSubnet-Apps" {
-  source                     = "../../module/Create-AzureRmSubnet"
+  source                     = "github.com/JamesDLD/terraform/module/Az-Subnet"
+  subscription_id            = "${var.subscription_id}"
   subnet_resource_group_name = "${var.rg_infr_name}"
-  subnet_prefix              = "${var.app_name}-${var.env_name}-"
-  subnet_suffix              = "-snet1"
-  snets                      = ["${var.apps_snets}"]
-  vnets                      = ["infra-jdld-infr-apps-net1"]
+  snet_list                  = ["${var.apps_snets}"]
+  vnet_names                 = ["infra-jdld-infr-apps-net1"]
   nsgs_ids                   = ["${data.azurerm_network_security_group.Infr.id}"]
-  subnet_route_table_ids     = ["${data.azurerm_route_table.Infr.id}"]
+  route_table_ids            = ["${data.azurerm_route_table.Infr.id}"]
 }
 
 ## Virtual Machines components
-module "Create-AzureRmAvailabilitySet-Apps" {
-  source                  = "../../module/Create-AzureRmAvailabilitySet"
-  ava_availabilitysets    = ["${var.Availabilitysets}"]
-  ava_prefix              = "${var.app_name}-${var.env_name}-"
-  ava_suffix              = "-avs1"
-  ava_location            = "${data.azurerm_resource_group.MyApps.location}"
-  ava_resource_group_name = "${data.azurerm_resource_group.MyApps.name}"
-  ava_tags                = "${data.azurerm_resource_group.MyApps.tags}"
-}
 
 module "Create-AzureRmLoadBalancer-Apps" {
-  source                 = "../../module/Create-AzureRmLoadBalancer"
+  source                 = "github.com/JamesDLD/terraform/module/Az-LoadBalancer"
   Lbs                    = ["${var.Lbs}"]
   lb_prefix              = "${var.app_name}-${var.env_name}-"
   lb_suffix              = "-lb1"
@@ -101,7 +91,8 @@ module "Create-AzureRmLoadBalancer-Apps" {
 }
 
 module "Create-AzureRmNetworkInterface-Apps" {
-  source                  = "../../module/Create-AzureRmNetworkInterface"
+  source                  = "github.com/JamesDLD/terraform/module/Az-NetworkInterface"
+  subscription_id         = "${var.subscription_id}"
   Linux_Vms               = ["${var.Linux_Vms}"]                                         #If no need just fill "Linux_Vms = []" in the tfvars file
   Windows_Vms             = ["${var.Windows_Vms}"]                                       #If no need just fill "Windows_Vms = []" in the tfvars file
   nic_prefix              = "${var.app_name}-${var.env_name}-"
@@ -110,14 +101,19 @@ module "Create-AzureRmNetworkInterface-Apps" {
   nic_resource_group_name = "${data.azurerm_resource_group.MyApps.name}"
   subnets_ids             = "${module.Create-AzureRmSubnet-Apps.subnets_ids}"
   lb_backend_ids          = "${module.Create-AzureRmLoadBalancer-Apps.lb_backend_ids}"
-  lb_backend_Public_ids   = []
+  lb_backend_Public_ids   = ["null"]
   nic_tags                = "${data.azurerm_resource_group.MyApps.tags}"
   nsgs_ids                = "${module.Create-AzureRmNetworkSecurityGroup-Apps.nsgs_ids}"
 }
 
 module "Create-AzureRmVm-Apps" {
-  source                  = "../../module/Create-AzureRmVm"
-  sa_bootdiag_storage_uri = "${data.azurerm_storage_account.Infr.primary_blob_endpoint}"
+  source                             = "github.com/JamesDLD/terraform/module/Az-Vm"
+  subscription_id                    = "${var.subscription_id}"
+  sa_bootdiag_storage_uri            = "${data.azurerm_storage_account.Infr.primary_blob_endpoint}"
+  key_vault_id                       = ""
+  disable_log_analytics_dependencies = "true"
+  workspace_resource_group_name      = ""
+  workspace_name                     = ""
 
   Linux_Vms                     = ["${var.Linux_Vms}"]                                           #If no need just fill "Linux_Vms = []" in the tfvars file
   Linux_nics_ids                = "${module.Create-AzureRmNetworkInterface-Apps.Linux_nics_ids}"
@@ -141,7 +137,7 @@ module "Create-AzureRmVm-Apps" {
 /*
 #Need improvment 1 : NEED MAJOR UPDATE to fit with AzureRM provider 1.21.0
 module "Create-AzureRmVmss-Apps" {
-  source                   = "../../module/Create-AzureRmVmss"
+  source                   = "github.com/JamesDLD/terraform/module/Create-AzureRmVmss"
   sa_bootdiag_storage_uri  = "${data.azurerm_storage_account.Infr.primary_blob_endpoint}"
   Linux_Ss_Vms             = ["${var.Linux_Ss_Vms}"]                                                #If no need just fill "Linux_Vms = []" in the tfvars file
   Windows_Ss_Vms           = ["${var.Windows_Ss_Vms}"]                                              #If no need just fill "Linux_Vms = []" in the tfvars file
@@ -156,29 +152,26 @@ module "Create-AzureRmVmss-Apps" {
   lb_backend_ids           = "${module.Create-AzureRmLoadBalancer-Apps.lb_backend_ids}"
   nsgs_ids                 = "${module.Create-AzureRmNetworkSecurityGroup-Apps.nsgs_ids}"
 }
+*/
 
-#Need improvment 1 : NEED MAJOR UPDATE to use the native terraform resource
 # Infra cross services for Apps
 module "Enable-AzureRmRecoveryServicesBackupProtection-Apps" {
-  source                      = "../../module/Enable-AzureRmRecoveryServicesBackupProtection"
-  resource_names              = "${concat(module.Create-AzureRmVm-Apps.Linux_Vms_names,module.Create-AzureRmVm-Apps.Windows_Vms_names)}"     #Names of the resources to backup
-  resource_group_names        = "${concat(module.Create-AzureRmVm-Apps.Linux_Vms_rgnames,module.Create-AzureRmVm-Apps.Windows_Vms_rgnames)}" #Resource Group Names of the resources to backup
-  resource_ids                = "${concat(module.Create-AzureRmVm-Apps.Linux_Vms_ids,module.Create-AzureRmVm-Apps.Windows_Vms_ids)}"         #Ids of the resources to backup
-  bck_rsv_name                = "${module.Create-AzureRmRecoveryServicesVault-Infr.backup_vault_name}"
-  bck_rsv_resource_group_name = "${module.Create-AzureRmRecoveryServicesVault-Infr.backup_vault_rgname}"
-  bck_ProtectedItemType       = "Microsoft.ClassicCompute/virtualMachines"
-  bck_BackupPolicyName        = "BackupPolicy-Schedule1"
-  bck_location                = "${data.azurerm_resource_group.Infr.location}"
+  source                       = "github.com/JamesDLD/terraform/module/Az-RecoveryServicesBackupProtection"
+  subscription_id              = "${var.subscription_id}"
+  bck_vms_names                = "${concat(module.Create-AzureRmVm-Apps.Linux_Vms_names,module.Create-AzureRmVm-Apps.Windows_Vms_names)}"     #Names of the resources to backup
+  bck_vms_resource_group_names = "${concat(module.Create-AzureRmVm-Apps.Linux_Vms_rgnames,module.Create-AzureRmVm-Apps.Windows_Vms_rgnames)}" #Resource Group Names of the resources to backup
+  bck_vms                      = ["${concat(var.Linux_Vms,var.Windows_Vms)}"]
+  bck_rsv_name                 = "${var.bck_rsv_name}"
+  bck_rsv_resource_group_name  = "${data.azurerm_resource_group.Infr.name}"
 }
-*/
 
 ## Infra common services
 module "Create-AzureRmAutomationAccount-Apps" {
-  source                   = "../../module/Create-AzureRmAutomationAccount"
+  source                   = "github.com/JamesDLD/terraform/module/Create-AzureRmAutomationAccount"
   auto_name                = "${var.app_name}-${var.env_name}-auto1"
   auto_location            = "${data.azurerm_resource_group.MyApps.location}"
   auto_resource_group_name = "${data.azurerm_resource_group.MyApps.name}"
   auto_sku                 = "${var.auto_sku}"
   auto_tags                = "${data.azurerm_resource_group.MyApps.tags}"
-  auto_credentials         = ["${var.service_principals}"]                    #If no need just set to []
+  auto_credentials         = ["${var.service_principals}"]                                          #If no need just set to []
 }

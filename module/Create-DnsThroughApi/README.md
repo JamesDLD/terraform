@@ -68,7 +68,7 @@ variable "Vms" {
     Id_Ava            = "0"                      #Id of the Availabilitysets, set to 777 if there is no Availabilitysets
     BackupPolicyName  = "BackupPolicy-Schedule1"
     static_ip         = "10.0.3.4"
-    vm_size           = "Standard_DS2_v2"
+    vm_size           = "Standard_DS1_v2"
     managed_disk_type = "Premium_LRS"
     publisher         = "MicrosoftWindowsServer"
     offer             = "WindowsServer"

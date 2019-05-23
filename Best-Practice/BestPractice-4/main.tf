@@ -1,6 +1,6 @@
 #Set the terraform backend
 terraform {
-  required_version = "0.11.10"
+  required_version = "0.11.14"
 
   backend "azurerm" {
     storage_account_name = "infrsand1vpcjdld1"
@@ -12,7 +12,7 @@ terraform {
 
 #Set the Provider
 provider "azurerm" {
-  version         = "1.21"
+  version         = "1.27.1"
   subscription_id = "${var.subscription_id}"
   client_id       = "${var.client_id}"
   client_secret   = "${var.client_secret}"

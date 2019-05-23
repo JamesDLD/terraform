@@ -18,7 +18,7 @@ variable "fw_resource_group_name" {
 
 variable "fw_tags" {
   type = "map"
-  description = "Load balancer tags."
+  description = "Firewall tags."
 
   default = {
     ENV = "sand1"
