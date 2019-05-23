@@ -11,12 +11,21 @@ provider "azurerm" {
 }
 
 #Set variable
+variable "subnets_ids" {
+  default = ["/subscriptions/xxxxxxxxxxxxxxxxxxx/resourceGroups/infr-jdld-noprd-rg1/providers/Microsoft.Network/virtualNetworks/bp1-vnet1/subnets/bp1-front-snet1"]
+}
+
 variable "Lbs" {
   default = [
     {
       suffix_name = "bou" #It must equals the Vm suffix_name
       Id_Subnet   = "0"   #Id of the Subnet
       static_ip   = "10.0.1.4"
+    },
+    {
+      suffix_name = "bas" #It must equals the Vm suffix_name
+      Id_Subnet   = "0"   #Id of the Subnet
+      static_ip   = "10.0.1.5"
     },
   ]
 }
@@ -39,10 +48,6 @@ variable "rg_apps_name" {
 
 variable "Lb_sku" {
   default = "Standard"
-}
-
-variable "subnets_ids" {
-  default = ["/subscriptions/xxxxxxxxxxxxxxxxxxx/resourceGroups/infr-jdld-noprd-rg1/providers/Microsoft.Network/virtualNetworks/bp1-vnet1/subnets/bp1-front-snet1"]
 }
 
 variable "LbRules" {
