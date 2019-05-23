@@ -38,7 +38,7 @@ resource "azurerm_subnet" "subnets" {
   resource_group_name  = "${var.subnet_resource_group_name}"
   virtual_network_name = "${element(var.vnet_names,lookup(var.snet_list[count.index], "vnet_name_id"))}"
   address_prefix       = "${lookup(var.snet_list[count.index],"cidr_block")}"
-  service_endpoints    = ["${compact(split(" ", "${lookup(var.snet_list[count.index], "service_endpoints")}" ))}"]
+  service_endpoints    = "${compact(split(" ", "${lookup(var.snet_list[count.index], "service_endpoints")}" ))}"
 
   lifecycle {
     ignore_changes = ["route_table_id", "network_security_group_id"]

@@ -2,7 +2,8 @@
 
 #Authentication
 terraform {
-  backend          "azurerm"        {}
+  backend "azurerm" {
+  }
   required_version = "0.12.0"
 }
 
@@ -23,7 +24,7 @@ variable "tenant_id" {
 }
 
 variable "service_principals" {
-  type        = "list"
+  type        = list
   description = "Azure service principals list containing the following keys : Application_Name, Application_Id, Application_Secret, Application_object_id."
 }
 
@@ -37,7 +38,7 @@ variable "env_name" {
 }
 
 variable "default_tags" {
-  type        = "map"
+  type        = map(string)
   description = "Tag map that will be pushed on all Azure resources."
 }
 
@@ -58,53 +59,65 @@ variable "kv_sku" {
 }
 
 variable "key_vaults" {
-  type        = "list"
+  type        = list
   description = "Azure Key vault list containing the following keys : suffix_name, policy1_tenant_id, policy1_object_id, policy1_application_id."
 }
 
 variable "policies" {
-  type        = "list"
+  type = list
   description = "Azure Policy list containing the following keys : suffix_name, policy_type, mode."
 }
 
 variable "roles" {
-  type        = "list"
+  type        = list
   description = "Azure Custom role list containing the following keys : suffix_name, actions, not_actions."
 }
 
 #Backup
 variable "backup_policies" {
-  type        = "list"
+  type        = list
   description = "Azure Recovery Services Vault policies list."
 }
 
 #Vnet & Subnet & Network Security group
 variable "vnets" {
-  type        = "list"
+  type        = list
   description = "Virtual Network list."
 }
 
 variable "snets" {
-  type        = "list"
+  type        = list
   description = "Subnet list."
 }
 
 variable "route_tables" {
-  type        = "list"
+  type        = list
   description = "Route table list containing the following keys : route_suffix_name."
 }
 
 variable "routes" {
-  type        = "list"
+  type        = list
   description = "Route list containing the following keys : name, Id_rt, address_prefix, next_hop_type, next_hop_in_ip_address."
 }
 
 variable "infra_nsgs" {
-  type        = "list"
+  type        = list
   description = "Infra Network Security Groups list containing the following keys : suffix_name."
 }
 
 variable "infra_nsgrules" {
-  type        = "list"
+  type        = list
   description = "Infra Network Security Groups Rules list."
+}
+#Compute
+variable "app_admin" {
+  description = "Specifies the name of the administrator account on the VM."
+}
+
+variable "pass" {
+  description = "Specifies the password of the administrator account on the VM."
+}
+
+variable "ssh_key" {
+  description = "Specifies the ssh public key to login on Linux VM."
 }
