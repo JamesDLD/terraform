@@ -1,26 +1,36 @@
 variable "Lbs" {
-  type = "list"
+
 }
 
-variable "lb_prefix" {}
-variable "lb_suffix" {}
-variable "lb_location" {}
-variable "lb_resource_group_name" {}
-variable "Lb_sku" {}
+variable "lb_prefix" {
+}
+
+variable "lb_suffix" {
+}
+
+variable "lb_location" {
+}
+
+variable "lb_resource_group_name" {
+}
+
+variable "Lb_sku" {
+}
 
 variable "subnets_ids" {
-  type = "list"
+  type = list(string)
 }
 
 variable "lb_tags" {
-  type = "map"
+  type = map(string)
 }
 
 variable "LbRules" {
-  type = "list"
+
 }
 
 variable "emptylist" {
-  type    = "list"
+  type    = list(string)
   default = ["null", "null"]
 }
+

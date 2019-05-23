@@ -45,3 +45,10 @@ resource "azurerm_role_assignment" "test" {
   principal_id         = data.azurerm_client_config.test.service_principal_object_id
 }
 
+output "subnet_ids" {
+  description = "The subnet Ids."
+  value = {
+    for subnet in azurerm_virtual_network.bp1-vnet1.subnet :
+    subnet.id => subnet.id
+  }
+}
