@@ -35,8 +35,8 @@ resource "azurerm_subnet_route_table_association" "associations" {
 resource "azurerm_subnet" "subnets" {
   count                = "${length(var.snet_list)}"
   name                 = "${lookup(var.snet_list[count.index],"name")}"
-  resource_group_name  = "${var.subnet_resource_group_name}"
-  virtual_network_name = "${element(var.vnet_names,lookup(var.snet_list[count.index], "vnet_name_id"))}"
+  resource_group_name  = var.subnet_resource_group_name
+  virtual_network_name = "${element(var.vnet_names[0],var.snet_list[count.index]["vnet_name_id"])}"
   address_prefix       = "${lookup(var.snet_list[count.index],"cidr_block")}"
   service_endpoints    = "${compact(split(" ", "${lookup(var.snet_list[count.index], "service_endpoints")}" ))}"
 

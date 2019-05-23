@@ -1,5 +1,5 @@
 variable "key_vaults" {
-  type = "list"
+  type = list
 }
 
 variable "kv_prefix" {}
