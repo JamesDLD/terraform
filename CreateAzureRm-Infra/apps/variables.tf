@@ -2,8 +2,13 @@
 
 #Authentication
 terraform {
-  backend          "azurerm"        {}
+  backend "azurerm" {
+  }
   required_version = "0.12.0"
+}
+
+provider "azurerm" {
+  version = "1.27.1"
 }
 
 provider "random" {
@@ -19,7 +24,7 @@ variable "tenant_id" {
 }
 
 variable "service_principals" {
-  type        = "list"
+  type        = list
   description = "Azure service principals list containing the following keys : Application_Name, Application_Id, Application_Secret, Application_object_id."
 }
 
@@ -33,7 +38,7 @@ variable "env_name" {
 }
 
 variable "default_tags" {
-  type        = "map"
+  type        = map(string)
   description = "Tag map that will be pushed on all Azure resources."
 }
 
@@ -56,22 +61,22 @@ variable "bck_rsv_name" {
 #Subnet & Network Security group
 
 variable "apps_snets" {
-  type        = "list"
+  type        = list
   description = "Subnet list."
 }
 
 variable "apps_nsgs" {
-  type        = "list"
+  type        = list
   description = "Apps Network Security Groups list containing the following keys : suffix_name."
 }
 
 variable "apps_nsgrules" {
-  type        = "list"
+  type        = list
   description = "Apps Network Security Groups Rules list."
 }
 
 variable "asgs" {
-  type        = "list"
+  type        = list
   description = "Application Security Groups list containing the following keys : suffix_name."
 }
 
@@ -81,50 +86,50 @@ variable "Lb_sku" {
 }
 
 variable "Lbs" {
-  type        = "list"
+  type        = list
   description = "Load Balancer list containing the following keys : suffix_name, Id_Subnet, static_ip."
 }
 
 variable "LbRules" {
-  type        = "list"
+  type        = list
   description = "Load Balancer rules list."
 }
 
 variable "Linux_Vms" {
-  type        = "list"
+  type        = list
   description = "Linux VM list"
 }
 
 variable "Linux_DataDisks" {
-  type = "list"
+  type = list
 }
 
 variable "Linux_storage_image_reference" {
-  type        = "list"
+  type        = list
   description = "Could containt an 'id' of a custom image or the following parameters for an Azure public 'image publisher','offer','sku', 'version'"
 }
 
 variable "Windows_Vms" {
-  type        = "list"
+  type        = list
   description = "Windows VM list"
 }
 
 variable "Windows_DataDisks" {
-  type = "list"
+  type = list
 }
 
 variable "Windows_storage_image_reference" {
-  type        = "list"
+  type        = list
   description = "Could containt an 'id' of a custom image or the following parameters for an Azure public 'image publisher','offer','sku', 'version'"
 }
 
 variable "Linux_Ss_Vms" {
-  type        = "list"
+  type        = list
   description = "Linux VM Scale Set list"
 }
 
 variable "Windows_Ss_Vms" {
-  type        = "list"
+  type        = list
   description = "Windows VM Scale Set list"
 }
 
@@ -143,3 +148,4 @@ variable "ssh_key" {
 variable "auto_sku" {
   description = "Specifies the automation account SKU."
 }
+

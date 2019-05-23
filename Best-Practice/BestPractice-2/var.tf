@@ -17,6 +17,7 @@ variable "client_secret" {
 }
 
 variable "subnets" {
-  type        = "list"
+  type        = list
   description = "Subnet list"
 }
+

@@ -17,6 +17,7 @@ variable "client_secret" {
 }
 
 variable "lbs_public" {
-  type        = "list"
+  type        = list
   description = "Public Load Balancer list containing the following values :suffix_name, sku, allocatedOutboundPorts, idleTimeoutInMinutes, enableTcpReset, protocol."
 }
+

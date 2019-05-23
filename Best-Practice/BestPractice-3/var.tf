@@ -17,27 +17,27 @@ variable "client_secret" {
 }
 
 variable "subnets" {
-  type        = "list"
+  type        = list
   description = "Subnet list"
 }
 
 variable "Lbs" {
-  type        = "list"
+  type        = list
   description = "Load Balancer list containing the following keys : suffix_name, Id_Subnet, static_ip."
 }
 
 variable "Windows_Vms" {
-  type        = "list"
+  type        = list
   description = "Windows VM list"
 }
 
 variable "Windows_DataDisks" {
-  type        = "list"
+  type        = list
   description = "Data disk list."
 }
 
 variable "Windows_storage_image_reference" {
-  type        = "list"
+  type        = list
   description = "Could contain an 'id' of a custom image or the following parameters for an Azure public 'image publisher','offer','sku', 'version'"
 }
 
@@ -48,3 +48,4 @@ variable "app_admin" {
 variable "pass" {
   description = "Specifies the password of the administrator account on the VM."
 }
+

@@ -5,7 +5,7 @@ terraform {
   backend "azurerm" {
     storage_account_name = "infrsand1vpcjdld1"
     container_name       = "tfstate"
-    key                  = "BestPractice-2.tfstate"
+    key                  = "BestPractice-2.0.12.tfstate"
     resource_group_name  = "infr-jdld-noprd-rg1"
   }
 }
@@ -13,10 +13,10 @@ terraform {
 #Set the Provider
 provider "azurerm" {
   version         = "1.27.1"
-  subscription_id = "${var.subscription_id}"
-  client_id       = "${var.client_id}"
-  client_secret   = "${var.client_secret}"
-  tenant_id       = "${var.tenant_id}"
+  subscription_id = var.subscription_id
+  client_id       = var.client_id
+  client_secret   = var.client_secret
+  tenant_id       = var.tenant_id
 }
 
 #Call module/resource
@@ -37,10 +37,11 @@ module "Get-AzureRmResourceGroup" {
 #Action
 module "Create-AzureRmSubnet" {
   source                     = "github.com/JamesDLD/terraform/module/Az-Subnet"
-  subscription_id            = "${var.subscription_id}"
-  subnet_resource_group_name = "${module.Get-AzureRmResourceGroup.rg_name}"
-  snet_list                  = ["${var.subnets}"]
-  vnet_names                 = "${module.Get-AzureRmVirtualNetwork.vnet_names}"
+  subscription_id            = var.subscription_id
+  subnet_resource_group_name = module.Get-AzureRmResourceGroup.rg_name
+  snet_list                  = [var.subnets]
+  vnet_names                 = module.Get-AzureRmVirtualNetwork.vnet_names
   nsgs_ids                   = ["null"]
   route_table_ids            = ["null"]
 }
+

@@ -2,7 +2,8 @@
 
 #Authentication
 terraform {
-  backend          "azurerm"        {}
+  backend "azurerm" {
+  }
   required_version = "0.12.0"
 }
 
@@ -23,7 +24,7 @@ variable "tenant_id" {
 }
 
 variable "service_principals" {
-  type        = "list"
+  type        = list(string)
   description = "Azure service principals list containing the following keys : Application_Name, Application_Id, Application_Secret, Application_object_id."
 }
 
@@ -35,7 +36,7 @@ variable "rg_infr_name" {
 
 #Vnet 
 variable "vnet_names" {
-  type        = "list"
+  type        = list(string)
   description = "Virtual Network Names list."
 }
 
@@ -51,7 +52,9 @@ variable "pass" {
 variable "ssh_key" {
   description = "Specifies the ssh public key to login on Linux VM."
 }
+
 variable "key_vaults" {
-  type        = list
+  type        = list(string)
   description = "Azure Key vault list containing the following keys : suffix_name, policy1_tenant_id, policy1_object_id, policy1_application_id."
 }
+
