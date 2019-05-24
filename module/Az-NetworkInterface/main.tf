@@ -27,7 +27,7 @@ resource "azurerm_network_interface_backend_address_pool_association" "linux_vms
   depends_on            = [azurerm_network_interface.linux_vms_nics]
   count                 = length(local.InternalLb-Linux_nic_names)
   network_interface_id  = "/subscriptions/${var.subscription_id}/resourceGroups/${var.nic_resource_group_name}/providers/Microsoft.Network/networkInterfaces/${element(local.InternalLb-Linux_nic_names, count.index)}"
-  ip_configuration_name = "${element(local.InternalLb-Linux_nic_names, count.index)}-CFG----${local.InternalLb-Linux_nic_names[0]}"
+  ip_configuration_name = "${element(local.InternalLb-Linux_nic_names, count.index)}-CFG"
   backend_address_pool_id = element(
     var.lb_backend_ids,
     element(local.InternalLb-Linux_id_lbs, count.index),
