@@ -4,17 +4,30 @@ Usage
 ```hcl
 #Set the Provider
 provider "azurerm" {
-    subscription_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-    client_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-    client_secret = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-    tenant_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+  tenant_id = var.tenant_id
+  subscription_id = var.subscription_id
+  client_id = var.client_id
+  client_secret = var.client_secret
 }
 
-#Set variable
-variable "subnets_ids" {
-  default = ["/subscriptions/xxxxxxxxxxxxxxxxxxx/resourceGroups/infr-jdld-noprd-rg1/providers/Microsoft.Network/virtualNetworks/bp1-vnet1/subnets/bp1-front-snet1"]
+#Set authentication variables
+variable "tenant_id" {
+  description = "Azure tenant Id."
 }
 
+variable "subscription_id" {
+  description = "Azure subscription Id."
+}
+
+variable "client_id" {
+  description = "Azure service principal application Id."
+}
+
+variable "client_secret" {
+  description = "Azure service principal application Secret."
+}
+
+#Set resource variables
 variable "Lbs" {
   default = [
     {
@@ -86,9 +99,11 @@ module "Create-AzureRmLoadBalancer-Apps" {
   lb_location            = var.location
   lb_resource_group_name = var.rg_apps_name
   Lb_sku                 = var.Lb_sku
-  subnets_ids            = var.subnets_ids
+  subnets_ids            = ["/subscriptions/${var.subscription_id}/resourceGroups/infr-jdld-noprd-rg1/providers/Microsoft.Network/virtualNetworks/bp1-vnet1/subnets/bp1-front-snet1",
+                            "/subscriptions/${var.subscription_id}/resourceGroups/infr-jdld-noprd-rg1/providers/Microsoft.Network/virtualNetworks/bp1-vnet1/subnets/bp1-front-snet2"]
   lb_tags                = var.default_tags
   LbRules                = var.LbRules
 }
+
 
 ```
