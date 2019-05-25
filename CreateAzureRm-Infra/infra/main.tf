@@ -80,7 +80,7 @@ module "Create-AzureRmVirtualNetwork-Infra" {
   }
 }
 
-module "Create-AzureRmSubnet-Infra" {
+module "Az-Subnet-Infra" {
   source                     = "../../module/Az-Subnet"
   subscription_id            = var.subscription_id
   subnet_resource_group_name = module.Create-AzureRmVirtualNetwork-Infra[0].vnet_rgnames[0]
@@ -175,22 +175,13 @@ module "Create-AzureRmFirewall-Infr" {
   fw_resource_group_name = data.azurerm_resource_group.Infr.name
   fw_location            = data.azurerm_resource_group.Infr.location
   fw_prefix              = "${var.app_name}-${var.env_name}-fw1"
-  fw_subnet_id           = element(module.Create-AzureRmSubnet-Infra.subnets_ids, 0)
+  fw_subnet_id           = element(module.Az-Subnet-Infra.subnets_ids, 0)
   fw_tags                = data.azurerm_resource_group.Infr.tags
 
   providers = {
     azurerm = azurerm.service_principal_infra
   }
 }
-Error with Terraform 0.12.0 -->
-Error: Error building AzureRM Client: Error populating Client ID from the Azure CLI: No Authorization Tokens were found - please re-authenticate using `az login`.
-
-  on variables.tf line 10, in provider "azurerm":
-  10: provider "azurerm" {
-
-
-
-Error: Error Creating/Updating Subnet "AzureFirewallSubnet" (Virtual Network "infra-jdld-infr-sec-net1" / Resource Group ""): network.SubnetsClient#CreateOrUpdate: Failure sending request: StatusCode=400 -- Original Error: Code="InvalidApiVersionParameter" Message="The api-version '2018-12-01' is invalid. The supported versions are '2019-05-01,2019-03-01,2018-11-01,2018-09-01,2018-08-01,2018-07-01,2018-06-01,2018-05-01,2018-02-01,2018-01-01,2017-12-01,2017-08-01,2017-06-01,2017-05-10,2017-05-01,2017-03-01,2016-09-01,2016-07-01,2016-06-01,2016-02-01,2015-11-01,2015-01-01,2014-04-01-preview,2014-04-01,2014-01-01,2013-03-01,2014-02-26,2014-04'."
 */
 /*
 Currently generating a bug on Apps

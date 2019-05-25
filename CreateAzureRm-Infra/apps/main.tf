@@ -123,26 +123,6 @@ module "Az-Vm-Apps" {
   pass                   = var.pass
 }
 
-/*
-#Need improvment 1 : NEED MAJOR UPDATE to fit with AzureRM provider 1.21.0
-module "Az-Vmss-Apps" {
-  source                   = "github.com/JamesDLD/terraform/module/Az-Vmss"
-  sa_bootdiag_storage_uri  = "${data.azurerm_storage_account.Infr.primary_blob_endpoint}"
-  Linux_Ss_Vms             = ["${var.Linux_Ss_Vms}"]                                                #If no need just fill "Linux_Vms = []" in the tfvars file
-  Windows_Ss_Vms           = ["${var.Windows_Ss_Vms}"]                                              #If no need just fill "Linux_Vms = []" in the tfvars file
-  vmss_location            = "${data.azurerm_resource_group.MyApps.location}"
-  vmss_resource_group_name = "${data.azurerm_resource_group.MyApps.name}"
-  vmss_prefix              = "${var.app_name}-${var.env_name}-"
-  vmss_tags                = "${data.azurerm_resource_group.MyApps.tags}"
-  app_admin                = "${var.app_admin}"
-  pass                     = "${var.pass}"
-  ssh_key                  = "${var.ssh_key}"
-  subnets_ids              = "${module.Az-Subnet-Apps.subnets_ids}"
-  lb_backend_ids           = "${module.Az-LoadBalancer-Apps.lb_backend_ids}"
-  nsgs_ids                 = "${module.Az-NetworkSecurityGroup-Apps.nsgs_ids}"
-}
-*/
-
 # Infra cross services for Apps
 module "Az-RecoveryServicesBackupProtection-Apps" {
   source          = "github.com/JamesDLD/terraform/module/Az-RecoveryServicesBackupProtection"
