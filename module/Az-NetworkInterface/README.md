@@ -40,7 +40,7 @@ variable "Linux_Vms" {
       zone                          = "1"                      #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to "", WARNING you could not have Availabilitysets and AvailabilityZones
       Id_Nsg                        = "777"                      #Id of the Network Security Group, set to 777 if there is no Network Security Groups
       BackupPolicyName              = "BackupPolicy-Schedule1" #Set 777 to disable backup (WARNING, this will delete previous backup) otherwise set a backup policy like BackupPolicy-Schedule1
-      static_ip                     = "10.0.1.6"
+      static_ip                     = "10.0.1.6"          #Set 777 to get dynamic IP
       enable_accelerated_networking = "false"
       vm_size                       = "Standard_DS1_v2"
       managed_disk_type             = "Premium_LRS"

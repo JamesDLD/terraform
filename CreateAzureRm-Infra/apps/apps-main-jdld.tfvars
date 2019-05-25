@@ -212,14 +212,12 @@ Linux_DataDisks = [
   },
 ]
 
-Linux_storage_image_reference = [
-  {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "18.04-LTS"
-    version   = "Latest"
-  },
-]
+Linux_storage_image_reference = {
+  publisher = "Canonical"
+  offer     = "UbuntuServer"
+  sku       = "18.04-LTS"
+  version   = "Latest"
+}
 
 Windows_Vms = [
   {
@@ -256,14 +254,12 @@ Windows_Vms = [
 
 Windows_DataDisks = []
 
-Windows_storage_image_reference = [
-  {
-    publisher = "MicrosoftWindowsServer"
-    offer     = "WindowsServer"
-    sku       = "2019-Datacenter"
-    version   = "Latest"
-  },
-]
+Windows_storage_image_reference = {
+  publisher = "MicrosoftWindowsServer"
+  offer     = "WindowsServer"
+  sku       = "2019-Datacenter"
+  version   = "Latest"
+}
 
 /*
 Sample

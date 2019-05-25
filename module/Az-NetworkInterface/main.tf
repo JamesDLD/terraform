@@ -57,8 +57,8 @@ resource "azurerm_network_interface" "linux_vms_nics" {
     name = "${var.nic_prefix}${var.Linux_Vms[count.index]["suffix_name"]}${var.Linux_Vms[count.index]["id"]}${var.nic_suffix}-CFG"
 
     subnet_id                     = element(var.subnets_ids, var.Linux_Vms[count.index]["Id_Subnet"])
-    private_ip_address_allocation = var.Linux_Vms[count.index]["static_ip"] == 777 ? "dynamic" : "static"
-    private_ip_address            = var.Linux_Vms[count.index]["static_ip"] == 777 ? "" : var.Linux_Vms[count.index]["static_ip"]
+    private_ip_address_allocation = var.Linux_Vms[count.index]["static_ip"] == "777" ? "dynamic" : "static"
+    private_ip_address            = var.Linux_Vms[count.index]["static_ip"] == "777" ? "" : var.Linux_Vms[count.index]["static_ip"]
     public_ip_address_id          = var.Linux_Vms[count.index]["Id_Ip_Public"] == 777 ? "" : var.Linux_Vms[count.index]["Id_Ip_Public"]
   }
 
@@ -126,8 +126,8 @@ resource "azurerm_network_interface" "Windows_Vms_nics" {
     name = "${var.nic_prefix}${var.Windows_Vms[count.index]["suffix_name"]}${var.Windows_Vms[count.index]["id"]}${var.nic_suffix}-CFG"
 
     subnet_id                     = element(var.subnets_ids, var.Windows_Vms[count.index]["Id_Subnet"])
-    private_ip_address_allocation = var.Windows_Vms[count.index]["static_ip"] == 777 ? "dynamic" : "static"
-    private_ip_address            = var.Windows_Vms[count.index]["static_ip"] == 777 ? "" : var.Windows_Vms[count.index]["static_ip"]
+    private_ip_address_allocation = var.Windows_Vms[count.index]["static_ip"] == "777" ? "dynamic" : "static"
+    private_ip_address            = var.Windows_Vms[count.index]["static_ip"] == "777" ? "" : var.Windows_Vms[count.index]["static_ip"]
     public_ip_address_id          = var.Windows_Vms[count.index]["Id_Ip_Public"] == 777 ? "" : var.Windows_Vms[count.index]["Id_Ip_Public"]
   }
 
