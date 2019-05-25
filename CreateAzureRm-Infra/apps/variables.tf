@@ -75,11 +75,6 @@ variable "apps_nsgrules" {
   description = "Apps Network Security Groups Rules list."
 }
 
-variable "asgs" {
-  type        = list
-  description = "Application Security Groups list containing the following keys : suffix_name."
-}
-
 #Load Balancers & Availability Set & Virtual Machines
 variable "Lb_sku" {
   description = "The SKU of the Azure Load Balancer. Accepted values are Basic and Standard. Defaults to Basic."

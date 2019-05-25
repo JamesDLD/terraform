@@ -94,8 +94,8 @@ module "Create-AzureRmSubnet-Infra" {
   }
 }
 
-module "Create-AzureRmNetworkSecurityGroup-Infra" {
-  source                  = "../../module/Create-AzureRmNetworkSecurityGroup"
+module "Az-NetworkSecurityGroup-Infra" {
+  source                  = "../../module/Az-NetworkSecurityGroup"
   nsgs                    = var.infra_nsgs
   nsg_prefix              = "${var.app_name}-${var.env_name}-"
   nsg_suffix              = "-nsg1"
@@ -155,7 +155,7 @@ module "Enable-AzureRmRoleAssignment" {
     data.azurerm_resource_group.Apps.id,
     module.Create-AzureRmVirtualNetwork-Infra[0].vnet_ids[0],
     module.Create-AzureRmRoute-Infra[0].rt_ids[0],
-    module.Create-AzureRmNetworkSecurityGroup-Infra[0].nsgs_ids[0],
+    module.Az-NetworkSecurityGroup-Infra[0].nsgs_ids[0],
     data.azurerm_resource_group.Infr.id,
     module.Create-AzureRmRecoveryServicesVault-Infr.backup_vault_id,
     data.azurerm_storage_account.Infr.id,
@@ -200,7 +200,7 @@ module "Enable-AzureRmPolicyAssignment-Infra-nsg-on-apps-subnet" {
   p_ass_scope                = "${element(module.Create-AzureRmVirtualNetwork-Infra.vnet_ids,1)}"
   p_ass_policy_definition_id = "${element(module.Create-AzureRmPolicyDefinition.policy_ids,0)}"
   p_ass_key_parameter1       = "nsgId"
-  p_ass_value_parameter1     = "${element(module.Create-AzureRmNetworkSecurityGroup-Infra.nsgs_ids,0)}"
+  p_ass_value_parameter1     = "${element(module.Az-NetworkSecurityGroup-Infra.nsgs_ids,0)}"
 
   providers {
     "azurerm" = "azurerm.service_principal_infra"

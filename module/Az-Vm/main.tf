@@ -281,20 +281,20 @@ delete_data_disks_on_termination = false
 #license_type = "${lookup(var.Windows_Vms[count.index], "license_type")}"
 
 storage_os_disk {
-name              = "${var.vm_prefix}${var.Windows_Vms[count.index]["suffix_name"]}${var.Windows_Vms[count.index]["id"]}osdk"
-caching           = "ReadWrite"
-create_option     = "FromImage"
-managed_disk_type = var.Windows_Vms[count.index]["managed_disk_type"]
+  name              = "${var.vm_prefix}${var.Windows_Vms[count.index]["suffix_name"]}${var.Windows_Vms[count.index]["id"]}osdk"
+  caching           = "ReadWrite"
+  create_option     = "FromImage"
+  managed_disk_type = var.Windows_Vms[count.index]["managed_disk_type"]
 }
 dynamic "storage_image_reference" {
-for_each = [var.Windows_storage_image_reference]
-content {
-id        = lookup(storage_image_reference.value, "id", null)
-offer     = lookup(storage_image_reference.value, "offer", null)
-publisher = lookup(storage_image_reference.value, "publisher", null)
-sku       = lookup(storage_image_reference.value, "sku", null)
-version   = lookup(storage_image_reference.value, "version", null)
-}
+  for_each = [var.Windows_storage_image_reference]
+    content {
+      id        = lookup(storage_image_reference.value, "id", null)
+      offer     = lookup(storage_image_reference.value, "offer", null)
+      publisher = lookup(storage_image_reference.value, "publisher", null)
+      sku       = lookup(storage_image_reference.value, "sku", null)
+      version   = lookup(storage_image_reference.value, "version", null)
+    }
 }
 os_profile {
 computer_name  = "${var.vm_prefix}${var.Windows_Vms[count.index]["suffix_name"]}${var.Windows_Vms[count.index]["id"]}"

@@ -43,8 +43,8 @@ data "azurerm_network_security_group" "Infr" {
 }
 
 ## Core Network components
-module "Create-AzureRmNetworkSecurityGroup-Apps" {
-  source                  = "github.com/JamesDLD/terraform/module/Create-AzureRmNetworkSecurityGroup"
+module "Az-NetworkSecurityGroup-Apps" {
+  source                  = "github.com/JamesDLD/terraform/module/Az-NetworkSecurityGroup"
   nsgs                    = var.apps_nsgs
   nsg_prefix              = "${var.app_name}-${var.env_name}-"
   nsg_suffix              = "-nsg1"
@@ -52,16 +52,6 @@ module "Create-AzureRmNetworkSecurityGroup-Apps" {
   nsg_resource_group_name = data.azurerm_resource_group.MyApps.name
   nsg_tags                = data.azurerm_resource_group.MyApps.tags
   nsgrules                = var.apps_nsgrules
-}
-
-module "Create-AzureRmApplicationkSecurityGroup-Apps" {
-  source                  = "github.com/JamesDLD/terraform/module/Create-AzureRmApplicationSecurityGroup"
-  asgs                    = var.asgs
-  asg_prefix              = "${var.app_name}-${var.env_name}-"
-  asg_suffix              = "-asg1"
-  asg_location            = data.azurerm_resource_group.MyApps.location
-  asg_resource_group_name = data.azurerm_resource_group.MyApps.name
-  asg_tags                = data.azurerm_resource_group.MyApps.tags
 }
 
 module "Create-AzureRmSubnet-Apps" {
@@ -102,7 +92,7 @@ module "Create-AzureRmNetworkInterface-Apps" {
   lb_backend_ids          = module.Create-AzureRmLoadBalancer-Apps.lb_backend_ids
   lb_backend_Public_ids   = ["null"]
   nic_tags                = data.azurerm_resource_group.MyApps.tags
-  nsgs_ids                = module.Create-AzureRmNetworkSecurityGroup-Apps.nsgs_ids
+  nsgs_ids                = module.Az-NetworkSecurityGroup-Apps.nsgs_ids
 }
 
 module "Create-AzureRmVm-Apps" {
@@ -149,7 +139,7 @@ module "Create-AzureRmVmss-Apps" {
   ssh_key                  = "${var.ssh_key}"
   subnets_ids              = "${module.Create-AzureRmSubnet-Apps.subnets_ids}"
   lb_backend_ids           = "${module.Create-AzureRmLoadBalancer-Apps.lb_backend_ids}"
-  nsgs_ids                 = "${module.Create-AzureRmNetworkSecurityGroup-Apps.nsgs_ids}"
+  nsgs_ids                 = "${module.Az-NetworkSecurityGroup-Apps.nsgs_ids}"
 }
 */
 
@@ -165,7 +155,7 @@ module "Enable-AzureRmRecoveryServicesBackupProtection-Apps" {
     module.Create-AzureRmVm-Apps.Linux_Vms_rgnames,
     module.Create-AzureRmVm-Apps.Windows_Vms_rgnames,
   ) #Resource Group Names of the resources to backup
-  bck_vms                     = [concat(var.Linux_Vms, var.Windows_Vms)]
+  bck_vms                     = concat(var.Linux_Vms, var.Windows_Vms)
   bck_rsv_name                = var.bck_rsv_name
   bck_rsv_resource_group_name = data.azurerm_resource_group.Infr.name
 }

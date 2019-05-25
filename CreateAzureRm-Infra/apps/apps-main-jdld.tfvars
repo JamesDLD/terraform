@@ -89,15 +89,6 @@ apps_nsgrules = [
   },
 ]
 
-asgs = [
-  {
-    suffix_name = "ssh"
-  },
-  {
-    suffix_name = "rdg"
-  },
-]
-
 # Virtual Machines components : Load Balancer & Availability Set & Nic & VM
 Lb_sku = "Standard" #"Basic" 
 
