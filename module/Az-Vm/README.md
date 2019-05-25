@@ -97,7 +97,7 @@ variable "default_tags" {
 
 #Call module
 module "Az-NetworkInterface-Demo" {
-  source                 = "../../Az-NetworkInterface"
+  source                 = "github.com/JamesDLD/terraform/module/Az-NetworkInterface"
   subscription_id         = var.subscription_id
   Linux_Vms               = []                      #If no need just fill "Linux_Vms = []" in the tfvars file
   Windows_Vms             = var.Windows_Vms          #If no need just fill "Windows_Vms = []" in the tfvars file
@@ -113,7 +113,7 @@ module "Az-NetworkInterface-Demo" {
   nsgs_ids                = ["nsg_id1","nsg_id2"]
 }
 module "Az-Vm-Demo" {
-  source = "../../Az-Vm"
+  source = "github.com/JamesDLD/terraform/module/Az-Vm"
   subscription_id                    = var.subscription_id
   sa_bootdiag_storage_uri            = "https://infrsand1vpcjdld1.blob.core.windows.net/"
   key_vault_id                       = ""
