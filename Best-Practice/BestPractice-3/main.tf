@@ -27,61 +27,59 @@ module "Get-AzureRmVirtualNetwork" {
   vnet_resource_group_name = "infr-jdld-noprd-rg1"
 }
 
-module "Get-AzureRmResourceGroup" {
-  source  = "github.com/JamesDLD/terraform/module/Get-AzureRmResourceGroup"
-  rg_name = "infr-jdld-noprd-rg1"
+data "azurerm_resource_group" "infr" {
+  name = "infr-jdld-noprd-rg1"
 }
 
-module "Get-AzureRmStorageAccount" {
-  source     = "github.com/JamesDLD/terraform/module/Get-AzureRmStorageAccount"
-  sa_rg_name = module.Get-AzureRmResourceGroup.rg_name
-  sa_name    = "infrsand1vpcjdld1"
+data "azurerm_storage_account" "infr" {
+  name                = "infrsand1vpcjdld1"
+  resource_group_name = data.azurerm_resource_group.infr.name
 }
 
 #Action
-module "Create-AzureRmSubnet" {
+module "Az-Subnet-Demo" {
   source                     = "github.com/JamesDLD/terraform/module/Az-Subnet"
   subscription_id            = var.subscription_id
-  subnet_resource_group_name = module.Get-AzureRmResourceGroup.rg_name
+  subnet_resource_group_name = data.azurerm_resource_group.infr.name
   snet_list                  = [var.subnets]
   vnet_names                 = module.Get-AzureRmVirtualNetwork.vnet_names
   nsgs_ids                   = ["null"]
   route_table_ids            = ["null"]
 }
 
-module "Create-AzureRmLoadBalancer" {
+module "Az-LoadBalancer-Demo" {
   source                 = "github.com/JamesDLD/terraform/module/Az-LoadBalancer"
   Lbs                    = var.Lbs
   lb_prefix              = "bp3-"
   lb_suffix              = "-lb1"
-  lb_location            = module.Get-AzureRmResourceGroup.rg_location
-  lb_resource_group_name = module.Get-AzureRmResourceGroup.rg_name
+  lb_location            = data.azurerm_resource_group.infr.location
+  lb_resource_group_name = data.azurerm_resource_group.infr.name
   Lb_sku                 = "Standard"
-  subnets_ids            = module.Create-AzureRmSubnet.subnets_ids
-  lb_tags                = module.Get-AzureRmResourceGroup.rg_tags
+  subnets_ids            = module.Az-Subnet-Demo.subnets_ids
+  lb_tags                = data.azurerm_resource_group.infr.tags
   LbRules                = []
 }
 
-module "Create-AzureRmNetworkInterface" {
+module "Az-NetworkInterface-Demo" {
   source                  = "github.com/JamesDLD/terraform/module/Az-NetworkInterface"
   subscription_id         = var.subscription_id
   Linux_Vms               = []                #If no need just fill "Linux_Vms = []" in the tfvars file
   Windows_Vms             = var.Windows_Vms #If no need just fill "Windows_Vms = []" in the tfvars file
   nic_prefix              = "bp3-"
   nic_suffix              = "-nic1"
-  nic_location            = module.Get-AzureRmResourceGroup.rg_location
-  nic_resource_group_name = module.Get-AzureRmResourceGroup.rg_name
-  subnets_ids             = module.Create-AzureRmSubnet.subnets_ids
-  lb_backend_ids          = module.Create-AzureRmLoadBalancer.lb_backend_ids
+  nic_location            = data.azurerm_resource_group.infr.location
+  nic_resource_group_name = data.azurerm_resource_group.infr.name
+  subnets_ids             = module.Az-Subnet-Demo.subnets_ids
+  lb_backend_ids          = module.Az-LoadBalancer-Demo.lb_backend_ids
   lb_backend_Public_ids   = ["null"]
-  nic_tags                = module.Get-AzureRmResourceGroup.rg_tags
+  nic_tags                = data.azurerm_resource_group.infr.tags
   nsgs_ids                = [""]
 }
 
-module "Create-AzureRmVms" {
+module "Az-Vm-Demo" {
   source                             = "github.com/JamesDLD/terraform/module/Az-Vm"
   subscription_id                    = var.subscription_id
-  sa_bootdiag_storage_uri            = module.Get-AzureRmStorageAccount.sa_primary_blob_endpoint
+  sa_bootdiag_storage_uri            = data.azurerm_storage_account.infr.primary_blob_endpoint
   key_vault_id                       = ""
   disable_log_analytics_dependencies = "true"
   workspace_resource_group_name      = ""
@@ -94,14 +92,14 @@ module "Create-AzureRmVms" {
   ssh_key                       = ""
 
   Windows_Vms                     = var.Windows_Vms #If no need just fill "Windows_Vms = []" in the tfvars file
-  Windows_nics_ids                = module.Create-AzureRmNetworkInterface.Windows_nics_ids
+  Windows_nics_ids                = module.Az-NetworkInterface-Demo.Windows_nics_ids
   Windows_storage_image_reference = var.Windows_storage_image_reference #If no need just fill "Windows_storage_image_reference = []" in the tfvars file
   Windows_DataDisks               = []
 
-  vm_location            = module.Get-AzureRmResourceGroup.rg_location
-  vm_resource_group_name = module.Get-AzureRmResourceGroup.rg_name
+  vm_location            = data.azurerm_resource_group.infr.location
+  vm_resource_group_name = data.azurerm_resource_group.infr.name
   vm_prefix              = "bp3-"
-  vm_tags                = module.Get-AzureRmResourceGroup.rg_tags
+  vm_tags                = data.azurerm_resource_group.infr.tags
   app_admin              = var.app_admin
   pass                   = var.pass
 }

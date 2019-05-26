@@ -43,8 +43,8 @@ module "Create-AzureRmRecoveryServicesVault-Infr" {
   }
 }
 
-module "Create-AzureRmKeyVault-Infr" {
-  source                 = "../../module/Create-AzureRmKeyVault"
+module "Az-KeyVault-Infr" {
+  source                 = "../../module/Az-KeyVault"
   key_vaults             = var.key_vaults
   kv_tenant_id           = var.tenant_id
   kv_prefix              = "${var.app_name}-${var.env_name}-"

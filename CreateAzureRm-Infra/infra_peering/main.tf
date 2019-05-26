@@ -15,6 +15,12 @@ provider "azurerm" {
   alias           = "service_principal_apps"
 }
 
+provider "azuread" {
+  subscription_id = var.subscription_id
+  client_id       = var.service_principals[0]["Application_Id"]
+  client_secret   = var.service_principals[0]["Application_Secret"]
+  tenant_id       = var.tenant_id
+}
 ####################################################
 ##########           Infra                ##########
 ####################################################

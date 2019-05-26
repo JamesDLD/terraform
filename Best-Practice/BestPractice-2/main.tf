@@ -28,18 +28,16 @@ module "Get-AzureRmVirtualNetwork" {
   vnet_resource_group_name = "infr-jdld-noprd-rg1"
 }
 
-module "Get-AzureRmResourceGroup" {
-  version = "~> 0.1"
-  source  = "github.com/JamesDLD/terraform/module/Get-AzureRmResourceGroup"
-  rg_name = "infr-jdld-noprd-rg1"
+data "azurerm_resource_group" "infr" {
+  name = "infr-jdld-noprd-rg1"
 }
 
 #Action
-module "Create-AzureRmSubnet" {
+module "Az-Subnet-Demo" {
   source                     = "github.com/JamesDLD/terraform/module/Az-Subnet"
   subscription_id            = var.subscription_id
-  subnet_resource_group_name = module.Get-AzureRmResourceGroup.rg_name
-  snet_list                  = [var.subnets]
+  subnet_resource_group_name = data.azurerm_resource_group.infr.name
+  snet_list                  = var.subnets
   vnet_names                 = module.Get-AzureRmVirtualNetwork.vnet_names
   nsgs_ids                   = ["null"]
   route_table_ids            = ["null"]
