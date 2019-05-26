@@ -168,29 +168,6 @@ module "Az-RoleAssignment-Apps" {
 }
 
 /*
-module "Az-RoleAssignment" {
-  source                  = "../../module/Az-RoleAssignment"
-  ass_countRoleAssignment = length(var.roles)
-
-  ass_scopes = [
-    data.azurerm_resource_group.Apps.id,
-    module.Az-VirtualNetwork-Infra.vnet_ids[0],
-    module.Az-RouteTable-Infra.rt_ids[0],
-    module.Az-NetworkSecurityGroup-Infra.nsgs_ids[0],
-    data.azurerm_resource_group.Infr.id,
-    module.Create-AzureRmRecoveryServicesVault-Infr.backup_vault_id,
-    data.azurerm_storage_account.Infr.id,
-  ]
-
-  ass_role_definition_ids = module.Az-RoleDefinition-Apps.role_ids
-  ass_principal_id        = var.service_principals[1]["Application_object_id"]
-
-  providers = {
-    azurerm = azurerm.service_principal_infra
-  }
-}
-*/
-/*
 module "Create-AzureRmFirewall-Infr" {
   source                 = "../../module/Create-AzureRmFirewall"
   fw_resource_group_name = data.azurerm_resource_group.Infr.name
@@ -204,31 +181,28 @@ module "Create-AzureRmFirewall-Infr" {
   }
 }
 */
-/*
-Currently generating a bug on Apps
-module "Enable-AzureRmPolicyAssignment-Infra-nsg-on-apps-subnet" {
-  source                     = "../../module/Enable-AzureRmPolicyAssignment"
-  p_ass_name                 = "enforce-nsg-under-vnet-${element(module.Az-VirtualNetwork-Infra.vnet_names,1)}"
-  p_ass_scope                = "${element(module.Az-VirtualNetwork-Infra.vnet_ids,1)}"
-  p_ass_policy_definition_id = "${element(module.Az-PolicyDefinition.policy_ids,0)}"
+
+module "Az-PolicyAssignment-Infra-nsg-on-apps-subnet" {
+  source                     = "../../module/Az-PolicyAssignment"
+  p_ass_name                 = "enforce-nsg-under-vnet-${module.Az-VirtualNetwork-Infra.vnet_names[1]}"
+  p_ass_scope                = module.Az-VirtualNetwork-Infra.vnet_ids[1]
+  p_ass_policy_definition_id = module.Az-PolicyDefinition.policy_ids[0]
   p_ass_key_parameter1       = "nsgId"
-  p_ass_value_parameter1     = "${element(module.Az-NetworkSecurityGroup-Infra.nsgs_ids,0)}"
+  p_ass_value_parameter1     = module.Az-NetworkSecurityGroup-Infra.nsgs_ids[0]
 
   providers {
     "azurerm" = "azurerm.service_principal_infra"
   }
 }
-
-module "Enable-AzureRmPolicyAssignment-Infra-udr-on-subnet" {
-  source                     = "../../module/Enable-AzureRmPolicyAssignment"
-  p_ass_name                 = "enforce-udr-under-vnet-${element(module.Az-VirtualNetwork-Infra.vnet_names,1)}"
-  p_ass_scope                = "${element(module.Az-VirtualNetwork-Infra.vnet_ids,1)}"
-  p_ass_policy_definition_id = "${element(module.Az-PolicyDefinition.policy_ids,1)}"
+module "Az-PolicyAssignment-Infra-udr-on-subnet" {
+  source                     = "../../module/Az-PolicyAssignment"
+  p_ass_name                 = "enforce-udr-under-vnet-${module.Az-VirtualNetwork-Infra.vnet_names[1]}"
+  p_ass_scope                = module.Az-VirtualNetwork-Infra.vnet_ids[1]
+  p_ass_policy_definition_id = module.Az-PolicyDefinition.policy_ids[1]
   p_ass_key_parameter1       = "udrId"
-  p_ass_value_parameter1     = "${element(module.Az-RouteTable-Infra.rt_ids,0)}"
+  p_ass_value_parameter1     = module.Az-RouteTable-Infra.rt_ids[0]
 
   providers {
     "azurerm" = "azurerm.service_principal_infra"
   }
 }
-*/
