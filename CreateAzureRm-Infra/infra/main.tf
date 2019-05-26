@@ -66,8 +66,8 @@ data "azurerm_storage_account" "Infr" {
 }
 
 ## Core Network components
-module "Create-AzureRmVirtualNetwork-Infra" {
-  source                   = "../../module/Create-AzureRmVirtualNetwork"
+module "Az-VirtualNetwork-Infra" {
+  source                   = "../../module/Az-VirtualNetwork"
   vnets                    = var.vnets
   vnet_prefix              = "infra-${var.app_name}-${var.env_name}-"
   vnet_suffix              = "-net1"
@@ -83,9 +83,9 @@ module "Create-AzureRmVirtualNetwork-Infra" {
 module "Az-Subnet-Infra" {
   source                     = "../../module/Az-Subnet"
   subscription_id            = var.subscription_id
-  subnet_resource_group_name = module.Create-AzureRmVirtualNetwork-Infra[0].vnet_rgnames[0]
+  subnet_resource_group_name = module.Az-VirtualNetwork-Infra.vnet_rgnames[0]
   snet_list                  = var.snets
-  vnet_names                 = module.Create-AzureRmVirtualNetwork-Infra.vnet_names
+  vnet_names                 = module.Az-VirtualNetwork-Infra.vnet_names
   nsgs_ids                   = ["null"]
   route_table_ids            = ["null"]
 
@@ -153,9 +153,9 @@ module "Enable-AzureRmRoleAssignment" {
 
   ass_scopes = [
     data.azurerm_resource_group.Apps.id,
-    module.Create-AzureRmVirtualNetwork-Infra[0].vnet_ids[0],
-    module.Create-AzureRmRoute-Infra[0].rt_ids[0],
-    module.Az-NetworkSecurityGroup-Infra[0].nsgs_ids[0],
+    module.Az-VirtualNetwork-Infra.vnet_ids[0],
+    module.Create-AzureRmRoute-Infra.rt_ids[0],
+    module.Az-NetworkSecurityGroup-Infra.nsgs_ids[0],
     data.azurerm_resource_group.Infr.id,
     module.Create-AzureRmRecoveryServicesVault-Infr.backup_vault_id,
     data.azurerm_storage_account.Infr.id,
@@ -187,8 +187,8 @@ module "Create-AzureRmFirewall-Infr" {
 Currently generating a bug on Apps
 module "Enable-AzureRmPolicyAssignment-Infra-nsg-on-apps-subnet" {
   source                     = "../../module/Enable-AzureRmPolicyAssignment"
-  p_ass_name                 = "enforce-nsg-under-vnet-${element(module.Create-AzureRmVirtualNetwork-Infra.vnet_names,1)}"
-  p_ass_scope                = "${element(module.Create-AzureRmVirtualNetwork-Infra.vnet_ids,1)}"
+  p_ass_name                 = "enforce-nsg-under-vnet-${element(module.Az-VirtualNetwork-Infra.vnet_names,1)}"
+  p_ass_scope                = "${element(module.Az-VirtualNetwork-Infra.vnet_ids,1)}"
   p_ass_policy_definition_id = "${element(module.Create-AzureRmPolicyDefinition.policy_ids,0)}"
   p_ass_key_parameter1       = "nsgId"
   p_ass_value_parameter1     = "${element(module.Az-NetworkSecurityGroup-Infra.nsgs_ids,0)}"
@@ -200,8 +200,8 @@ module "Enable-AzureRmPolicyAssignment-Infra-nsg-on-apps-subnet" {
 
 module "Enable-AzureRmPolicyAssignment-Infra-udr-on-subnet" {
   source                     = "../../module/Enable-AzureRmPolicyAssignment"
-  p_ass_name                 = "enforce-udr-under-vnet-${element(module.Create-AzureRmVirtualNetwork-Infra.vnet_names,1)}"
-  p_ass_scope                = "${element(module.Create-AzureRmVirtualNetwork-Infra.vnet_ids,1)}"
+  p_ass_name                 = "enforce-udr-under-vnet-${element(module.Az-VirtualNetwork-Infra.vnet_names,1)}"
+  p_ass_scope                = "${element(module.Az-VirtualNetwork-Infra.vnet_ids,1)}"
   p_ass_policy_definition_id = "${element(module.Create-AzureRmPolicyDefinition.policy_ids,1)}"
   p_ass_key_parameter1       = "udrId"
   p_ass_value_parameter1     = "${element(module.Create-AzureRmRoute-Infra.rt_ids,0)}"
