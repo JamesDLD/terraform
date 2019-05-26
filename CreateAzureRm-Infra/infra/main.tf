@@ -109,8 +109,8 @@ module "Az-NetworkSecurityGroup-Infra" {
   }
 }
 
-module "Create-AzureRmRoute-Infra" {
-  source                 = "../../module/Create-AzureRmRoute"
+module "Az-RouteTable-Infra" {
+  source                 = "../../module/Az-RouteTable"
   rt_resource_group_name = data.azurerm_resource_group.Infr.name
   rt_location            = data.azurerm_resource_group.Infr.location
   routes                 = var.routes
@@ -154,7 +154,7 @@ module "Enable-AzureRmRoleAssignment" {
   ass_scopes = [
     data.azurerm_resource_group.Apps.id,
     module.Az-VirtualNetwork-Infra.vnet_ids[0],
-    module.Create-AzureRmRoute-Infra.rt_ids[0],
+    module.Az-RouteTable-Infra.rt_ids[0],
     module.Az-NetworkSecurityGroup-Infra.nsgs_ids[0],
     data.azurerm_resource_group.Infr.id,
     module.Create-AzureRmRecoveryServicesVault-Infr.backup_vault_id,
@@ -204,7 +204,7 @@ module "Enable-AzureRmPolicyAssignment-Infra-udr-on-subnet" {
   p_ass_scope                = "${element(module.Az-VirtualNetwork-Infra.vnet_ids,1)}"
   p_ass_policy_definition_id = "${element(module.Create-AzureRmPolicyDefinition.policy_ids,1)}"
   p_ass_key_parameter1       = "udrId"
-  p_ass_value_parameter1     = "${element(module.Create-AzureRmRoute-Infra.rt_ids,0)}"
+  p_ass_value_parameter1     = "${element(module.Az-RouteTable-Infra.rt_ids,0)}"
 
   providers {
     "azurerm" = "azurerm.service_principal_infra"

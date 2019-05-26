@@ -96,7 +96,7 @@ kv_sku = "standard"
 
 route_tables = [
   {
-    route_suffix_name = "core"
+    rt_suffix_name = "core"
   },
 ]
 

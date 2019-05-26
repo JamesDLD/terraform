@@ -17,10 +17,12 @@ provider "random" {
 
 variable "subscription_id" {
   description = "Azure subscription Id."
+  type=string
 }
 
 variable "tenant_id" {
   description = "Azure tenant Id."
+  type=string
 }
 
 variable "service_principals" {
@@ -31,10 +33,12 @@ variable "service_principals" {
 #Common
 variable "app_name" {
   description = "Application name used in objects naming convention."
+  type=string
 }
 
 variable "env_name" {
   description = "Environment name used in objects naming convention."
+  type=string
 }
 
 variable "default_tags" {
@@ -44,18 +48,22 @@ variable "default_tags" {
 
 variable "rg_apps_name" {
   description = "Apps resource group name."
+  type=string
 }
 
 variable "rg_infr_name" {
   description = "infra resource group name."
+  type=string
 }
 
 variable "sa_infr_name" {
   description = "Infra storage account name."
+  type=string
 }
 
 variable "bck_rsv_name" {
   description = "Infra recovery services vault name."
+  type=string
 }
 
 #Subnet & Network Security group
@@ -78,6 +86,7 @@ variable "apps_nsgrules" {
 #Load Balancers & Availability Set & Virtual Machines
 variable "Lb_sku" {
   description = "The SKU of the Azure Load Balancer. Accepted values are Basic and Standard. Defaults to Basic."
+  type=string
 }
 
 variable "Lbs" {
@@ -130,17 +139,21 @@ variable "Windows_Ss_Vms" {
 
 variable "app_admin" {
   description = "Specifies the name of the administrator account on the VM."
+  type=string
 }
 
 variable "pass" {
   description = "Specifies the password of the administrator account on the VM."
+  type=string
 }
 
 variable "ssh_key" {
   description = "Specifies the ssh public key to login on Linux VM."
+  type=string
 }
 
 variable "auto_sku" {
   description = "Specifies the automation account SKU."
+  type=string
 }
 
