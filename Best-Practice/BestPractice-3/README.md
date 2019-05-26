@@ -31,17 +31,17 @@ module "Create-AzureRmNetworkInterface" {
   version                 = "~> 0.1"
   source                  = "github.com/JamesDLD/terraform/module/Create-AzureRmNetworkInterface"
   Linux_Vms               = []                                                                    
-  Windows_Vms             = ["${var.Windows_Vms}"]                                                
+  Windows_Vms             = var.Windows_Vms                                               
   nic_prefix              = "bp3-"
   nic_suffix              = "-nic1"
-  nic_location            = "${module.Get-AzureRmResourceGroup.rg_location}"
-  nic_resource_group_name = "${module.Get-AzureRmResourceGroup.rg_name}"
-  subnets_ids             = "${module.Create-AzureRmSubnet.subnets_ids}"
-  nic_tags                = "${module.Get-AzureRmResourceGroup.rg_tags}"
+  nic_location            = module.Get-AzureRmResourceGroup.rg_location
+  nic_resource_group_name = module.Get-AzureRmResourceGroup.rg_name
+  subnets_ids             = module.Create-AzureRmSubnet.subnets_ids
+  nic_tags                = module.Get-AzureRmResourceGroup.rg_tags
   nsgs_ids                = [""]
 
   #This an implicit dependency
-  #lb_backend_ids = "${module.Create-AzureRmLoadBalancer.lb_backend_ids}"
+  #lb_backend_ids = module.Create-AzureRmLoadBalancer.lb_backend_ids
 
   #This an explicit dependency                 
   lb_backend_ids = ["/subscriptions/${var.subscription_id}/resourceGroups/infr-jdld-noprd-rg1/providers/Microsoft.Network/loadBalancers/bp3-internal-lb1/backendAddressPools/bp3-internal-bckpool1"]

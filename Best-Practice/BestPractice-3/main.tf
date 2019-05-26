@@ -41,7 +41,7 @@ module "Az-Subnet-Demo" {
   source                     = "../../module/Az-Subnet"
   subscription_id            = var.subscription_id
   subnet_resource_group_name = data.azurerm_resource_group.infr.name
-  snet_list                  = [var.subnets]
+  snet_list                  = var.subnets
   vnet_names                 = module.Get-AzureRmVirtualNetwork.vnet_names
   nsgs_ids                   = ["null"]
   route_table_ids            = ["null"]
@@ -87,7 +87,7 @@ module "Az-Vm-Demo" {
 
   Linux_Vms                     = [] #If no need just fill "Linux_Vms = []" in the tfvars file
   Linux_nics_ids                = []
-  Linux_storage_image_reference = []
+  Linux_storage_image_reference = {}
   Linux_DataDisks               = []
   ssh_key                       = ""
 
