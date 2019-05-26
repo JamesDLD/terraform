@@ -109,7 +109,7 @@ variable "Linux_DataDisks" {
 }
 
 variable "Linux_storage_image_reference" {
-  type        = list
+  type        = map(string)
   description = "Could containt an 'id' of a custom image or the following parameters for an Azure public 'image publisher','offer','sku', 'version'"
 }
 
@@ -123,7 +123,7 @@ variable "Windows_DataDisks" {
 }
 
 variable "Windows_storage_image_reference" {
-  type        = list
+  type        = map(string)
   description = "Could containt an 'id' of a custom image or the following parameters for an Azure public 'image publisher','offer','sku', 'version'"
 }
 
@@ -157,3 +157,12 @@ variable "auto_sku" {
   type=string
 }
 
+variable "key_vaults" {
+  description="List containing your key vaults."
+  type = list(object({
+    suffix_name    = string
+    policy1_tenant_id =  string
+    policy1_object_id              = string
+    policy1_application_id              = string
+  }))
+}
