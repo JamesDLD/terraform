@@ -22,7 +22,7 @@ provider "azurerm" {
 #Call module/resource
 #Get components
 module "Get-AzureRmVirtualNetwork" {
-  version                  = "~> 0.1"
+  #version                  = "~> 0.1"
   source                   = "../../module/Get-AzureRmVirtualNetwork"
   vnets                    = ["bp1-vnet1"]
   vnet_resource_group_name = "infr-jdld-noprd-rg1"

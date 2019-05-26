@@ -22,14 +22,14 @@ provider "azurerm" {
 #Call module/resource
 #Get components
 module "Get-AzureRmResourceGroup" {
-  version = "~> 0.1"
+  #version = "~> 0.1"
   source  = "../../module/Get-AzureRmResourceGroup"
   rg_name = "infr-jdld-noprd-rg1"
 }
 
 #Action
 module "Add-AzureRmLoadBalancerOutboundRules-Apps" {
-  version                    = "~> 0.1"
+  #version                    = "~> 0.1"
   source                     = "../../module/Add-AzureRmLoadBalancerOutboundRules"
   lbs_out                    = var.lbs_public
   lb_out_prefix              = "bp4-"

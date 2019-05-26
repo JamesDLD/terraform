@@ -167,7 +167,6 @@ module "Az-RoleAssignment-Apps" {
   }
 }
 
-/*
 module "Az-Firewall-Infr" {
   source                 = "../../module/Az-Firewall"
   fw_resource_group_name = data.azurerm_resource_group.Infr.name
@@ -180,7 +179,6 @@ module "Az-Firewall-Infr" {
     azurerm = azurerm.service_principal_infra
   }
 }
-*/
 
 module "Az-PolicyAssignment-Infra-nsg-on-apps-subnet" {
   source                     = "../../module/Az-PolicyAssignment"
@@ -191,7 +189,7 @@ module "Az-PolicyAssignment-Infra-nsg-on-apps-subnet" {
   p_ass_value_parameter1     = module.Az-NetworkSecurityGroup-Infra.nsgs_ids[0]
 
   providers {
-    "azurerm" = "azurerm.service_principal_infra"
+    azurerm = azurerm.service_principal_infra
   }
 }
 module "Az-PolicyAssignment-Infra-udr-on-subnet" {
@@ -203,6 +201,6 @@ module "Az-PolicyAssignment-Infra-udr-on-subnet" {
   p_ass_value_parameter1     = module.Az-RouteTable-Infra.rt_ids[0]
 
   providers {
-    "azurerm" = "azurerm.service_principal_infra"
+    azurerm = azurerm.service_principal_infra
   }
 }
