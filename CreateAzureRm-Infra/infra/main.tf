@@ -146,9 +146,30 @@ module "Az-RoleDefinition-Apps" {
     azurerm = azurerm.service_principal_infra
   }
 }
+
+module "Az-RoleAssignment-Apps" {
+  source                     = "../../Az-RoleAssignment"
+  ass_countRoleAssignment = length(var.roles)
+  ass_scopes   = [
+    data.azurerm_resource_group.Apps.id,
+    module.Az-VirtualNetwork-Infra.vnet_ids[0],
+    module.Az-RouteTable-Infra.rt_ids[0],
+    module.Az-NetworkSecurityGroup-Infra.nsgs_ids[0],
+    data.azurerm_resource_group.Infr.id,
+    module.Create-AzureRmRecoveryServicesVault-Infr.backup_vault_id,
+    data.azurerm_storage_account.Infr.id,
+  ]
+  ass_role_definition_ids = odule.Az-RoleDefinition-Apps.role_ids
+  ass_principal_id = var.service_principals[1]["Application_object_id"]
+
+  providers = {
+    azurerm = azurerm.service_principal_infra
+  }
+}
+
 /*
-module "Enable-AzureRmRoleAssignment" {
-  source                  = "../../module/Enable-AzureRmRoleAssignment"
+module "Az-RoleAssignment" {
+  source                  = "../../module/Az-RoleAssignment"
   ass_countRoleAssignment = length(var.roles)
 
   ass_scopes = [
