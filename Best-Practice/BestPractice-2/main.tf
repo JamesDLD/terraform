@@ -23,7 +23,7 @@ provider "azurerm" {
 #Get components
 module "Get-AzureRmVirtualNetwork" {
   version                  = "~> 0.1"
-  source                   = "github.com/JamesDLD/terraform/module/Get-AzureRmVirtualNetwork"
+  source                   = "../../module/Get-AzureRmVirtualNetwork"
   vnets                    = ["bp1-vnet1"]
   vnet_resource_group_name = "infr-jdld-noprd-rg1"
 }
@@ -34,7 +34,7 @@ data "azurerm_resource_group" "infr" {
 
 #Action
 module "Az-Subnet-Demo" {
-  source                     = "github.com/JamesDLD/terraform/module/Az-Subnet"
+  source                     = "../../module/Az-Subnet"
   subscription_id            = var.subscription_id
   subnet_resource_group_name = data.azurerm_resource_group.infr.name
   snet_list                  = var.subnets

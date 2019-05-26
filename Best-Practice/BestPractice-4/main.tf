@@ -23,14 +23,14 @@ provider "azurerm" {
 #Get components
 module "Get-AzureRmResourceGroup" {
   version = "~> 0.1"
-  source  = "github.com/JamesDLD/terraform/module/Get-AzureRmResourceGroup"
+  source  = "../../module/Get-AzureRmResourceGroup"
   rg_name = "infr-jdld-noprd-rg1"
 }
 
 #Action
 module "Add-AzureRmLoadBalancerOutboundRules-Apps" {
   version                    = "~> 0.1"
-  source                     = "github.com/JamesDLD/terraform/module/Add-AzureRmLoadBalancerOutboundRules"
+  source                     = "../../module/Add-AzureRmLoadBalancerOutboundRules"
   lbs_out                    = var.lbs_public
   lb_out_prefix              = "bp4-"
   lb_out_suffix              = "-publiclb1"

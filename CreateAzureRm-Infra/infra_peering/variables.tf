@@ -24,7 +24,7 @@ variable "tenant_id" {
 }
 
 variable "service_principals" {
-  type        = list(string)
+  type        = list
   description = "Azure service principals list containing the following keys : Application_Name, Application_Id, Application_Secret, Application_object_id."
 }
 

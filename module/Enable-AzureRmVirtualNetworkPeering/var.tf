@@ -1,18 +1,28 @@
-variable "vnet_src_name" {}
-variable "vnet_rg_src_name" {}
-variable "vnet_src_id" {}
+variable "vnet_src_name" {
+}
+
+variable "vnet_rg_src_name" {
+}
+
+variable "vnet_src_id" {
+}
 
 provider "azurerm" {
   alias = "src"
 }
 
-variable "Disable_Vnet_Peering" {}
+variable "Disable_Vnet_Peering" {
+}
 
 #############################################################
 ##########                  ops                    ##########
 #############################################################
 variable "list_one" {
-  type = "list"
+  description="Virtual network names and resource group names list."
+  type = list(object({
+    name                   = string
+    resource_group_name    = number 
+  }))
 }
 
 provider "azurerm" {
@@ -23,7 +33,11 @@ provider "azurerm" {
 ##########                  sec                    ##########
 #############################################################
 variable "list_two" {
-  type = "list"
+  description="Virtual network names and resource group names list."
+  type = list(object({
+    name                   = string
+    resource_group_name    = number 
+  }))
 }
 
 provider "azurerm" {
@@ -34,7 +48,11 @@ provider "azurerm" {
 ##########                  k8s                    ##########
 #############################################################
 variable "list_three" {
-  type = "list"
+  description="Virtual network names and resource group names list."
+  type = list(object({
+    name                   = string
+    resource_group_name    = number 
+  }))
 }
 
 provider "azurerm" {
@@ -45,7 +63,11 @@ provider "azurerm" {
 ##########               Agile Fabric              ##########
 #############################################################
 variable "list_four" {
-  type = "list"
+  description="Virtual network names and resource group names list."
+  type = list(object({
+    name                   = string
+    resource_group_name    = number 
+  }))
 }
 
 provider "azurerm" {
@@ -56,7 +78,11 @@ provider "azurerm" {
 ##########                   Pub                   ##########
 #############################################################
 variable "list_five" {
-  type = "list"
+  description="Virtual network names and resource group names list."
+  type = list(object({
+    name                   = string
+    resource_group_name    = number 
+  }))
 }
 
 provider "azurerm" {
@@ -67,7 +93,11 @@ provider "azurerm" {
 ##########                 Extra 1                 ##########
 #############################################################
 variable "list_six" {
-  type = "list"
+  description="Virtual network names and resource group names list."
+  type = list(object({
+    name                   = string
+    resource_group_name    = number 
+  }))
 }
 
 provider "azurerm" {
@@ -78,7 +108,11 @@ provider "azurerm" {
 ##########                 Extra 2                 ##########
 #############################################################
 variable "list_seven" {
-  type = "list"
+  description="Virtual network names and resource group names list."
+  type = list(object({
+    name                   = string
+    resource_group_name    = number 
+  }))
 }
 
 provider "azurerm" {
@@ -89,9 +123,14 @@ provider "azurerm" {
 ##########                 Extra 3                 ##########
 #############################################################
 variable "list_eight" {
-  type = "list"
+  description="Virtual network names and resource group names list."
+  type = list(object({
+    name                   = string
+    resource_group_name    = number 
+  }))
 }
 
 provider "azurerm" {
   alias = "provider_eight"
 }
+

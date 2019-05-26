@@ -44,7 +44,7 @@ data "azurerm_network_security_group" "Infr" {
 
 ## Core Network components
 module "Az-NetworkSecurityGroup-Apps" {
-  source                  = "github.com/JamesDLD/terraform/module/Az-NetworkSecurityGroup"
+  source                  = "../../module/Az-NetworkSecurityGroup"
   nsgs                    = var.apps_nsgs
   nsg_prefix              = "${var.app_name}-${var.env_name}-"
   nsg_suffix              = "-nsg1"
@@ -55,7 +55,7 @@ module "Az-NetworkSecurityGroup-Apps" {
 }
 
 module "Az-Subnet-Apps" {
-  source                     = "github.com/JamesDLD/terraform/module/Az-Subnet"
+  source                     = "../../module/Az-Subnet"
   subscription_id            = var.subscription_id
   subnet_resource_group_name = var.rg_infr_name
   snet_list                  = var.apps_snets
@@ -67,7 +67,7 @@ module "Az-Subnet-Apps" {
 ## Virtual Machines components
 
 module "Az-LoadBalancer-Apps" {
-  source                 = "github.com/JamesDLD/terraform/module/Az-LoadBalancer"
+  source                 = "../../module/Az-LoadBalancer"
   Lbs                    = var.Lbs
   lb_prefix              = "${var.app_name}-${var.env_name}-"
   lb_suffix              = "-lb1"
@@ -80,7 +80,7 @@ module "Az-LoadBalancer-Apps" {
 }
 
 module "Az-NetworkInterface-Apps" {
-  source                  = "github.com/JamesDLD/terraform/module/Az-NetworkInterface"
+  source                  = "../../module/Az-NetworkInterface"
   subscription_id         = var.subscription_id
   Linux_Vms               = var.Linux_Vms   #If no need just fill "Linux_Vms = []" in the tfvars file
   Windows_Vms             = var.Windows_Vms #If no need just fill "Windows_Vms = []" in the tfvars file
@@ -96,7 +96,7 @@ module "Az-NetworkInterface-Apps" {
 }
 
 module "Az-Vm-Apps" {
-  source                             = "github.com/JamesDLD/terraform/module/Az-Vm"
+  source                             = "../../module/Az-Vm"
   subscription_id                    = var.subscription_id
   sa_bootdiag_storage_uri            = data.azurerm_storage_account.Infr.primary_blob_endpoint
   key_vault_id                       = ""
@@ -125,7 +125,7 @@ module "Az-Vm-Apps" {
 
 # Infra cross services for Apps
 module "Az-RecoveryServicesBackupProtection-Apps" {
-  source          = "github.com/JamesDLD/terraform/module/Az-RecoveryServicesBackupProtection"
+  source          = "../../module/Az-RecoveryServicesBackupProtection"
   subscription_id = var.subscription_id
   bck_vms_names = concat(
     module.Az-Vm-Apps.Linux_Vms_names,
