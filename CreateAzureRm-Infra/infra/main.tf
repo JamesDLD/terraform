@@ -148,7 +148,7 @@ module "Az-RoleDefinition-Apps" {
 }
 
 module "Az-RoleAssignment-Apps" {
-  source                     = "../../Az-RoleAssignment"
+  source                     = "../../module/Az-RoleAssignment"
   ass_countRoleAssignment = length(var.roles)
   ass_scopes   = [
     data.azurerm_resource_group.Apps.id,
@@ -159,7 +159,7 @@ module "Az-RoleAssignment-Apps" {
     module.Create-AzureRmRecoveryServicesVault-Infr.backup_vault_id,
     data.azurerm_storage_account.Infr.id,
   ]
-  ass_role_definition_ids = odule.Az-RoleDefinition-Apps.role_ids
+  ass_role_definition_ids = module.Az-RoleDefinition-Apps.role_ids
   ass_principal_id = var.service_principals[1]["Application_object_id"]
 
   providers = {
@@ -188,7 +188,7 @@ module "Az-PolicyAssignment-Infra-nsg-on-apps-subnet" {
   p_ass_key_parameter1       = "nsgId"
   p_ass_value_parameter1     = module.Az-NetworkSecurityGroup-Infra.nsgs_ids[0]
 
-  providers {
+  providers = {
     azurerm = azurerm.service_principal_infra
   }
 }
@@ -200,7 +200,7 @@ module "Az-PolicyAssignment-Infra-udr-on-subnet" {
   p_ass_key_parameter1       = "udrId"
   p_ass_value_parameter1     = module.Az-RouteTable-Infra.rt_ids[0]
 
-  providers {
+  providers = {
     azurerm = azurerm.service_principal_infra
   }
 }
