@@ -16,10 +16,7 @@ variable "fw_resource_group_name" {
   default = "apps-jdld-sand1-rg1"
 }
 
-variable "fw_tags" {
-  type = "map"
-  description = "Firewall tags."
-
+variable "default_tags" {
   default = {
     ENV = "sand1"
     APP = "JDLD"
@@ -30,12 +27,12 @@ variable "fw_tags" {
 
 #Call module
 
-module "Create-AzureRmFirewall-Infr" {
-  source                 = "github.com/JamesDLD/terraform/module/Create-AzureRmFirewall"
-  fw_resource_group_name = "${var.fw_resource_group_name}"
+module "Az-Firewall-Infr" {
+  source                 = "github.com/JamesDLD/terraform/module/Az-Firewall"
+  fw_resource_group_name = var.fw_resource_group_name
   fw_location            = "francecentral"
   fw_prefix              = "demo-fw1"
   fw_subnet_id           = "/xxx/xxxx/subnetid"
-  fw_tags                = "${var.fw_tags}"
+  fw_tags                = var.default_tags
 }
 ```

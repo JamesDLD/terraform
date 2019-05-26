@@ -168,8 +168,8 @@ module "Az-RoleAssignment-Apps" {
 }
 
 /*
-module "Create-AzureRmFirewall-Infr" {
-  source                 = "../../module/Create-AzureRmFirewall"
+module "Az-Firewall-Infr" {
+  source                 = "../../module/Az-Firewall"
   fw_resource_group_name = data.azurerm_resource_group.Infr.name
   fw_location            = data.azurerm_resource_group.Infr.location
   fw_prefix              = "${var.app_name}-${var.env_name}-fw1"
