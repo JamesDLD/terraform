@@ -125,8 +125,8 @@ module "Az-RouteTable-Infra" {
 }
 
 ## Secops policies & RBAC roles
-module "Create-AzureRmPolicyDefinition" {
-  source     = "../../module/Create-AzureRmPolicyDefinition"
+module "Az-PolicyDefinition" {
+  source     = "../../module/Az-PolicyDefinition"
   policies   = var.policies
   pol_prefix = "${var.app_name}-${var.env_name}-"
   pol_suffix = "-pol1"
@@ -189,7 +189,7 @@ module "Enable-AzureRmPolicyAssignment-Infra-nsg-on-apps-subnet" {
   source                     = "../../module/Enable-AzureRmPolicyAssignment"
   p_ass_name                 = "enforce-nsg-under-vnet-${element(module.Az-VirtualNetwork-Infra.vnet_names,1)}"
   p_ass_scope                = "${element(module.Az-VirtualNetwork-Infra.vnet_ids,1)}"
-  p_ass_policy_definition_id = "${element(module.Create-AzureRmPolicyDefinition.policy_ids,0)}"
+  p_ass_policy_definition_id = "${element(module.Az-PolicyDefinition.policy_ids,0)}"
   p_ass_key_parameter1       = "nsgId"
   p_ass_value_parameter1     = "${element(module.Az-NetworkSecurityGroup-Infra.nsgs_ids,0)}"
 
@@ -202,7 +202,7 @@ module "Enable-AzureRmPolicyAssignment-Infra-udr-on-subnet" {
   source                     = "../../module/Enable-AzureRmPolicyAssignment"
   p_ass_name                 = "enforce-udr-under-vnet-${element(module.Az-VirtualNetwork-Infra.vnet_names,1)}"
   p_ass_scope                = "${element(module.Az-VirtualNetwork-Infra.vnet_ids,1)}"
-  p_ass_policy_definition_id = "${element(module.Create-AzureRmPolicyDefinition.policy_ids,1)}"
+  p_ass_policy_definition_id = "${element(module.Az-PolicyDefinition.policy_ids,1)}"
   p_ass_key_parameter1       = "udrId"
   p_ass_value_parameter1     = "${element(module.Az-RouteTable-Infra.rt_ids,0)}"
 

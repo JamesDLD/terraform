@@ -82,8 +82,12 @@ variable "key_vaults" {
 }
 
 variable "policies" {
-  type = list
-  description = "Azure Policy list containing the following keys : suffix_name, policy_type, mode."
+  description="Policies."
+  type = list(object({
+    suffix_name         = string #Used to name the policy and to call json template files located into the module's folder
+    policy_type          = string
+    mode = string
+  }))
 }
 
 variable "roles" {
