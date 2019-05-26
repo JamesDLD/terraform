@@ -21,7 +21,7 @@ variable "list_one" {
   description="Virtual network names and resource group names list."
   type = list(object({
     name                   = string
-    resource_group_name    = number 
+    resource_group_name    = string 
   }))
 }
 
@@ -36,7 +36,7 @@ variable "list_two" {
   description="Virtual network names and resource group names list."
   type = list(object({
     name                   = string
-    resource_group_name    = number 
+    resource_group_name    = string 
   }))
 }
 
@@ -51,7 +51,7 @@ variable "list_three" {
   description="Virtual network names and resource group names list."
   type = list(object({
     name                   = string
-    resource_group_name    = number 
+    resource_group_name    = string 
   }))
 }
 
@@ -66,7 +66,7 @@ variable "list_four" {
   description="Virtual network names and resource group names list."
   type = list(object({
     name                   = string
-    resource_group_name    = number 
+    resource_group_name    = string 
   }))
 }
 
@@ -81,7 +81,7 @@ variable "list_five" {
   description="Virtual network names and resource group names list."
   type = list(object({
     name                   = string
-    resource_group_name    = number 
+    resource_group_name    = string 
   }))
 }
 
@@ -96,7 +96,7 @@ variable "list_six" {
   description="Virtual network names and resource group names list."
   type = list(object({
     name                   = string
-    resource_group_name    = number 
+    resource_group_name    = string 
   }))
 }
 
@@ -111,7 +111,7 @@ variable "list_seven" {
   description="Virtual network names and resource group names list."
   type = list(object({
     name                   = string
-    resource_group_name    = number 
+    resource_group_name    = string 
   }))
 }
 
@@ -126,7 +126,7 @@ variable "list_eight" {
   description="Virtual network names and resource group names list."
   type = list(object({
     name                   = string
-    resource_group_name    = number 
+    resource_group_name    = string 
   }))
 }
 

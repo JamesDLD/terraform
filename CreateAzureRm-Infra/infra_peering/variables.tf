@@ -54,7 +54,7 @@ variable "ssh_key" {
 }
 
 variable "key_vaults" {
-  type        = list(string)
+  type        = list
   description = "Azure Key vault list containing the following keys : suffix_name, policy1_tenant_id, policy1_object_id, policy1_application_id."
 }
 
