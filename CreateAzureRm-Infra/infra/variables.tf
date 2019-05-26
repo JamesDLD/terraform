@@ -91,8 +91,12 @@ variable "policies" {
 }
 
 variable "roles" {
-  type        = list
-  description = "Azure Custom role list containing the following keys : suffix_name, actions, not_actions."
+  description="Roles list."
+  type = list(object({
+    suffix_name         = string 
+    actions          = string
+    not_actions = string
+  }))
 }
 
 #Backup

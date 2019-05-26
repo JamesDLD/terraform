@@ -136,8 +136,8 @@ module "Az-PolicyDefinition" {
   }
 }
 
-module "Create-AzureRmRoleDefinition-Apps" {
-  source      = "../../module/Create-AzureRmRoleDefinition"
+module "Az-RoleDefinition-Apps" {
+  source      = "../../module/Az-RoleDefinition"
   roles       = var.roles
   role_prefix = "${var.app_name}-${var.env_name}-"
   role_suffix = "-role1"
@@ -161,7 +161,7 @@ module "Enable-AzureRmRoleAssignment" {
     data.azurerm_storage_account.Infr.id,
   ]
 
-  ass_role_definition_ids = module.Create-AzureRmRoleDefinition-Apps.role_ids
+  ass_role_definition_ids = module.Az-RoleDefinition-Apps.role_ids
   ass_principal_id        = var.service_principals[1]["Application_object_id"]
 
   providers = {
