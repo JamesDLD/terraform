@@ -20,11 +20,8 @@ provider "azurerm" {
 }
 
 #Call module/resource
-#Get components
-module "Get-AzureRmResourceGroup" {
-  #version = "~> 0.1"
-  source  = "../../module/Get-AzureRmResourceGroup"
-  rg_name = "infr-jdld-noprd-rg1"
+data "azurerm_resource_group" "infr" {
+  name = "infr-jdld-noprd-rg1"
 }
 
 #Action
@@ -34,7 +31,7 @@ module "Add-AzureRmLoadBalancerOutboundRules-Apps" {
   lbs_out                    = var.lbs_public
   lb_out_prefix              = "bp4-"
   lb_out_suffix              = "-publiclb1"
-  lb_out_resource_group_name = module.Get-AzureRmResourceGroup.rg_name
-  lbs_tags                   = module.Get-AzureRmResourceGroup.rg_tags
+  lb_out_resource_group_name = data.azurerm_resource_group.infr.name
+  lbs_tags                   = data.azurerm_resource_group.infr.tags
 }
 
