@@ -10,13 +10,6 @@ variables:
   value: 'backend-main-jdld-1.json'
 - name: main_secret_file_id34
   value: 'main-jdld-1.json'
-
-resources:
-  repositories:
-    - repository: terraform # identifier (A-Z, a-z, 0-9, and underscore)
-      type: github
-      endpoint: JamesDLD  # name of the service connection to use (for non-Azure Repos types)
-      name: JamesDLD/terraform
       
 trigger:
   batch: true #when a build is running, the system waits until the build is completed
@@ -38,6 +31,12 @@ stages:
       vmImage: 'Ubuntu-16.04'
     # creates an environment if it doesn’t exist
     environment: 'staging'
+    resources:
+      repositories:
+        - repository: terraform # identifier (A-Z, a-z, 0-9, and underscore)
+          type: github
+          endpoint: JamesDLD  # name of the service connection to use (for non-Azure Repos types)
+          name: JamesDLD/terraform
     strategy:
       # default deployment strategy
       runOnce:
