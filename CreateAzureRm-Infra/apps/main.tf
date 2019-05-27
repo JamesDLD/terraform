@@ -50,7 +50,7 @@ data "azurerm_network_security_group" "Infr" {
 
 ## Core Network components
 module "Az-NetworkSecurityGroup-Apps" {
-  source                  = "git::https://github.com/JamesDLD/terraform.git//module/Az-NetworkSecurityGroup?ref=feature/terraform0.12"
+  source                  = "git::https://github.com/JamesDLD/terraform.git//module/Az-NetworkSecurityGroup?ref=master"
   nsgs                    = var.apps_nsgs
   nsg_prefix              = "${var.app_name}-${var.env_name}-"
   nsg_suffix              = "-nsg1"
@@ -64,7 +64,7 @@ module "Az-NetworkSecurityGroup-Apps" {
 }
 
 module "Az-Subnet-Apps" {
-  source                     = "git::https://github.com/JamesDLD/terraform.git//module/Az-Subnet?ref=feature/terraform0.12"
+  source                     = "git::https://github.com/JamesDLD/terraform.git//module/Az-Subnet?ref=master"
   subscription_id            = var.subscription_id
   subnet_resource_group_name = var.rg_infr_name
   snet_list                  = var.apps_snets
@@ -79,7 +79,7 @@ module "Az-Subnet-Apps" {
 ## Virtual Machines components
 
 module "Az-LoadBalancer-Apps" {
-  source                 = "git::https://github.com/JamesDLD/terraform.git//module/Az-LoadBalancer?ref=feature/terraform0.12"
+  source                 = "git::https://github.com/JamesDLD/terraform.git//module/Az-LoadBalancer?ref=master"
   Lbs                    = var.Lbs
   lb_prefix              = "${var.app_name}-${var.env_name}-"
   lb_suffix              = "-lb1"
@@ -95,7 +95,7 @@ module "Az-LoadBalancer-Apps" {
 }
 
 module "Az-NetworkInterface-Apps" {
-  source                  = "git::https://github.com/JamesDLD/terraform.git//module/Az-NetworkInterface?ref=feature/terraform0.12"
+  source                  = "git::https://github.com/JamesDLD/terraform.git//module/Az-NetworkInterface?ref=master"
   subscription_id         = var.subscription_id
   Linux_Vms               = var.Linux_Vms   #If no need just fill "Linux_Vms = []" in the tfvars file
   Windows_Vms             = var.Windows_Vms #If no need just fill "Windows_Vms = []" in the tfvars file
@@ -114,7 +114,7 @@ module "Az-NetworkInterface-Apps" {
 }
 
 module "Az-Vm-Apps" {
-  source                             = "git::https://github.com/JamesDLD/terraform.git//module/Az-Vm?ref=feature/terraform0.12"
+  source                             = "git::https://github.com/JamesDLD/terraform.git//module/Az-Vm?ref=master"
   subscription_id                    = var.subscription_id
   sa_bootdiag_storage_uri            = data.azurerm_storage_account.Infr.primary_blob_endpoint
   key_vault_id                       = ""
@@ -146,7 +146,7 @@ module "Az-Vm-Apps" {
 
 # Infra cross services for Apps
 module "Az-RecoveryServicesBackupProtection-Apps" {
-  source          = "git::https://github.com/JamesDLD/terraform.git//module/Az-RecoveryServicesBackupProtection?ref=feature/terraform0.12"
+  source          = "git::https://github.com/JamesDLD/terraform.git//module/Az-RecoveryServicesBackupProtection?ref=master"
   subscription_id = var.subscription_id
   bck_vms_names = concat(
     module.Az-Vm-Apps.Linux_Vms_names,

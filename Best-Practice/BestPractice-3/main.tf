@@ -22,7 +22,7 @@ provider "azurerm" {
 #Call module/resource
 #Get components
 module "Get-AzureRmVirtualNetwork" {
-  source                   = "git::https://github.com/JamesDLD/terraform.git//module/Get-AzureRmVirtualNetwork?ref=feature/terraform0.12"
+  source                   = "git::https://github.com/JamesDLD/terraform.git//module/Get-AzureRmVirtualNetwork?ref=master"
   vnets                    = ["bp1-vnet1"]
   vnet_resource_group_name = "infr-jdld-noprd-rg1"
 }
@@ -38,7 +38,7 @@ data "azurerm_storage_account" "infr" {
 
 #Action
 module "Az-Subnet-Demo" {
-  source                     = "git::https://github.com/JamesDLD/terraform.git//module/Az-Subnet?ref=feature/terraform0.12"
+  source                     = "git::https://github.com/JamesDLD/terraform.git//module/Az-Subnet?ref=master"
   subscription_id            = var.subscription_id
   subnet_resource_group_name = data.azurerm_resource_group.infr.name
   snet_list                  = var.subnets
@@ -48,7 +48,7 @@ module "Az-Subnet-Demo" {
 }
 
 module "Az-LoadBalancer-Demo" {
-  source                 = "git::https://github.com/JamesDLD/terraform.git//module/Az-LoadBalancer?ref=feature/terraform0.12"
+  source                 = "git::https://github.com/JamesDLD/terraform.git//module/Az-LoadBalancer?ref=master"
   Lbs                    = var.Lbs
   lb_prefix              = "bp3-"
   lb_suffix              = "-lb1"
@@ -61,7 +61,7 @@ module "Az-LoadBalancer-Demo" {
 }
 
 module "Az-NetworkInterface-Demo" {
-  source                  = "git::https://github.com/JamesDLD/terraform.git//module/Az-NetworkInterface?ref=feature/terraform0.12"
+  source                  = "git::https://github.com/JamesDLD/terraform.git//module/Az-NetworkInterface?ref=master"
   subscription_id         = var.subscription_id
   Linux_Vms               = []                #If no need just fill "Linux_Vms = []" in the tfvars file
   Windows_Vms             = var.Windows_Vms #If no need just fill "Windows_Vms = []" in the tfvars file
@@ -77,7 +77,7 @@ module "Az-NetworkInterface-Demo" {
 }
 
 module "Az-Vm-Demo" {
-  source                             = "git::https://github.com/JamesDLD/terraform.git//module/Az-Vm?ref=feature/terraform0.12"
+  source                             = "git::https://github.com/JamesDLD/terraform.git//module/Az-Vm?ref=master"
   subscription_id                    = var.subscription_id
   sa_bootdiag_storage_uri            = data.azurerm_storage_account.infr.primary_blob_endpoint
   key_vault_id                       = ""
