@@ -32,15 +32,75 @@ resources:
 stages:
 - stage: Deployment
   jobs:
-  - job: Linux
+    # track deployments on the environment
+  - deployment: Terraform_Apply
     pool:
-      vmImage: 'ubuntu-16.04'
-    steps:
-    - template: pipeline/test.yml@terraform # Template reference
+      vmImage: 'Ubuntu-16.04'
+    # creates an environment if it doesn’t exist
+    environment: 'staging'
+    strategy:
+      # default deployment strategy
+      runOnce:
+        deploy:
+          steps:
+          - checkout: self
+            clean: true
+            persistCredentials: true
 
-  - job: macOS
-    pool:
-      vmImage: 'macOS-10.13'
-    steps:
-    - template: pipeline/test.yml@terraform # Template reference
-  
+          - task: DownloadSecureFile@1
+            displayName: 'Download secure file $(main_backend_secret_file_id1234)'
+            inputs:
+              secureFile: $(main_backend_secret_file_id1234)
+
+          - task: DownloadSecureFile@1
+            displayName: 'Download secure file $(main_secret_file_id34)'
+            inputs:
+              secureFile: $(main_secret_file_id34)
+
+          - template: pipeline/terraform.yml@terraform
+            parameters:
+              version: $(terraform_version)
+              path: './Best-Practice/BestPractice-1/'
+              ArtifactName: 'BestPractice1'
+              backend_secret_file_id: $(main_backend_secret_file_id1234)
+              main_secret_file_id: $(main_backend_secret_file_id1234)
+              main_file_path: ''
+              terraform_apply: true
+
+          # - template: pipeline/terraform.yml@terraform
+          #   parameters:
+          #     version: $(terraform_version)
+          #     path: './Best-Practice/BestPractice-2/'
+          #     ArtifactName: 'BestPractice2'
+          #     backend_secret_file_id: $(main_backend_secret_file_id1234)
+          #     main_secret_file_id: $(main_backend_secret_file_id1234)
+          #     main_file_path: './main-jdld.tfvars'
+          #     terraform_apply: true
+
+          # - template: pipeline/terraform.yml@terraform
+          #   parameters:
+          #     version: $(terraform_version)
+          #     path: './Best-Practice/BestPractice-3/'
+          #     ArtifactName: 'BestPractice3'
+          #     backend_secret_file_id: $(main_backend_secret_file_id1234)
+          #     main_secret_file_id: $(main_secret_file_id34)
+          #     main_file_path: './main-jdld.tfvars'
+          #     terraform_apply: true
+
+          # - template: pipeline/terraform.yml@terraform
+          #   parameters:
+          #     version: $(terraform_version)
+          #     path: './Best-Practice/BestPractice-4/'
+          #     ArtifactName: 'BestPractice4'
+          #     backend_secret_file_id: $(main_backend_secret_file_id1234)
+          #     main_secret_file_id: $(main_secret_file_id34)
+          #     main_file_path: './main-jdld.tfvars'
+          #     terraform_apply: true
+
+          # - template: pipeline/PublishBuildArtifacts.yml@terraform
+          #   parameters:
+          #     ArtifactName: 'BestPractice'
+
+
+
+
