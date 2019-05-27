@@ -1,0 +1,4 @@
+# File: steps/build.yml
+
+steps:
+- script: echo hello

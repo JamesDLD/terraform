@@ -21,15 +21,15 @@ trigger:
     include:
     - Best-Practice/*
 
+resources:
+  repositories:
+    - repository: terraform # identifier (A-Z, a-z, 0-9, and underscore)
+      type: github
+      endpoint: JamesDLD  # name of the service connection to use (for non-Azure Repos types)
+      name: JamesDLD/terraform
 
 stages:
 - stage: Deployment
-  resources:
-    repositories:
-      - repository: terraform # identifier (A-Z, a-z, 0-9, and underscore)
-        type: github
-        endpoint: JamesDLD  # name of the service connection to use (for non-Azure Repos types)
-        name: JamesDLD/terraform
   jobs:
     # track deployments on the environment
   - deployment: Terraform_Apply
@@ -60,6 +60,8 @@ stages:
             displayName: 'Use Terraform $(terraform_version)'
             inputs:
               terraformVersion: $(terraform_version)
+          - template: pipeline/test.yml@terraform # Template reference
+          
           # - template: pipeline/terraform.yml@terraform
           #   parameters:
           #     version: $(terraform_version)
