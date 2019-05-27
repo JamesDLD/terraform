@@ -25,7 +25,7 @@ In this article we will perform the following action with :
 | Resource Group | An Azure resource group is available |
 | Storage Account | An Azure storage account is available and is located in the upper resource group, it contains a container named `tfstate` |
 | Service Principal | An Azure service principal is available and has the `owner` privilege on the upper resource group |
-| Terraform file | [Clone this repository](https://github.com/JamesDLD/terraform/tree/master/Best-Practice/BestPractice-4) and fill in the following files with the upper prerequisite items : <br> Variable used for the Terraform `init` : secret/backend-jdld.tfvars <br> Variable used for the Terraform `plan` and `apply` : [main.tf](main.tf) & [main-jdld.tfvars](main-jdld.tfvars) & secret/main-jdld.tfvars |
+| Terraform file | [Clone this repository](https://github.com/JamesDLD/terraform/tree/master/Best-Practice/BestPractice-4) and fill in the following files with the upper prerequisite items : <br> Variable used for the Terraform `init` : secret/backend-jdld.json <br> Variable used for the Terraform `plan` and `apply` : [main.tf](main.tf) & [main-jdld.tfvars](main-jdld.tfvars) & secret/main-jdld.json |
 
 
 
@@ -37,20 +37,22 @@ Review the [main.tf file of the module here](https://github.com/JamesDLD/terrafo
 As illustrated in the following bracket that's how we can push parameters into an AzureRm template (this file template is located here : [azuredeploy.json](https://github.com/JamesDLD/AzureRm-Template/tree/master/Create-AzureRmLoadBalancerOutboundRules) 
 ```hcl
 resource "azurerm_template_deployment" "lb_to_addOutboundRule" {
-  count               = "${length(var.lbs_out)}"
-  name                = "${lookup(var.lbs_out[count.index], "suffix_name")}-bck-DEP"
-  resource_group_name = "${var.lb_out_resource_group_name}"
-  template_body       = "${file("${path.module}/AzureRmLoadBalancerOutboundRules_template.json")}"
-  deployment_mode     = "Incremental"
+  name                = "${var.lbs_out[0]["suffix_name"]}-bck-DEP"
+  resource_group_name = var.lb_out_resource_group_name
+  template_body = file(
+    "${path.module}/AzureRmLoadBalancerOutboundRules_template.json",
+  )
+  deployment_mode = "Incremental"
 
   parameters = {
-    lbName                 = "${var.lb_out_prefix}${lookup(var.lbs_out[count.index], "suffix_name")}${var.lb_out_suffix}"
-    tags                   = "${jsonencode(var.lbs_tags)}"
-    sku                    = "${lookup(var.lbs_out[count.index], "sku")}"
-    allocatedOutboundPorts = "${lookup(var.lbs_out[count.index], "allocatedOutboundPorts")}"
-    idleTimeoutInMinutes   = "${lookup(var.lbs_out[count.index], "idleTimeoutInMinutes")}"
-    enableTcpReset         = "${lookup(var.lbs_out[count.index], "enableTcpReset")}"
-    protocol               = "${lookup(var.lbs_out[count.index], "protocol")}"
+    lbName                 = "${var.lb_out_prefix}${var.lbs_out[0]["suffix_name"]}${var.lb_out_suffix}"
+    tags                   = jsonencode(var.lbs_tags)
+    sku                    = var.lbs_out[0]["sku"]
+    allocatedOutboundPorts = var.lbs_out[0]["allocatedOutboundPorts"]
+    idleTimeoutInMinutes   = var.lbs_out[0]["idleTimeoutInMinutes"]
+    enableTcpReset         = var.lbs_out[0]["enableTcpReset"]
+    protocol               = var.lbs_out[0]["protocol"]
+    lb_public_ip_id        = var.lb_public_ip_id
   }
 }
 ```
@@ -60,23 +62,23 @@ resource "azurerm_template_deployment" "lb_to_addOutboundRule" {
 
 This step ensures that Terraform has all the prerequisites to build your template in Azure.
 ```hcl
-terraform init -backend-config="secret/backend-jdld.tfvars" -reconfigure
+terraform init -backend-config="secret/backend-jdld.json" -reconfigure
 ```
 
 The Terraform plan command is used to create an execution plan.
 This step compares the requested resources to the state information saved by Terraform and then gives as an output the planned execution. Resources are not created in Azure.
 ```hcl
-terraform plan -var-file="secret/main-jdld.tfvars" -var-file="main-jdld.tfvars"
+terraform plan -var-file="secret/main-jdld.json" -var-file="main-jdld.tfvars"
 ```
 
 If all is ok with the proposal you can now apply the configuration.
 ```hcl
-terraform apply -var-file="secret/main-jdld.tfvars" -var-file="main-jdld.tfvars"
+terraform apply -var-file="secret/main-jdld.json" -var-file="main-jdld.tfvars"
 ```
 
 We will now destroy what we have done and you will see that our load balancer will not be deleted.
 ```hcl
-terraform destroy -var-file="secret/main-jdld.tfvars" -var-file="main-jdld.tfvars"
+terraform destroy -var-file="secret/main-jdld.json" -var-file="main-jdld.tfvars"
 ```
 
 ### 2. Analysis

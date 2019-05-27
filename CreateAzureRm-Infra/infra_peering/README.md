@@ -7,7 +7,7 @@ I called this step with the suffix bis because I couldn't find a way to integrat
 
 ```hcl
 
-terraform init -backend-config="infra-backend-jdld.tfvars" -backend-config="../secret/backend-jdld.tfvars" -reconfigure
+terraform init -backend-config="infra-backend-jdld.tfvars" -backend-config="../secret/backend-jdld.json" -reconfigure
 
 ```
 
