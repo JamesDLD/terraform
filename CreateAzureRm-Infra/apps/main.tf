@@ -57,7 +57,6 @@ module "Az-NetworkSecurityGroup-Apps" {
   nsg_location            = data.azurerm_resource_group.MyApps.location
   nsg_resource_group_name = data.azurerm_resource_group.MyApps.name
   nsg_tags                = data.azurerm_resource_group.MyApps.tags
-  nsgrules                = var.apps_nsgrules
     providers = {
     azurerm = azurerm.service_principal_apps
   }

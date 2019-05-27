@@ -102,7 +102,6 @@ module "Az-NetworkSecurityGroup-Infra" {
   nsg_location            = data.azurerm_resource_group.Infr.location
   nsg_resource_group_name = data.azurerm_resource_group.Infr.name
   nsg_tags                = data.azurerm_resource_group.Infr.tags
-  nsgrules                = var.infra_nsgrules
 
   providers = {
     azurerm = azurerm.service_principal_infra
