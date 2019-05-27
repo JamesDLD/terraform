@@ -24,6 +24,12 @@ trigger:
 
 stages:
 - stage: Deployment
+  resources:
+    repositories:
+      - repository: terraform # identifier (A-Z, a-z, 0-9, and underscore)
+        type: github
+        endpoint: JamesDLD  # name of the service connection to use (for non-Azure Repos types)
+        name: JamesDLD/terraform
   jobs:
     # track deployments on the environment
   - deployment: Terraform_Apply
@@ -31,12 +37,6 @@ stages:
       vmImage: 'Ubuntu-16.04'
     # creates an environment if it doesn’t exist
     environment: 'staging'
-    resources:
-      repositories:
-        - repository: terraform # identifier (A-Z, a-z, 0-9, and underscore)
-          type: github
-          endpoint: JamesDLD  # name of the service connection to use (for non-Azure Repos types)
-          name: JamesDLD/terraform
     strategy:
       # default deployment strategy
       runOnce:
