@@ -1,4 +1,4 @@
-# File: steps/build.yml
-
+# File: templates/npm-steps.yml
 steps:
-- script: echo hello
+- script: npm install
+- script: npm test

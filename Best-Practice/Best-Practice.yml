@@ -60,8 +60,9 @@ stages:
             displayName: 'Use Terraform $(terraform_version)'
             inputs:
               terraformVersion: $(terraform_version)
+            
           - template: pipeline/test.yml@terraform # Template reference
-          
+
           # - template: pipeline/terraform.yml@terraform
           #   parameters:
           #     version: $(terraform_version)
