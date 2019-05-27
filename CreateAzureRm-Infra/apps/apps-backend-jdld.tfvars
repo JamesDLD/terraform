@@ -1,4 +1,5 @@
 #Variables initialization
+storage_account_name = "infrsand1vpcjdld1"
 
 container_name = "tfstate"
 

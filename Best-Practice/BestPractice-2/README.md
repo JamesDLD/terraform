@@ -18,7 +18,7 @@ In this article we will perform the following action  :
 | Resource Group | An Azure resource group is available |
 | Storage Account | An Azure storage account is available and is located in the upper resource group, it contains a container named `tfstate` |
 | Service Principal | An Azure service principal is available and has the `owner` privilege on the upper resource group |
-| Terraform file | [Clone this repository](https://github.com/JamesDLD/terraform/tree/master/Best-Practice/BestPractice-2) and fill in the following files with the upper prerequisite items : <br> Variable used for the Terraform `init` : secret/backend-jdld.tfvars <br> Variable used for the Terraform `plan` and `apply` : [main.tf](main.tf) & [main-jdld.tfvars](main-jdld.tfvars) & secret/main-jdld.tfvars |
+| Terraform file | [Clone this repository](https://github.com/JamesDLD/terraform/tree/master/Best-Practice/BestPractice-2) and fill in the following files with the upper prerequisite items : <br> Variable used for the Terraform `init` : secret/backend-jdld.json <br> Variable used for the Terraform `plan` and `apply` : [main.tf](main.tf) & [main-jdld.tfvars](main-jdld.tfvars) & secret/main-jdld.json |
 
 
 
@@ -71,18 +71,18 @@ module "Get-AzureRmVirtualNetwork" {
 
 This step ensures that Terraform has all the prerequisites to build your template in Azure.
 ```hcl
-terraform init -backend-config="secret/backend-jdld.tfvars" -reconfigure
+terraform init -backend-config="secret/backend-jdld.json" -reconfigure
 ```
 
 The terraform plan command is used to create an execution plan.
 This step compares the requested resources to the state information saved by Terraform and then gives as an output the planned execution. Resources are not created in Azure.
 ```hcl
-terraform plan -var-file="secret/main-jdld.tfvars" -var-file="main-jdld.tfvars"
+terraform plan -var-file="secret/main-jdld.json" -var-file="main-jdld.tfvars"
 ```
 
 If all is ok with the proposal you can now apply the configuration.
 ```hcl
-terraform apply -var-file="secret/main-jdld.tfvars" -var-file="main-jdld.tfvars"
+terraform apply -var-file="secret/main-jdld.json" -var-file="main-jdld.tfvars"
 ```
 
 ### 2. Analysis
