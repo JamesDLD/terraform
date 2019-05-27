@@ -15,3 +15,4 @@ variable "client_id" {
 variable "client_secret" {
   description = "Azure service principal application Secret"
 }
+

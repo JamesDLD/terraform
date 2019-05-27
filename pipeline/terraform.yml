@@ -10,7 +10,7 @@ parameters:
   terraform_apply: false
 
 steps:
-- task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
+- task: TerraformInstaller@0
   displayName: '${{ parameters.ArtifactName }} - Use Terraform ${{ parameters.version }}'
   inputs:
     terraformVersion: ${{ parameters.version }}

@@ -1,7 +1,7 @@
 #Set the terraform backend
 terraform {
-  required_version = "0.11.14"
-  backend          "azurerm"        {}        #Backend variables are initialized in secret and variable folders
+  required_version = "0.12.0"
+  backend          "azurerm"        {}       #Backend variables are initialized in secret and variable folders
 }
 
 #Set the Provider
