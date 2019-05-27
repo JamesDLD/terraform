@@ -12,7 +12,7 @@ This step ensures that Terraform has all the prerequisites to build your templat
 
 ```hcl
 
-terraform init -backend-config="infra-backend-jdld.tfvars" -backend-config="../secret/backend-jdld.tfvars" -reconfigure
+terraform init -backend-config="infra-backend-jdld.tfvars" -backend-config="../secret/backend-jdld.json" -reconfigure
 
 ```
 

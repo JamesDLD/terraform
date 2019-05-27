@@ -1,5 +1,7 @@
 variable "vnets" {
-  type = "list"
+  type = list(string)
 }
 
-variable "vnet_resource_group_name" {}
+variable "vnet_resource_group_name" {
+}
+

@@ -3,42 +3,47 @@ Usage
 ```hcl
 #Set the Provider
 provider "azurerm" {
-  subscription_id = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-  client_id       = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-  client_secret   = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-  tenant_id       = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+  tenant_id = var.tenant_id
+  subscription_id = var.subscription_id
+  client_id = var.client_id
+  client_secret = var.client_secret
 }
 
-#Set variable
-variable "Linux_Vms" {
-  type = "map"
+#Set authentication variables
+variable "tenant_id" {
+  description = "Azure tenant Id."
+}
 
-  default = {
-    suffix_name       = "Name"
-    id                = "1"                      #Id of the VM
-    Id_Lb             = "777"                    #Id of the Load Balancer
-    Id_Subnet         = "0"                      #Id of the Subnet
-    Id_Nsg            = "1"                      #Id of the Network Security Group, set to 777 if there is no Network Security Groups
-    BackupPolicyName  = "BackupPolicy-Schedule1"
-    static_ip         = "198.18.1.228"
-    vm_size           = "Standard_DS1_v2"
-    managed_disk_type = "Premium_LRS"
-    publisher         = "redhat"
-    offer             = "RHEL"
-    sku               = "7.3"
-    lun               = "0"
-    disk_size_gb      = "32"
-  }
+variable "subscription_id" {
+  description = "Azure subscription Id."
+}
+
+variable "client_id" {
+  description = "Azure service principal application Id."
+}
+
+variable "client_secret" {
+  description = "Azure service principal application Secret."
+}
+
+#Set resource variables
+
+variable "Windows_Vms" {
+  default = [
+    {
+      BackupPolicyName              = "BackupPolicy-Schedule1" #Set 777 to disable backup (WARNING, this will delete previous backup) otherwise set a backup policy like BackupPolicy-Schedule1)
+    },
+  ]
 }
 
 #Call module
-module "Enable-AzureRmRecoveryServicesBackupProtection-Apps" {
-  source                       = "../module/Az-RecoveryServicesBackupProtection"
-  subscription_id              = "xxxxxxxSubIdxxxxxxxx"
-  bck_vms_names                = ["MyVmName1"]     #Names of the resources to backup
-  bck_vms_resource_group_names = ["MyVmName1RgName"]  #Resource Group Names of the resources to backup
-  bck_vms                      = ["${var.Linux_Vms}"]
-  bck_rsv_name                 = "MyRsvName"
-  bck_rsv_resource_group_name  = "MyRsvRgName"
+module "Az-RecoveryServicesBackupProtection-Demo" {
+  source                       = "github.com/JamesDLD/terraform/module/Az-RecoveryServicesBackupProtection"
+  subscription_id              = var.subscription_id
+  bck_vms_names                = ["jdld-sand1-rdg1","MyVmName2"]     #Names of the resources to backup
+  bck_vms_resource_group_names = ["infr-jdld-noprd-rg1","RgOfVM2"]  #Resource Group Names of the resources to backup
+  bck_vms                      = var.Windows_Vms
+  bck_rsv_name                 = "infra-jdld-infr-rsv1"
+  bck_rsv_resource_group_name  = "infr-jdld-noprd-rg1"
 }
 ```

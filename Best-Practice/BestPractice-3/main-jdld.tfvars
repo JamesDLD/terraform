@@ -54,11 +54,9 @@ Windows_Vms = [
 
 Windows_DataDisks = []
 
-Windows_storage_image_reference = [
-  {
-    publisher = "MicrosoftWindowsServer"
-    offer     = "WindowsServer"
-    sku       = "2016-Datacenter"
-    version   = "Latest"
-  },
-]
+Windows_storage_image_reference = {
+  publisher = "MicrosoftWindowsServer"
+  offer     = "WindowsServer"
+  sku       = "2016-Datacenter"
+  version   = "Latest"
+}

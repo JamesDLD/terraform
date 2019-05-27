@@ -7,9 +7,9 @@ name: $(BuildDefinitionName).$(DayOfYear)$(Rev:.r)
 variables:
 - group: terraform_binary  # variable group
 - name: backend_secret_file_id1
-  value: 'infra1_backend.tfvars'
+  value: 'backend-main-jdld-1.json'
 - name: main_secret_file_id1
-  value: 'infra1_main.tfvars'
+  value: 'main-jdld-2.tfvars'
 
 resources:
   repositories:
