@@ -26,8 +26,7 @@ data "azurerm_resource_group" "infr" {
 
 #Action
 module "Add-AzureRmLoadBalancerOutboundRules-Apps" {
-  #version                    = "~> 0.1"
-  source                     = "../../module/Add-AzureRmLoadBalancerOutboundRules"
+  source                     = "git::https://github.com/JamesDLD/terraform.git//module/Add-AzureRmLoadBalancerOutboundRules?ref=feature/terraform0.12"
   lbs_out                    = var.lbs_public
   lb_out_prefix              = "bp4-"
   lb_out_suffix              = "-publiclb1"

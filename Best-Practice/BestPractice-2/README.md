@@ -59,7 +59,7 @@ Specify the module version
 module "Get-AzureRmVirtualNetwork" {
   version                  = "~> 0.1"
   source                   = "github.com/JamesDLD/terraform/module/Get-AzureRmVirtualNetwork"
-  vnets                    = ["virtualNetwork1"]
+  vnets                    = "virtualNetwork1"
   vnet_resource_group_name = "infr-jdld-noprd-rg1"
 }
 ```

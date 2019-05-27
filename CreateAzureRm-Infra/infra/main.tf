@@ -32,7 +32,7 @@ data "azurerm_resource_group" "Apps" {
 
 ## Core Infra components
 module "Create-AzureRmRecoveryServicesVault-Infr" {
-  source                  = "../../module/Create-AzureRmRecoveryServicesVault"
+  source                  = "git::https://github.com/JamesDLD/terraform.git//module/Create-AzureRmRecoveryServicesVault?ref=feature/terraform0.12"
   rsv_name                = "infra-${var.app_name}-${var.env_name}-rsv1"
   rsv_resource_group_name = data.azurerm_resource_group.Infr.name
   rsv_tags                = data.azurerm_resource_group.Infr.tags
@@ -44,7 +44,7 @@ module "Create-AzureRmRecoveryServicesVault-Infr" {
 }
 
 module "Az-KeyVault-Infr" {
-  source                 = "../../module/Az-KeyVault"
+  source                 = "git::https://github.com/JamesDLD/terraform.git//module/Az-KeyVault?ref=feature/terraform0.12"
   key_vaults             = var.key_vaults
   kv_tenant_id           = var.tenant_id
   kv_prefix              = "${var.app_name}-${var.env_name}-"
@@ -67,7 +67,7 @@ data "azurerm_storage_account" "Infr" {
 
 ## Core Network components
 module "Az-VirtualNetwork-Infra" {
-  source                   = "../../module/Az-VirtualNetwork"
+  source                   = "git::https://github.com/JamesDLD/terraform.git//module/Az-VirtualNetwork?ref=feature/terraform0.12"
   vnets                    = var.vnets
   vnet_prefix              = "infra-${var.app_name}-${var.env_name}-"
   vnet_suffix              = "-net1"
@@ -81,7 +81,7 @@ module "Az-VirtualNetwork-Infra" {
 }
 
 module "Az-Subnet-Infra" {
-  source                     = "../../module/Az-Subnet"
+  source                     = "git::https://github.com/JamesDLD/terraform.git//module/Az-Subnet?ref=feature/terraform0.12"
   subscription_id            = var.subscription_id
   subnet_resource_group_name = module.Az-VirtualNetwork-Infra.vnet_rgnames[0]
   snet_list                  = var.snets
@@ -95,7 +95,7 @@ module "Az-Subnet-Infra" {
 }
 
 module "Az-NetworkSecurityGroup-Infra" {
-  source                  = "../../module/Az-NetworkSecurityGroup"
+  source                  = "git::https://github.com/JamesDLD/terraform.git//module/Az-NetworkSecurityGroup?ref=feature/terraform0.12"
   nsgs                    = var.infra_nsgs
   nsg_prefix              = "${var.app_name}-${var.env_name}-"
   nsg_suffix              = "-nsg1"
@@ -110,7 +110,7 @@ module "Az-NetworkSecurityGroup-Infra" {
 }
 
 module "Az-RouteTable-Infra" {
-  source                 = "../../module/Az-RouteTable"
+  source                 = "git::https://github.com/JamesDLD/terraform.git//module/Az-RouteTable?ref=feature/terraform0.12"
   rt_resource_group_name = data.azurerm_resource_group.Infr.name
   rt_location            = data.azurerm_resource_group.Infr.location
   routes                 = var.routes
@@ -126,7 +126,7 @@ module "Az-RouteTable-Infra" {
 
 ## Secops policies & RBAC roles
 module "Az-PolicyDefinition" {
-  source     = "../../module/Az-PolicyDefinition"
+  source     = "git::https://github.com/JamesDLD/terraform.git//module/Az-PolicyDefinition?ref=feature/terraform0.12"
   policies   = var.policies
   pol_prefix = "${var.app_name}-${var.env_name}-"
   pol_suffix = "-pol1"
@@ -137,7 +137,7 @@ module "Az-PolicyDefinition" {
 }
 
 module "Az-RoleDefinition-Apps" {
-  source      = "../../module/Az-RoleDefinition"
+  source      = "git::https://github.com/JamesDLD/terraform.git//module/Az-RoleDefinition?ref=feature/terraform0.12"
   roles       = var.roles
   role_prefix = "${var.app_name}-${var.env_name}-"
   role_suffix = "-role1"
@@ -148,7 +148,7 @@ module "Az-RoleDefinition-Apps" {
 }
 
 module "Az-RoleAssignment-Apps" {
-  source                     = "../../module/Az-RoleAssignment"
+  source                     = "git::https://github.com/JamesDLD/terraform.git//module/Az-RoleAssignment?ref=feature/terraform0.12"
   ass_countRoleAssignment = length(var.roles)
   ass_scopes   = [
     data.azurerm_resource_group.Apps.id,
@@ -168,7 +168,7 @@ module "Az-RoleAssignment-Apps" {
 }
 
 module "Az-Firewall-Infr" {
-  source                 = "../../module/Az-Firewall"
+  source                 = "git::https://github.com/JamesDLD/terraform.git//module/Az-Firewall?ref=feature/terraform0.12"
   fw_resource_group_name = data.azurerm_resource_group.Infr.name
   fw_location            = data.azurerm_resource_group.Infr.location
   fw_prefix              = "${var.app_name}-${var.env_name}-fw1"
@@ -181,7 +181,7 @@ module "Az-Firewall-Infr" {
 }
 /*
 module "Az-PolicyAssignment-Infra-nsg-on-apps-subnet" {
-  source                     = "../../module/Az-PolicyAssignment"
+  source                     = "git::https://github.com/JamesDLD/terraform.git//module/Az-PolicyAssignment?ref=feature/terraform0.12"
   p_ass_name                 = "enforce-nsg-under-vnet-${module.Az-VirtualNetwork-Infra.vnet_names[1]}"
   p_ass_scope                = module.Az-VirtualNetwork-Infra.vnet_ids[1]
   p_ass_policy_definition_id = module.Az-PolicyDefinition.policy_ids[0]
@@ -193,7 +193,7 @@ module "Az-PolicyAssignment-Infra-nsg-on-apps-subnet" {
   }
 }
 module "Az-PolicyAssignment-Infra-udr-on-subnet" {
-  source                     = "../../module/Az-PolicyAssignment"
+  source                     = "git::https://github.com/JamesDLD/terraform.git//module/Az-PolicyAssignment?ref=feature/terraform0.12"
   p_ass_name                 = "enforce-udr-under-vnet-${module.Az-VirtualNetwork-Infra.vnet_names[1]}"
   p_ass_scope                = module.Az-VirtualNetwork-Infra.vnet_ids[1]
   p_ass_policy_definition_id = module.Az-PolicyDefinition.policy_ids[1]

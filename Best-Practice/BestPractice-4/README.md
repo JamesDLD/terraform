@@ -37,20 +37,22 @@ Review the [main.tf file of the module here](https://github.com/JamesDLD/terrafo
 As illustrated in the following bracket that's how we can push parameters into an AzureRm template (this file template is located here : [azuredeploy.json](https://github.com/JamesDLD/AzureRm-Template/tree/master/Create-AzureRmLoadBalancerOutboundRules) 
 ```hcl
 resource "azurerm_template_deployment" "lb_to_addOutboundRule" {
-  count               = "${length(var.lbs_out)}"
-  name                = "${lookup(var.lbs_out[count.index], "suffix_name")}-bck-DEP"
-  resource_group_name = "${var.lb_out_resource_group_name}"
-  template_body       = "${file("${path.module}/AzureRmLoadBalancerOutboundRules_template.json")}"
-  deployment_mode     = "Incremental"
+  name                = "${var.lbs_out[0]["suffix_name"]}-bck-DEP"
+  resource_group_name = var.lb_out_resource_group_name
+  template_body = file(
+    "${path.module}/AzureRmLoadBalancerOutboundRules_template.json",
+  )
+  deployment_mode = "Incremental"
 
   parameters = {
-    lbName                 = "${var.lb_out_prefix}${lookup(var.lbs_out[count.index], "suffix_name")}${var.lb_out_suffix}"
-    tags                   = "${jsonencode(var.lbs_tags)}"
-    sku                    = "${lookup(var.lbs_out[count.index], "sku")}"
-    allocatedOutboundPorts = "${lookup(var.lbs_out[count.index], "allocatedOutboundPorts")}"
-    idleTimeoutInMinutes   = "${lookup(var.lbs_out[count.index], "idleTimeoutInMinutes")}"
-    enableTcpReset         = "${lookup(var.lbs_out[count.index], "enableTcpReset")}"
-    protocol               = "${lookup(var.lbs_out[count.index], "protocol")}"
+    lbName                 = "${var.lb_out_prefix}${var.lbs_out[0]["suffix_name"]}${var.lb_out_suffix}"
+    tags                   = jsonencode(var.lbs_tags)
+    sku                    = var.lbs_out[0]["sku"]
+    allocatedOutboundPorts = var.lbs_out[0]["allocatedOutboundPorts"]
+    idleTimeoutInMinutes   = var.lbs_out[0]["idleTimeoutInMinutes"]
+    enableTcpReset         = var.lbs_out[0]["enableTcpReset"]
+    protocol               = var.lbs_out[0]["protocol"]
+    lb_public_ip_id        = var.lb_public_ip_id
   }
 }
 ```
