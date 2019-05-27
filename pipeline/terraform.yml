@@ -9,7 +9,7 @@ parameters:
   main_file_path: ''
   terraform_apply: false
 
-step:
+steps:
 - task: TerraformInstaller@0
   displayName: '${{ parameters.ArtifactName }} - Use Terraform ${{ parameters.version }}'
   inputs:

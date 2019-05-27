@@ -57,15 +57,19 @@ stages:
             inputs:
               secureFile: $(main_secret_file_id34)
 
-          - template: pipeline/terraform.yml@terraform
-            parameters:
-              version: $(terraform_version)
-              path: './Best-Practice/BestPractice-1/'
-              ArtifactName: 'BestPractice1'
-              backend_secret_file_id: $(main_backend_secret_file_id1234)
-              main_secret_file_id: $(main_backend_secret_file_id1234)
-              main_file_path: ''
-              terraform_apply: true
+          - task: TerraformInstaller@0
+            displayName: 'Use Terraform $(terraform_version)'
+            inputs:
+              terraformVersion: $(terraform_version)
+          # - template: pipeline/terraform.yml@terraform
+          #   parameters:
+          #     version: $(terraform_version)
+          #     path: './Best-Practice/BestPractice-1/'
+          #     ArtifactName: 'BestPractice1'
+          #     backend_secret_file_id: $(main_backend_secret_file_id1234)
+          #     main_secret_file_id: $(main_backend_secret_file_id1234)
+          #     main_file_path: ''
+          #     terraform_apply: true
 
           # - template: pipeline/terraform.yml@terraform
           #   parameters:
