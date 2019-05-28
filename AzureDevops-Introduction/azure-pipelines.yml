@@ -5,6 +5,8 @@ variables:
 - group: terraform_binary  # variable containing Terraform information like the Terraform version
 - name: backend_main_secret_file_id1 # secret file used by the following cmdlet Terraform init, plan, apply and destroy 
   value: 'backend-main-jdld-1.json'
+  ArtifactName: 'AzureDevops-Introduction'
+  PackageName1: 'aks-k8s'
 
 resources:
   repositories:
@@ -51,8 +53,8 @@ stages:
     - script: |
         terraform init -backend-config="./variable/backend-jdld.tfvars" -backend-config="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -reconfigure
         terraform plan -var-file="./variable/main-jdld.tfvars" -var-file="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -out="./out_plan_file" -input=false 
-        terraform apply "./out_plan_file"
-      displayName: 'Terraform Apply'
+        #terraform apply "./out_plan_file"
+      displayName: 'Terraform Plan'
       workingDirectory: './AzureDevops-Introduction/aks-k8s/'
 
     - script: |
@@ -63,7 +65,13 @@ stages:
         mv -f aks-k8s.tar.gz ./ArtifactPublishLocation/aks-k8s.tar.gz
       displayName: 'Compress ./AzureDevops-Introduction/aks-k8s/ before Artifact publication'
 
-- stage: Deployment
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact: AzureDevops-Introduction'
+      inputs:
+        PathtoPublish: './ArtifactPublishLocation'
+        ArtifactName: 'AzureDevops-Introduction'
+
+- stage: Deploy
   jobs:
     # track deployments on the environment
   - deployment: Terraform_Apply_Windows
@@ -78,35 +86,22 @@ stages:
           steps:
           - script: echo Deployment job in the staging environment
 
-          - checkout: self # self represents the repo where the initial Pipelines YAML file was found
-            displayName: 'Checking out source code'
-            clean: true # whether to fetch clean each time
-            persistCredentials: true # set to 'true' to leave the OAuth token in the Git config after the initial fetch
-
-          - task: DownloadSecureFile@1
-            displayName: 'Download secure file $(backend_main_secret_file_id1)'
+          - task: ExtractFiles@1
+            displayName: 'Extract files for package $(PackageName1)'
             inputs:
-              secureFile: $(backend_main_secret_file_id1)
+              archiveFilePatterns: '$(System.DefaultWorkingDirectory)/$(ArtifactName)/$(ArtifactName)/$(PackageName1).tar.gz'
+              destinationFolder: './$(PackageName1)'
 
           - task: TerraformInstaller@0
             displayName: 'Use Terraform $(terraform_version)'
             inputs:
               terraformVersion: $(terraform_version)
 
-          - script: |
-              terraform init -backend-config="./variable/backend-jdld.tfvars" -backend-config="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -reconfigure
-              terraform plan -var-file="./variable/main-jdld.tfvars" -var-file="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -out="./out_plan_file" -input=false 
-              terraform apply "./out_plan_file"
+          - script: terraform apply "./out_plan_file"
             displayName: 'Terraform Apply'
-            workingDirectory: './AzureDevops-Introduction/aks-k8s/'
+            workingDirectory: './$(PackageName1)'
 
-          # # Publish Pipeline Artifact --> Note that publishing is only supported in build pipelines
-          # - task: PublishPipelineArtifact@1
-          #   inputs:
-          #     targetPath: './ArtifactPublishLocation'
-          #     artifactName: 'AzureDevops-Introduction'
-
-- stage: Delivery
+- stage: Deliver
   jobs:
     # track deployments on the environment
   - deployment: Terraform_Destroy_MacOs
@@ -121,12 +116,12 @@ stages:
           steps:
           - script: echo Deployment job in the production environment
 
-          # # Download Pipeline Artifact
-          # - task: DownloadPipelineArtifact@1
-          #   inputs:
-          #     buildType: 'current' # Options: current, specific
-          #     buildVersionToDownload: 'latest' # Required when buildType == Specific. Options: latest, latestFromBranch, specific
-          #     artifactName: 'AzureDevops-Introduction'
+          # Download Pipeline Artifact
+          - task: DownloadPipelineArtifact@1
+            inputs:
+              buildType: 'current' # Options: current, specific
+              buildVersionToDownload: 'latest' # Required when buildType == Specific. Options: latest, latestFromBranch, specific
+              artifactName: 'AzureDevops-Introduction'
 
           - checkout: self # self represents the repo where the initial Pipelines YAML file was found
             displayName: 'Checking out source code'
