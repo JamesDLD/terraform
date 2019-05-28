@@ -60,6 +60,20 @@ stages:
             displayName: 'Terraform Apply'
             workingDirectory: './AzureDevops-Introduction/aks-k8s/'
 
+          - script: |
+              echo "Compressing ./AzureDevops-Introduction/aks-k8s/ directory ..."
+              tar -czf aks-k8s.tar.gz -C ./AzureDevops-Introduction/aks-k8s/ .
+              mkdir -p ./ArtifactPublishLocation
+              echo "Moving this archive directory to this location ./ArtifactPublishLocation ..."
+              mv -f aks-k8s.tar.gz ./ArtifactPublishLocation/aks-k8s.tar.gz
+            displayName: 'Compress ./AzureDevops-Introduction/aks-k8s/ before Artifact publication'
+
+          - task: PublishBuildArtifacts@1
+            displayName: 'Publish Artifact: AzureDevops-Introduction'
+            inputs:
+              PathtoPublish: './ArtifactPublishLocation'
+              ArtifactName: 'AzureDevops-Introduction'
+
 - stage: Delivery
   jobs:
     # track deployments on the environment
