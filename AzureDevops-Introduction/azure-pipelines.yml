@@ -89,20 +89,13 @@ stages:
           steps:
           - script: echo Deployment job in the production environment
 
-          # Download Pipeline Artifact
-          - task: DownloadPipelineArtifact@1
+          # Download Build Artifacts
+          - task: DownloadBuildArtifacts@0
             inputs:
               buildType: 'current' # Options: current, specific
-              buildVersionToDownload: 'latest' # Required when buildType == Specific. Options: latest, latestFromBranch, specific
-              artifactName: 'AzureDevops-Introduction'
-
-          # # Download Build Artifacts
-          # - task: DownloadBuildArtifacts@0
-          #   inputs:
-          #     buildType: 'current' # Options: current, specific
-          #     buildVersionToDownload: 'latest' # Required when buildType == Specific# Options: latest, latestFromBranch, specific
-          #     downloadType: 'single' # Options: single, specific
-          #     artifactName: 'AzureDevops-Introduction' # Required when downloadType == Single
+              buildVersionToDownload: 'latest' # Required when buildType == Specific# Options: latest, latestFromBranch, specific
+              downloadType: 'single' # Options: single, specific
+              artifactName: 'AzureDevops-Introduction' # Required when downloadType == Single
 
           - checkout: self # self represents the repo where the initial Pipelines YAML file was found
             displayName: 'Checking out source code'
