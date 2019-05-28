@@ -59,13 +59,13 @@ stages:
       displayName: 'Terraform Plan'
       workingDirectory: './AzureDevops-Introduction/aks-k8s/'
 
-    - script: |
-        echo "Compressing ./AzureDevops-Introduction/aks-k8s/ directory ..."
-        tar -czf aks-k8s.tar.gz -C ./AzureDevops-Introduction/aks-k8s/ .
-        mkdir -p ./ArtifactPublishLocation
-        echo "Moving this archive directory to this location ./ArtifactPublishLocation ..."
-        mv -f aks-k8s.tar.gz ./ArtifactPublishLocation/aks-k8s.tar.gz
-      displayName: 'Compress ./AzureDevops-Introduction/aks-k8s/ before Artifact publication'
+    # - script: |
+    #     echo "Compressing ./AzureDevops-Introduction/aks-k8s/ directory ..."
+    #     tar -czf aks-k8s.tar.gz -C ./AzureDevops-Introduction/aks-k8s/ .
+    #     mkdir -p ./ArtifactPublishLocation
+    #     echo "Moving this archive directory to this location ./ArtifactPublishLocation ..."
+    #     mv -f aks-k8s.tar.gz ./ArtifactPublishLocation/aks-k8s.tar.gz
+    #   displayName: 'Compress ./AzureDevops-Introduction/aks-k8s/ before Artifact publication'
 
     - task: PublishPipelineArtifact@0
       inputs:
@@ -87,11 +87,11 @@ stages:
           steps:
           - script: echo Deployment job in the staging environment
 
-          - task: ExtractFiles@1
-            displayName: 'Extract files for package $(PackageName1)'
-            inputs:
-              archiveFilePatterns: '$(System.ArtifactsDirectory)/$(ArtifactName)/$(ArtifactName)/$(PackageName1).tar.gz'
-              destinationFolder: './$(PackageName1)'
+          # - task: ExtractFiles@1
+          #   displayName: 'Extract files for package $(PackageName1)'
+          #   inputs:
+          #     archiveFilePatterns: '$(System.ArtifactsDirectory)/$(ArtifactName)/$(ArtifactName)/$(PackageName1).tar.gz'
+          #     destinationFolder: './$(PackageName1)'
 
           - task: TerraformInstaller@0
             displayName: 'Use Terraform $(terraform_version)'
@@ -100,7 +100,7 @@ stages:
 
           - script: terraform apply "./out_plan_file"
             displayName: 'Terraform Apply'
-            workingDirectory: './$(PackageName1)'
+            workingDirectory: '$(System.ArtifactsDirectory)/$(ArtifactName)/$(PackageName1)'
 
 - stage: Deliver
   jobs:
