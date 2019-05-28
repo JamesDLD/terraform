@@ -89,6 +89,9 @@ stages:
 
           - script: |
               ls
+              echo $(System.ArtifactsDirectory)
+              cd $(System.ArtifactsDirectory)
+              ls
               cd ./AzureDevops-Introduction
               ls
             displayName: 'Debug'
