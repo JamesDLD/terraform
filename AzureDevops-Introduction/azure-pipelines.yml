@@ -87,6 +87,13 @@ stages:
           steps:
           - script: echo Deployment job in the staging environment
 
+          # Download Pipeline Artifact
+          - task: DownloadPipelineArtifact@1
+            inputs:
+              buildType: 'current' # Options: current, specific
+              buildVersionToDownload: 'latest' # Required when buildType == Specific. Options: latest, latestFromBranch, specific
+              artifactName: '$(ArtifactName)'
+
           - script: |
               ls
               echo $(System.ArtifactsDirectory)
