@@ -87,6 +87,13 @@ stages:
           steps:
           - script: echo Deployment job in the staging environment
 
+          - script: |
+              ls
+              cd ./AzureDevops-Introduction
+              ls
+            displayName: 'Debug'
+            workingDirectory: '$(System.ArtifactsDirectory)'
+
           # - task: ExtractFiles@1
           #   displayName: 'Extract files for package $(PackageName1)'
           #   inputs:
@@ -117,12 +124,12 @@ stages:
           steps:
           - script: echo Deployment job in the production environment
 
-          # Download Pipeline Artifact
-          - task: DownloadPipelineArtifact@1
-            inputs:
-              buildType: 'current' # Options: current, specific
-              buildVersionToDownload: 'latest' # Required when buildType == Specific. Options: latest, latestFromBranch, specific
-              artifactName: 'AzureDevops-Introduction'
+          # # Download Pipeline Artifact
+          # - task: DownloadPipelineArtifact@1
+          #   inputs:
+          #     buildType: 'current' # Options: current, specific
+          #     buildVersionToDownload: 'latest' # Required when buildType == Specific. Options: latest, latestFromBranch, specific
+          #     artifactName: 'AzureDevops-Introduction'
 
           - checkout: self # self represents the repo where the initial Pipelines YAML file was found
             displayName: 'Checking out source code'
