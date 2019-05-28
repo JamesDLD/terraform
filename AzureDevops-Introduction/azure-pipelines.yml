@@ -23,6 +23,46 @@ trigger:
     - AzureDevops-Introduction/*
 
 stages:
+- stage: Build
+  jobs:
+  - job: Terraform_Plan_Windows
+    displayName: Publish an Artifact if Infrastructure changes are identified.
+    continueOnError: false
+    pool:
+      vmImage: 'windows-2019'
+    steps:
+    - script: echo Build job that will publish an Artifact if Infrastructure changes are identified.
+
+    - checkout: self # self represents the repo where the initial Pipelines YAML file was found
+      displayName: 'Checking out source code'
+      clean: true # whether to fetch clean each time
+      persistCredentials: true # set to 'true' to leave the OAuth token in the Git config after the initial fetch
+
+    - task: DownloadSecureFile@1
+      displayName: 'Download secure file $(backend_main_secret_file_id1)'
+      inputs:
+        secureFile: $(backend_main_secret_file_id1)
+
+    - task: TerraformInstaller@0
+      displayName: 'Use Terraform $(terraform_version)'
+      inputs:
+        terraformVersion: $(terraform_version)
+
+    - script: |
+        terraform init -backend-config="./variable/backend-jdld.tfvars" -backend-config="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -reconfigure
+        terraform plan -var-file="./variable/main-jdld.tfvars" -var-file="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -out="./out_plan_file" -input=false 
+        terraform apply "./out_plan_file"
+      displayName: 'Terraform Apply'
+      workingDirectory: './AzureDevops-Introduction/aks-k8s/'
+
+    - script: |
+        echo "Compressing ./AzureDevops-Introduction/aks-k8s/ directory ..."
+        tar -czf aks-k8s.tar.gz -C ./AzureDevops-Introduction/aks-k8s/ .
+        mkdir -p ./ArtifactPublishLocation
+        echo "Moving this archive directory to this location ./ArtifactPublishLocation ..."
+        mv -f aks-k8s.tar.gz ./ArtifactPublishLocation/aks-k8s.tar.gz
+      displayName: 'Compress ./AzureDevops-Introduction/aks-k8s/ before Artifact publication'
+
 - stage: Deployment
   jobs:
     # track deployments on the environment
