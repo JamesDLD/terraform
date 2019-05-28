@@ -68,11 +68,11 @@ stages:
               mv -f aks-k8s.tar.gz ./ArtifactPublishLocation/aks-k8s.tar.gz
             displayName: 'Compress ./AzureDevops-Introduction/aks-k8s/ before Artifact publication'
 
-          # Publish Pipeline Artifact
-          - task: PublishPipelineArtifact@1
-            inputs:
-              targetPath: './ArtifactPublishLocation'
-              artifactName: 'AzureDevops-Introduction'
+          # # Publish Pipeline Artifact
+          # - task: PublishPipelineArtifact@1
+          #   inputs:
+          #     targetPath: './ArtifactPublishLocation'
+          #     artifactName: 'AzureDevops-Introduction'
 
 - stage: Delivery
   jobs:
