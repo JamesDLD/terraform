@@ -4,9 +4,9 @@ name: $(BuildDefinitionName).$(DayOfYear)$(Rev:.r)
 variables:
 - group: terraform_binary  # variable containing Terraform information like the Terraform version
 - name: backend_secret_file_id1 # secret file used by the Terraform init cmdlet
-  value: 'backend-jdld.tfvars'
+  value: 'backend-main-jdld-1.json'
 - name: main_secret_file_id1 # secret file used by the Terraform plan and destroy cmdlet
-  value: 'main-jdld.tfvars'
+  value: 'main-jdld-1.json'
 
 resources:
   repositories:
@@ -16,7 +16,7 @@ resources:
       name: JamesDLD/terraform
 
 trigger:
-  batch: true #when a build is running, the system waits until the build is completed
+  batch: true # when a build is running, the system waits until the build is completed
   branches:
     include:
       - feature/*
@@ -38,7 +38,30 @@ stages:
       runOnce:
         deploy:
           steps:
-          - script: echo my first deployment in the staging environment
+          - script: echo Deployment job in the staging environment
+
+          - task: DownloadSecureFile@1
+            displayName: 'Download secure file $(backend_secret_file_id1)'
+            inputs:
+              secureFile: $(backend_secret_file_id1)
+
+          - task: DownloadSecureFile@1
+            displayName: 'Download secure file $(main_secret_file_id1)'
+            inputs:
+              secureFile: $(main_secret_file_id1)
+
+          - task: TerraformInstaller@0
+            displayName: 'Use Terraform $(terraform_version)'
+            inputs:
+              terraformVersion: $(terraform_version)
+
+          - script: |
+              terraform init -backend-config="./variable/backend-jdld.tfvars" -backend-config="$(Agent.TempDirectory)/$(backend_secret_file_id1)" -reconfigure
+              terraform plan -var-file="./variable/main-jdld.tfvars" -var-file="$(Agent.TempDirectory)/$(main_secret_file_id1)" -out="./out_plan_file" -input=false 
+              terraform apply "./out_plan_file"
+            displayName: 'Terraform Apply'
+            workingDirectory: './AzureDevops-Introduction/aks-k8s/'
+
 - stage: Delivery
   jobs:
     # track deployments on the environment
@@ -52,4 +75,25 @@ stages:
       runOnce:
         deploy:
           steps:
-          - script: echo my second deployment in the production environment
+          - script: echo Deployment job in the production environment
+
+          - task: DownloadSecureFile@1
+            displayName: 'Download secure file $(backend_secret_file_id1)'
+            inputs:
+              secureFile: $(backend_secret_file_id1)
+
+          - task: DownloadSecureFile@1
+            displayName: 'Download secure file $(main_secret_file_id1)'
+            inputs:
+              secureFile: $(main_secret_file_id1)
+
+          - task: TerraformInstaller@0
+            displayName: 'Use Terraform $(terraform_version)'
+            inputs:
+              terraformVersion: $(terraform_version)
+
+          - script: |
+              terraform init -backend-config="./variable/backend-jdld.tfvars" -backend-config="$(Agent.TempDirectory)/$(backend_secret_file_id1)" -reconfigure
+              terraform destroy -var-file="./variable/main-jdld.tfvars" -var-file="$(Agent.TempDirectory)/$(main_secret_file_id1)" -auto-approve
+            displayName: 'Terraform Destroy'
+            workingDirectory: './AzureDevops-Introduction/aks-k8s/'

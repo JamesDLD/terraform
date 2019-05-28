@@ -12,7 +12,7 @@ This step ensures that Terraform has all the prerequisites to build your templat
 
 ```hcl
 
-terraform init -backend-config="./variable/backend-jdld.tfvars" -backend-config="./secret/backend-jdld.tfvars" -reconfigure
+terraform init -backend-config="./variable/backend-jdld.tfvars" -backend-config="./secret/backend-jdld.json" -reconfigure
 
 ```
 
@@ -20,20 +20,20 @@ The terraform plan command is used to create an execution plan.
 This step compares the requested resources to the state information saved by Terraform and then gives as an output the planned execution. Resources are not created in Azure.
 ```hcl
 
-terraform plan -var-file="./variable/main-jdld.tfvars" -var-file="./secret/main-jdld.tfvars"
+terraform plan -var-file="./variable/main-jdld.tfvars" -var-file="./secret/main-jdld.json"
 
 ```
 
 If all is ok with the proposal you can now apply the configuration.
 ```hcl
 
-terraform apply -var-file="./variable/main-jdld.tfvars" -var-file="./secret/main-jdld.tfvars"
+terraform apply -var-file="./variable/main-jdld.tfvars" -var-file="./secret/main-jdld.json"
 
 ```
 
 To destroy the associated resources.
 ```hcl
 
-terraform destroy -var-file="./variable/main-jdld.tfvars" -var-file="./secret/main-jdld.tfvars"
+terraform destroy -var-file="./variable/main-jdld.tfvars" -var-file="./secret/main-jdld.json"
 
 ```
