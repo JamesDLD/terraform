@@ -21,7 +21,7 @@ variable "rg_infr_name" {
 }
 
 variable log_analytics_workspace_name {
-  default = "testLogAnalyticsWorkspaceName"
+  description = "The log analytics workspace name must be unique"
 }
 
 variable log_analytics_workspace_sku {
