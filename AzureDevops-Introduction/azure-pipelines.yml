@@ -95,7 +95,6 @@ stages:
               cd ./AzureDevops-Introduction
               ls
             displayName: 'Debug'
-            workingDirectory: '$(System.ArtifactsDirectory)'
 
           # - task: ExtractFiles@1
           #   displayName: 'Extract files for package $(PackageName1)'
