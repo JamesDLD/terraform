@@ -67,11 +67,10 @@ stages:
         mv -f aks-k8s.tar.gz ./ArtifactPublishLocation/aks-k8s.tar.gz
       displayName: 'Compress ./AzureDevops-Introduction/aks-k8s/ before Artifact publication'
 
-    - task: PublishBuildArtifacts@1
-      displayName: 'Publish Artifact: AzureDevops-Introduction'
+    - task: PublishPipelineArtifact@0
       inputs:
-        PathtoPublish: './ArtifactPublishLocation'
-        ArtifactName: 'AzureDevops-Introduction'
+        artifactName: '$(ArtifactName)'
+        targetPath: '$(ArtifactName)'
 
 - stage: Deploy
   jobs:
@@ -91,7 +90,7 @@ stages:
           - task: ExtractFiles@1
             displayName: 'Extract files for package $(PackageName1)'
             inputs:
-              archiveFilePatterns: '$(System.DefaultWorkingDirectory)/$(ArtifactName)/$(ArtifactName)/$(PackageName1).tar.gz'
+              archiveFilePatterns: '$(System.ArtifactsDirectory)/$(ArtifactName)/$(ArtifactName)/$(PackageName1).tar.gz'
               destinationFolder: './$(PackageName1)'
 
           - task: TerraformInstaller@0
