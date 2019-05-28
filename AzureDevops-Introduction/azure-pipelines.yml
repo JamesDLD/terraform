@@ -5,8 +5,10 @@ variables:
 - group: terraform_binary  # variable containing Terraform information like the Terraform version
 - name: backend_main_secret_file_id1 # secret file used by the following cmdlet Terraform init, plan, apply and destroy 
   value: 'backend-main-jdld-1.json'
-  ArtifactName: 'AzureDevops-Introduction'
-  PackageName1: 'aks-k8s'
+- name: ArtifactName
+  value: 'AzureDevops-Introduction'
+- name: PackageName1
+  value: 'aks-k8s'
 
 resources:
   repositories:
