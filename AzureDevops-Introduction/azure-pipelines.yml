@@ -68,11 +68,12 @@ stages:
               mv -f aks-k8s.tar.gz ./ArtifactPublishLocation/aks-k8s.tar.gz
             displayName: 'Compress ./AzureDevops-Introduction/aks-k8s/ before Artifact publication'
 
-          - task: PublishBuildArtifacts@1
+          # Publish Pipeline Artifact
+          - task: PublishPipelineArtifact@1
             displayName: 'Publish Artifact: AzureDevops-Introduction'
             inputs:
-              PathtoPublish: './ArtifactPublishLocation'
-              ArtifactName: 'AzureDevops-Introduction'
+              targetPath: './ArtifactPublishLocation'
+              artifactName: 'AzureDevops-Introduction'
 
 - stage: Delivery
   jobs:
@@ -89,13 +90,12 @@ stages:
           steps:
           - script: echo Deployment job in the production environment
 
-          # Download Build Artifacts
-          - task: DownloadBuildArtifacts@0
+          # Download Pipeline Artifact
+          - task: DownloadPipelineArtifact@1
             inputs:
               buildType: 'current' # Options: current, specific
-              buildVersionToDownload: 'latest' # Required when buildType == Specific# Options: latest, latestFromBranch, specific
-              downloadType: 'single' # Options: single, specific
-              artifactName: 'AzureDevops-Introduction' # Required when downloadType == Single
+              buildVersionToDownload: 'latest' # Required when buildType == Specific. Options: latest, latestFromBranch, specific
+              artifactName: 'AzureDevops-Introduction'
 
           - checkout: self # self represents the repo where the initial Pipelines YAML file was found
             displayName: 'Checking out source code'
