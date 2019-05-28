@@ -70,7 +70,6 @@ stages:
 
           # Publish Pipeline Artifact
           - task: PublishPipelineArtifact@1
-            displayName: 'Publish Artifact: AzureDevops-Introduction'
             inputs:
               targetPath: './ArtifactPublishLocation'
               artifactName: 'AzureDevops-Introduction'
