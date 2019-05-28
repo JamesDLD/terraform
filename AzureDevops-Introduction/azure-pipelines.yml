@@ -25,11 +25,11 @@ trigger:
 stages:
 - stage: Build
   jobs:
-  - job: Terraform_Plan_Windows
-    displayName: Publish an Artifact if Infrastructure changes are identified.
+  - job: Terraform_Plan_Linux
+    displayName: Terraform_Plan_Linux
     continueOnError: false
     pool:
-      vmImage: 'windows-2019'
+      vmImage: 'Ubuntu-16.04'
     steps:
     - script: echo Build job that will publish an Artifact if Infrastructure changes are identified.
 
@@ -66,9 +66,9 @@ stages:
 - stage: Deployment
   jobs:
     # track deployments on the environment
-  - deployment: Terraform_Apply_Linux
+  - deployment: Terraform_Apply_Windows
     pool:
-      vmImage: 'Ubuntu-16.04'
+      vmImage: 'windows-2019'
     # creates an environment if it doesn’t exist
     environment: 'staging'
     strategy:
@@ -99,14 +99,6 @@ stages:
               terraform apply "./out_plan_file"
             displayName: 'Terraform Apply'
             workingDirectory: './AzureDevops-Introduction/aks-k8s/'
-
-          - script: |
-              echo "Compressing ./AzureDevops-Introduction/aks-k8s/ directory ..."
-              tar -czf aks-k8s.tar.gz -C ./AzureDevops-Introduction/aks-k8s/ .
-              mkdir -p ./ArtifactPublishLocation
-              echo "Moving this archive directory to this location ./ArtifactPublishLocation ..."
-              mv -f aks-k8s.tar.gz ./ArtifactPublishLocation/aks-k8s.tar.gz
-            displayName: 'Compress ./AzureDevops-Introduction/aks-k8s/ before Artifact publication'
 
           # # Publish Pipeline Artifact --> Note that publishing is only supported in build pipelines
           # - task: PublishPipelineArtifact@1
