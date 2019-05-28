@@ -39,6 +39,10 @@ stages:
         deploy:
           steps:
           - script: echo Deployment job in the staging environment
+          
+          - checkout: self
+            clean: true
+            persistCredentials: true
 
           - task: DownloadSecureFile@1
             displayName: 'Download secure file $(backend_secret_file_id1)'
