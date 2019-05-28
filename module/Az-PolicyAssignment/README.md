@@ -47,6 +47,22 @@ variable "apps_nsgs" {
   default = [
     {
       suffix_name = "nic-all"
+
+      rules = [
+        {
+          description               = "Demo1"
+          direction                  = "Inbound"
+          name                      = "ALL_to_NIC_tcp-3389"
+          access                     = "Allow"
+          priority                   = "2000"
+          source_address_prefix      = "*"
+          destination_address_prefix = "*"
+          destination_port_range     = "3389"
+          protocol                   = "tcp"
+          source_port_range          = "*"
+          source_port_ranges          = ""
+        },
+      ]
     },
   ]
 }

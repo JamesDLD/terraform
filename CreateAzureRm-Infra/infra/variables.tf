@@ -159,10 +159,6 @@ variable "infra_nsgs" {
   description = "Infra Network Security Groups list containing the following keys : suffix_name."
 }
 
-variable "infra_nsgrules" {
-  type        = list
-  description = "Infra Network Security Groups Rules list."
-}
 #Compute
 variable "app_admin" {
   description = "Specifies the name of the administrator account on the VM."

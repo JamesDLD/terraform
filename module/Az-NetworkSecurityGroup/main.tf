@@ -4,23 +4,24 @@ resource "azurerm_network_security_group" "nsgs" {
   location            = var.nsg_location
   resource_group_name = var.nsg_resource_group_name
   tags                = var.nsg_tags
-}
 
-resource "azurerm_network_security_rule" "nsgs_inbound_rules" {
-  count                      = length(var.nsgrules)
-  name                       = "${var.nsg_prefix}${var.nsgrules[count.index]["suffix_name"]}-${var.nsgrules[count.index]["access"]}"
-  direction                  = var.nsgrules[count.index]["direction"]
-  access                     = var.nsgrules[count.index]["access"]
-  priority                   = var.nsgrules[count.index]["priority"]
-  source_address_prefix      = var.nsgrules[count.index]["source_address_prefix"]
-  destination_address_prefix = var.nsgrules[count.index]["destination_address_prefix"]
-  destination_port_range     = var.nsgrules[count.index]["destination_port_range"]
-  protocol                   = var.nsgrules[count.index]["protocol"]
-  source_port_range          = var.nsgrules[count.index]["source_port_range"]
-  resource_group_name        = var.nsg_resource_group_name
-  network_security_group_name = element(
-    azurerm_network_security_group.nsgs.*.name,
-    var.nsgrules[count.index]["Id_Nsg"],
-  )
+  dynamic "security_rule" {
+  for_each = var.nsgs[count.index].rules
+    content {
+      description      = lookup(security_rule.value, "description", null)
+      direction        = lookup(security_rule.value, "direction", null)
+      name     = lookup(security_rule.value, "name", null)
+      access        = lookup(security_rule.value, "access", null)
+      priority     = lookup(security_rule.value, "priority", null)
+      source_address_prefix        = lookup(security_rule.value, "source_address_prefix", null)
+      source_address_prefixes        = lookup(security_rule.value, "source_address_prefixes", null)
+      destination_address_prefix     = lookup(security_rule.value, "destination_address_prefix", null)
+      destination_address_prefixes     = lookup(security_rule.value, "destination_address_prefixes", null)
+      destination_port_range        = lookup(security_rule.value, "destination_port_range", null)
+      destination_port_ranges        = lookup(security_rule.value, "destination_port_ranges", null)
+      protocol     = lookup(security_rule.value, "protocol", null)
+      source_port_range        = lookup(security_rule.value, "source_port_range", null)
+      source_port_ranges        = lookup(security_rule.value, "source_port_ranges", null)
+    }
+  }
 }
-
