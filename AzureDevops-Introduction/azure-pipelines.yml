@@ -47,13 +47,15 @@ stages:
       inputs:
         secureFile: $(backend_main_secret_file_id1)
 
+    - script: mkdir -p ./ArtifactPublishLocation
+      displayName: 'Make sure the Artifact folder is avalaible'
+      
     - task: TerraformInstaller@0
       displayName: 'Use Terraform $(terraform_version)'
       inputs:
         terraformVersion: $(terraform_version)
 
     - script: |
-        mkdir -p ./ArtifactPublishLocation
         terraform init -backend-config="./variable/backend-jdld.tfvars" -backend-config="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -reconfigure
         terraform plan -var-file="./variable/main-jdld.tfvars" -var-file="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -out="./out_plan_file" -input=false -detailed-exitcode > /dev/null 
 
@@ -73,6 +75,7 @@ stages:
             echo "Terraform planned has failed!"
             exit 1
         fi
+
       displayName: 'Terraform Plan'
       workingDirectory: './$(ArtifactName)/$(PackageName1)/'
 
