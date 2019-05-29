@@ -61,14 +61,14 @@ stages:
 
         OUT=$?
         if [ $OUT -eq 0 ];then
-            echo '##vso[task.setvariable variable=terraform_plan_exitcode;isOutput=true]0'
+            echo '##vso[task.setvariable variable=terraform_plan_exitcode]0'
             echo "No changes. Infrastructure is up-to-date!"
         elif [ $OUT -eq 1 ];then
-            echo '##vso[task.setvariable variable=terraform_plan_exitcode;isOutput=true]1'
+            echo '##vso[task.setvariable variable=terraform_plan_exitcode]1'
             echo "Terraform planned has failed!"
             exit 1
         elif [ $OUT -eq 2 ];then
-            echo '##vso[task.setvariable variable=terraform_plan_exitcode;isOutput=true]2'
+            echo '##vso[task.setvariable variable=terraform_plan_exitcode]2'
             echo "Changes have been noticed!"
             terraform show ./out_plan_file
         else
@@ -109,7 +109,7 @@ stages:
           steps:
           - script: echo Deployment job in the staging environment
 
-          - script: echo $[ dependencies.Build.outputs['debugJob.setvarStep.terraform_plan_exitcode'] ]
+          - script: echo $(variables['terraform_plan_exitcode'])
             name: echovar
 
           # Download Pipeline Artifact
