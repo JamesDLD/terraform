@@ -116,7 +116,7 @@ stages:
               artifactName: '$(ArtifactName)'
               downloadPath: '$(System.ArtifactsDirectory)' 
 
-          - bash: [ -f $(System.ArtifactsDirectory)/$(PackageName1).tar.gz ] && echo '##vso[task.setvariable variable=package_available]yes'
+          - script: [ -f $(System.ArtifactsDirectory)/$(PackageName1).tar.gz ] && echo '##vso[task.setvariable variable=package_available]yes'
             displayName: Checking if a package is available 
 
           - task: ExtractFiles@1
