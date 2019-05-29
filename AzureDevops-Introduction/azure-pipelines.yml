@@ -88,17 +88,25 @@ stages:
           steps:
           - script: echo Deployment job in the staging environment
 
+          # Download Pipeline Artifact
+          - task: DownloadPipelineArtifact@1
+            inputs:
+              buildType: 'current' # Options: current, specific
+              buildVersionToDownload: 'latest' # Required when buildType == Specific. Options: latest, latestFromBranch, specific
+              artifactName: '$(ArtifactName)'
+              downloadPath: '$(System.ArtifactsDirectory)' 
+
           - script: |
-              ls
-              cd /home/vsts/work/1/
+              # ls
+              # cd /home/vsts/work/1/
               ls
               echo $(System.ArtifactsDirectory)
               cd $(System.ArtifactsDirectory) #/home/vsts/work/1/a
               ls
-              cd ./ArtifactPublishLocation
-              ls
-              cd ./aks-k8s
-              ls
+              # cd ./ArtifactPublishLocation
+              # ls
+              # cd ./aks-k8s
+              # ls
             displayName: 'Debug'
 
           - task: ExtractFiles@1
@@ -131,13 +139,6 @@ stages:
         deploy:
           steps:
           - script: echo Deployment job in the production environment
-
-          # # Download Pipeline Artifact
-          # - task: DownloadPipelineArtifact@1
-          #   inputs:
-          #     buildType: 'current' # Options: current, specific
-          #     buildVersionToDownload: 'latest' # Required when buildType == Specific. Options: latest, latestFromBranch, specific
-          #     artifactName: 'AzureDevops-Introduction'
 
           - checkout: self # self represents the repo where the initial Pipelines YAML file was found
             displayName: 'Checking out source code'
