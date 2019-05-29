@@ -69,7 +69,7 @@ stages:
     - task: PublishPipelineArtifact@0
       inputs:
         artifactName: '$(ArtifactName)'
-        targetPath: '$(Build.ArtifactStagingDirectory)/$(ArtifactName)'
+        targetPath: '$(Build.ArtifactStagingDirectory)'
 
 - stage: Deploy
   dependsOn: Build
