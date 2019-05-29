@@ -70,7 +70,7 @@ stages:
     - task: PublishPipelineArtifact@0
       inputs:
         artifactName: '$(ArtifactName)'
-        targetPath: './ArtifactPublishLocation' # Local path to include in the Artifact
+        targetPath: 'ArtifactPublishLocation' # Local path to include in the Artifact
 
 - stage: Deploy
   dependsOn: Build
@@ -93,7 +93,7 @@ stages:
               cd /home/vsts/work/1/
               ls
               echo $(System.ArtifactsDirectory)
-              cd $(System.ArtifactsDirectory)
+              cd $(System.ArtifactsDirectory) #/home/vsts/work/1/a
               ls
               cd ./ArtifactPublishLocation
               ls
