@@ -32,12 +32,11 @@ stages:
 - stage: Build
   jobs:
   - job: Terraform_Plan
+    displayName: Build job - Publish an package if Infrastructure changes are identified
     continueOnError: false
     pool:
       vmImage: $(vmImageName)
     steps:
-    - script: echo Build job that will publish an Artifact if Infrastructure changes are identified.
-
     - checkout: self # self represents the repo where the initial Pipelines YAML file was found
       displayName: 'Checking out source code'
       clean: true # whether to fetch clean each time
@@ -54,6 +53,7 @@ stages:
         terraformVersion: $(terraform_version)
 
     - script: |
+        mkdir -p ./ArtifactPublishLocation
         terraform init -backend-config="./variable/backend-jdld.tfvars" -backend-config="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -reconfigure
         terraform plan -var-file="./variable/main-jdld.tfvars" -var-file="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -out="./out_plan_file" -input=false -detailed-exitcode > /dev/null 
 
@@ -79,7 +79,6 @@ stages:
     - script: |
         echo "Compressing ./$(ArtifactName)/$(PackageName1)/ directory ..."
         tar -czf $(PackageName1).tar.gz -C ./$(ArtifactName)/$(PackageName1)/ .
-        mkdir -p ./ArtifactPublishLocation
         echo "Moving this archive directory to this location ./ArtifactPublishLocation ..."
         mv -f $(PackageName1).tar.gz ./ArtifactPublishLocation/$(PackageName1).tar.gz
       displayName: 'Compress ./$(ArtifactName)/$(PackageName1)/ before Artifact publication'
@@ -95,6 +94,7 @@ stages:
   jobs:
     # track deployments on the environment
   - deployment: Terraform_Apply
+    displayName: Deployment job in the staging environment
     pool:
       vmImage: $(vmImageName)
     # creates an environment if it doesn’t exist
@@ -104,8 +104,6 @@ stages:
       runOnce:
         deploy:
           steps:
-          - script:  echo Deployment job in the staging environment
-
           # Download Pipeline Artifact
           - task: DownloadPipelineArtifact@1
             inputs:
@@ -143,6 +141,7 @@ stages:
   jobs:
     # track deployments on the environment
   - deployment: Terraform_Destroy
+    displayName: Deployment job in the production environment
     pool:
       vmImage: $(vmImageName)
     # creates an environment if it doesn’t exist
@@ -152,8 +151,6 @@ stages:
       runOnce:
         deploy:
           steps:
-          - script: echo Deployment job in the production environment
-
           # Download Pipeline Artifact
           - task: DownloadPipelineArtifact@1
             inputs:
