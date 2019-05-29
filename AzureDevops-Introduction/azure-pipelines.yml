@@ -1,5 +1,3 @@
-#Help a guy : https://github.com/microsoft/azure-pipelines-yaml/issues/215
-#https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/publish-pipeline-artifact?view=azure-devops
 #Multi-stage YAML pipeline demo.
 name: $(BuildDefinitionName).$(DayOfYear)$(Rev:.r)
 
@@ -164,22 +162,32 @@ stages:
               artifactName: '$(ArtifactName)'
               downloadPath: '$(System.ArtifactsDirectory)' 
 
+          - bash: |
+              if [ -f "$(System.ArtifactsDirectory)/$(PackageName1).tar.gz" ]; then
+                  echo '##vso[task.setvariable variable=package_available]yes'
+              fi
+            displayName: Checking if a package is available 
+
           - task: ExtractFiles@1
+            condition: eq(variables['package_available'], 'yes') # this task will only run if the package is available
             displayName: 'Extract files for package $(PackageName1)'
             inputs:
               archiveFilePatterns: '$(System.ArtifactsDirectory)/$(PackageName1).tar.gz'
               destinationFolder: './$(PackageName1)'
 
           - task: DownloadSecureFile@1
+            condition: eq(variables['package_available'], 'yes') # this task will only run if the package is available
             displayName: 'Download secure file $(backend_main_secret_file_id1)'
             inputs:
               secureFile: $(backend_main_secret_file_id1) 
 
           - task: TerraformInstaller@0
+            condition: eq(variables['package_available'], 'yes') # this task will only run if the package is available
             displayName: 'Use Terraform $(terraform_version)'
             inputs:
               terraformVersion: $(terraform_version)
 
           - script: terraform destroy -var-file="./variable/main-jdld.tfvars" -var-file="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -auto-approve
+            condition: eq(variables['package_available'], 'yes') # this task will only run if the package is available
             displayName: 'Terraform Destroy'
             workingDirectory: './$(PackageName1)'
