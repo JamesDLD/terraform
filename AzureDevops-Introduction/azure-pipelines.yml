@@ -29,7 +29,7 @@ trigger:
 stages:
 - stage: Build
   jobs:
-  - job: Terraform_Plan_Linux
+  - job: Terraform_Plan
     continueOnError: false
     pool:
       vmImage: 'Ubuntu-16.04'
@@ -69,15 +69,15 @@ stages:
     - task: PublishPipelineArtifact@0
       inputs:
         artifactName: '$(ArtifactName)'
-        targetPath: './$(ArtifactName)/' #'$(Build.ArtifactStagingDirectory)'
+        targetPath: './$(ArtifactName)/' # Local path to include in the Artifact
 
 - stage: Deploy
   dependsOn: Build
   jobs:
     # track deployments on the environment
-  - deployment: Terraform_Apply_Windows
+  - deployment: Terraform_Apply
     pool:
-      vmImage: 'windows-2019'
+      vmImage: 'Ubuntu-16.04'
     # creates an environment if it doesn’t exist
     environment: 'staging'
     strategy:
@@ -122,9 +122,9 @@ stages:
   dependsOn: Deploy
   jobs:
     # track deployments on the environment
-  - deployment: Terraform_Destroy_MacOs
+  - deployment: Terraform_Destroy
     pool:
-      vmImage: macos-10.13
+      vmImage: 'Ubuntu-16.04'
     # creates an environment if it doesn’t exist
     environment: 'production'
     strategy:
