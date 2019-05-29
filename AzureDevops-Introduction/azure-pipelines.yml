@@ -68,7 +68,7 @@ stages:
     - task: PublishPipelineArtifact@0
       inputs:
         artifactName: '$(ArtifactName)'
-        targetPath: './ArtifactPublishLocation/' # Local path to include in the Artifact
+        targetPath: './ArtifactPublishLocation' # Local path to include in the Artifact
 
 - stage: Deploy
   dependsOn: Build
@@ -90,6 +90,8 @@ stages:
               ls
               echo $(System.ArtifactsDirectory)
               cd $(System.ArtifactsDirectory)
+              ls
+              cd ./ArtifactPublishLocation
               ls
               cd ./aks-k8s
               ls
