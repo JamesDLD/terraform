@@ -54,22 +54,21 @@ stages:
     - script: |
         terraform init -backend-config="./variable/backend-jdld.tfvars" -backend-config="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -reconfigure
         terraform plan -var-file="./variable/main-jdld.tfvars" -var-file="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -out="./out_plan_file" -input=false 
-        #terraform apply "./out_plan_file"
       displayName: 'Terraform Plan'
-      workingDirectory: './AzureDevops-Introduction/aks-k8s/'
+      workingDirectory: './$(ArtifactName)/$(PackageName1)/'
 
-    # - script: |
-    #     echo "Compressing ./AzureDevops-Introduction/aks-k8s/ directory ..."
-    #     tar -czf aks-k8s.tar.gz -C ./AzureDevops-Introduction/aks-k8s/ .
-    #     mkdir -p ./ArtifactPublishLocation
-    #     echo "Moving this archive directory to this location ./ArtifactPublishLocation ..."
-    #     mv -f aks-k8s.tar.gz ./ArtifactPublishLocation/aks-k8s.tar.gz
-    #   displayName: 'Compress ./AzureDevops-Introduction/aks-k8s/ before Artifact publication'
+    - script: |
+        echo "Compressing ./$(ArtifactName)/$(PackageName1)/ directory ..."
+        tar -czf $(PackageName1).tar.gz -C ./$(ArtifactName)/$(PackageName1)/ .
+        mkdir -p ./ArtifactPublishLocation
+        echo "Moving this archive directory to this location ./ArtifactPublishLocation ..."
+        mv -f $(PackageName1).tar.gz ./ArtifactPublishLocation/$(PackageName1).tar.gz
+      displayName: 'Compress ./$(ArtifactName)/$(PackageName1)/ before Artifact publication'
 
     - task: PublishPipelineArtifact@0
       inputs:
         artifactName: '$(ArtifactName)'
-        targetPath: './$(ArtifactName)/' # Local path to include in the Artifact
+        targetPath: './ArtifactPublishLocation/' # Local path to include in the Artifact
 
 - stage: Deploy
   dependsOn: Build
@@ -87,27 +86,11 @@ stages:
           steps:
           - script: echo Deployment job in the staging environment
 
-          # Download Pipeline Artifact
-          - task: DownloadPipelineArtifact@1
+          - task: ExtractFiles@1
+            displayName: 'Extract files for package $(PackageName1)'
             inputs:
-              buildType: 'current' # Options: current, specific
-              buildVersionToDownload: 'latest' # Required when buildType == Specific. Options: latest, latestFromBranch, specific
-              artifactName: '$(ArtifactName)'
-
-          - script: |
-              ls
-              echo $(System.ArtifactsDirectory)
-              cd $(System.ArtifactsDirectory)
-              ls
-              cd ./aks-k8s
-              ls
-            displayName: 'Debug'
-
-          # - task: ExtractFiles@1
-          #   displayName: 'Extract files for package $(PackageName1)'
-          #   inputs:
-          #     archiveFilePatterns: '$(System.ArtifactsDirectory)/$(ArtifactName)/$(ArtifactName)/$(PackageName1).tar.gz'
-          #     destinationFolder: './$(PackageName1)'
+              archiveFilePatterns: '$(System.ArtifactsDirectory)/$(PackageName1).tar.gz'
+              destinationFolder: './$(PackageName1)'
 
           - task: TerraformInstaller@0
             displayName: 'Use Terraform $(terraform_version)'
@@ -116,7 +99,7 @@ stages:
 
           - script: terraform apply "./out_plan_file"
             displayName: 'Terraform Apply'
-            workingDirectory: '$(System.ArtifactsDirectory)/$(PackageName1)'
+            workingDirectory: './$(PackageName1)'
 
 - stage: Deliver
   dependsOn: Deploy
