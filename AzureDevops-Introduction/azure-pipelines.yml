@@ -108,9 +108,7 @@ stages:
         deploy:
           steps:
           - script: echo Deployment job in the staging environment
-
-          - script: echo $(variables['terraform_plan_exitcode'])
-            name: echovar
+            condition: eq(variables['terraform_plan_exitcode'], '2') # this task will only run if terrafrom has prompted for changes
 
           # Download Pipeline Artifact
           - task: DownloadPipelineArtifact@1
