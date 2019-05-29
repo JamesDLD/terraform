@@ -91,7 +91,6 @@ stages:
       inputs:
         artifactName: '$(ArtifactName)'
         targetPath: './ArtifactPublishLocation' # Local path to include in the Artifact
-      condition: eq(variables['terraform_plan_exitcode'], '2') # this task will only run if terrafrom has prompted for changes
 
 - stage: Deploy
   dependsOn: Build
@@ -107,8 +106,7 @@ stages:
       runOnce:
         deploy:
           steps:
-          - script: echo Deployment job in the staging environment
-            condition: eq(variables['terraform_plan_exitcode'], '2') # this task will only run if terrafrom has prompted for changes
+          - script:  echo Deployment job in the staging environment
 
           # Download Pipeline Artifact
           - task: DownloadPipelineArtifact@1
@@ -118,18 +116,24 @@ stages:
               artifactName: '$(ArtifactName)'
               downloadPath: '$(System.ArtifactsDirectory)' 
 
+          - bash: [ -f $(System.ArtifactsDirectory)/$(PackageName1).tar.gz ] && echo '##vso[task.setvariable variable=package_available]yes'
+            displayName: Checking if a package is available 
+
           - task: ExtractFiles@1
+            condition: eq(variables['package_available'], 'yes') # this task will only run if the package is available
             displayName: 'Extract files for package $(PackageName1)'
             inputs:
               archiveFilePatterns: '$(System.ArtifactsDirectory)/$(PackageName1).tar.gz'
               destinationFolder: './$(PackageName1)'
 
           - task: TerraformInstaller@0
+            condition: eq(variables['package_available'], 'yes') # this task will only run if the package is available
             displayName: 'Use Terraform $(terraform_version)'
             inputs:
               terraformVersion: $(terraform_version)
 
           - script: terraform apply "./out_plan_file"
+            condition: eq(variables['package_available'], 'yes') # this task will only run if the package is available
             displayName: 'Terraform Apply'
             workingDirectory: './$(PackageName1)'
 
