@@ -69,7 +69,7 @@ stages:
     - task: PublishPipelineArtifact@0
       inputs:
         artifactName: '$(ArtifactName)'
-        targetPath: '$(Build.ArtifactStagingDirectory)'
+        targetPath: './AzureDevops-Introduction/aks-k8s/' #'$(Build.ArtifactStagingDirectory)'
 
 - stage: Deploy
   dependsOn: Build
