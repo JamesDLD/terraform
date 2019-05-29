@@ -1,3 +1,5 @@
+#Help a guy : https://github.com/microsoft/azure-pipelines-yaml/issues/215
+#https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/publish-pipeline-artifact?view=azure-devops
 #Multi-stage YAML pipeline demo.
 name: $(BuildDefinitionName).$(DayOfYear)$(Rev:.r)
 
@@ -87,6 +89,8 @@ stages:
           - script: echo Deployment job in the staging environment
 
           - script: |
+              ls
+              cd /home/vsts/work/1/
               ls
               echo $(System.ArtifactsDirectory)
               cd $(System.ArtifactsDirectory)
