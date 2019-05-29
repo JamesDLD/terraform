@@ -57,7 +57,24 @@ stages:
 
     - script: |
         terraform init -backend-config="./variable/backend-jdld.tfvars" -backend-config="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -reconfigure
-        terraform plan -var-file="./variable/main-jdld.tfvars" -var-file="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -out="./out_plan_file" -input=false 
+        terraform plan -var-file="./variable/main-jdld.tfvars" -var-file="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -out="./out_plan_file" -input=false -detailed-exitcode > /dev/null 
+
+        OUT=$?
+        if [ $OUT -eq 0 ];then
+            echo '##vso[task.setvariable variable=terraform_plan_exitcode;isOutput=true]0'
+            echo "No changes. Infrastructure is up-to-date!"
+        elif [ $OUT -eq 1 ];then
+            echo '##vso[task.setvariable variable=terraform_plan_exitcode;isOutput=true]1'
+            echo "Terraform planned has failed!"
+            exit 1
+        elif [ $OUT -eq 2 ];then
+            echo '##vso[task.setvariable variable=terraform_plan_exitcode;isOutput=true]2'
+            echo "Changes have been noticed!"
+            terraform show ./out_plan_file
+        else
+            echo "Terraform planned has failed!"
+            exit 1
+        fi
       displayName: 'Terraform Plan'
       workingDirectory: './$(ArtifactName)/$(PackageName1)/'
 
@@ -68,11 +85,13 @@ stages:
         echo "Moving this archive directory to this location ./ArtifactPublishLocation ..."
         mv -f $(PackageName1).tar.gz ./ArtifactPublishLocation/$(PackageName1).tar.gz
       displayName: 'Compress ./$(ArtifactName)/$(PackageName1)/ before Artifact publication'
+      condition: eq(variables['terraform_plan_exitcode'], '2') # this task will only run if terrafrom has prompted for changes
 
     - task: PublishPipelineArtifact@0
       inputs:
         artifactName: '$(ArtifactName)'
         targetPath: './ArtifactPublishLocation' # Local path to include in the Artifact
+      condition: eq(variables['terraform_plan_exitcode'], '2') # this task will only run if terrafrom has prompted for changes
 
 - stage: Deploy
   dependsOn: Build
@@ -89,6 +108,9 @@ stages:
         deploy:
           steps:
           - script: echo Deployment job in the staging environment
+
+          - script: echo $[ dependencies.Build.outputs['debugJob.setvarStep.terraform_plan_exitcode'] ]
+            name: echovar
 
           # Download Pipeline Artifact
           - task: DownloadPipelineArtifact@1
