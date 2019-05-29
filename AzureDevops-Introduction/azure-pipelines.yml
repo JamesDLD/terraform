@@ -69,16 +69,16 @@ stages:
 
     - task: PublishPipelineArtifact@0
       inputs:
-        artifactName: 'ArtifactPublishLocation' #'$(ArtifactName)'
+        artifactName: '$(ArtifactName)'
         targetPath: './ArtifactPublishLocation' # Local path to include in the Artifact
 
 - stage: Deploy
   dependsOn: Build
   jobs:
     # track deployments on the environment
-  - deployment: Terraform_Apply
+  - deployment: Terraform_Apply_Windows
     pool:
-      vmImage: 'Ubuntu-16.04'
+      vmImage: 'windows-2019'
     # creates an environment if it doesn’t exist
     environment: 'staging'
     strategy:
