@@ -69,8 +69,8 @@ stages:
 
     - task: PublishPipelineArtifact@0
       inputs:
-        artifactName: '$(ArtifactName)'
-        targetPath: 'ArtifactPublishLocation' # Local path to include in the Artifact
+        artifactName: 'ArtifactPublishLocation' #'$(ArtifactName)'
+        targetPath: './ArtifactPublishLocation' # Local path to include in the Artifact
 
 - stage: Deploy
   dependsOn: Build
