@@ -30,7 +30,6 @@ stages:
 - stage: Build
   jobs:
   - job: Terraform_Plan_Linux
-    displayName: Terraform_Plan_Linux
     continueOnError: false
     pool:
       vmImage: 'Ubuntu-16.04'
@@ -73,6 +72,7 @@ stages:
         targetPath: '$(ArtifactName)'
 
 - stage: Deploy
+  dependsOn: Build
   jobs:
     # track deployments on the environment
   - deployment: Terraform_Apply_Windows
@@ -119,6 +119,7 @@ stages:
             workingDirectory: '$(System.ArtifactsDirectory)/$(ArtifactName)/$(PackageName1)'
 
 - stage: Deliver
+  dependsOn: Build
   jobs:
     # track deployments on the environment
   - deployment: Terraform_Destroy_MacOs
