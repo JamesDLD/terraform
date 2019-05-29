@@ -127,10 +127,19 @@ stages:
           steps:
           - script: echo Deployment job in the production environment
 
-          - checkout: self # self represents the repo where the initial Pipelines YAML file was found
-            displayName: 'Checking out source code'
-            clean: true # whether to fetch clean each time
-            persistCredentials: true # set to 'true' to leave the OAuth token in the Git config after the initial fetch
+          # Download Pipeline Artifact
+          - task: DownloadPipelineArtifact@1
+            inputs:
+              buildType: 'current' # Options: current, specific
+              buildVersionToDownload: 'latest' # Required when buildType == Specific. Options: latest, latestFromBranch, specific
+              artifactName: '$(ArtifactName)'
+              downloadPath: '$(System.ArtifactsDirectory)' 
+
+          - task: ExtractFiles@1
+            displayName: 'Extract files for package $(PackageName1)'
+            inputs:
+              archiveFilePatterns: '$(System.ArtifactsDirectory)/$(PackageName1).tar.gz'
+              destinationFolder: './$(PackageName1)'
 
           - task: DownloadSecureFile@1
             displayName: 'Download secure file $(backend_main_secret_file_id1)'
@@ -142,8 +151,6 @@ stages:
             inputs:
               terraformVersion: $(terraform_version)
 
-          - script: |
-              terraform init -backend-config="./variable/backend-jdld.tfvars" -backend-config="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -reconfigure
-              terraform destroy -var-file="./variable/main-jdld.tfvars" -var-file="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -auto-approve
+          - script: terraform destroy -var-file="./variable/main-jdld.tfvars" -var-file="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -auto-approve
             displayName: 'Terraform Destroy'
-            workingDirectory: './AzureDevops-Introduction/aks-k8s/'
+            workingDirectory: './$(PackageName1)'
