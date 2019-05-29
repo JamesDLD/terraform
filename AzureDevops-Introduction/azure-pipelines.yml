@@ -69,7 +69,7 @@ stages:
     - task: PublishPipelineArtifact@0
       inputs:
         artifactName: '$(ArtifactName)'
-        targetPath: '$(ArtifactName)'
+        targetPath: '$(Build.ArtifactStagingDirectory)/$(ArtifactName)'
 
 - stage: Deploy
   dependsOn: Build
@@ -119,7 +119,7 @@ stages:
             workingDirectory: '$(System.ArtifactsDirectory)/$(ArtifactName)/$(PackageName1)'
 
 - stage: Deliver
-  dependsOn: Build
+  dependsOn: Deploy
   jobs:
     # track deployments on the environment
   - deployment: Terraform_Destroy_MacOs
