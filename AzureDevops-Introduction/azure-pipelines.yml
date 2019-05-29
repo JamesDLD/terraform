@@ -99,7 +99,7 @@ stages:
               echo $(System.ArtifactsDirectory)
               cd $(System.ArtifactsDirectory)
               ls
-              cd ./AzureDevops-Introduction
+              cd ./aks-k8s
               ls
             displayName: 'Debug'
 
@@ -116,7 +116,7 @@ stages:
 
           - script: terraform apply "./out_plan_file"
             displayName: 'Terraform Apply'
-            workingDirectory: '$(System.ArtifactsDirectory)/$(ArtifactName)/$(PackageName1)'
+            workingDirectory: '$(System.ArtifactsDirectory)/$(PackageName1)'
 
 - stage: Deliver
   dependsOn: Deploy
