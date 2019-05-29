@@ -4,7 +4,9 @@
 name: $(BuildDefinitionName).$(DayOfYear)$(Rev:.r)
 
 variables:
-- group: terraform_binary  # variable containing Terraform information like the Terraform version
+- group: terraform_binary  # variable group containing Terraform information like the Terraform version (like terraform_version)
+- name: vmImageName
+  value: 'ubuntu-latest'
 - name: backend_main_secret_file_id1 # secret file used by the following cmdlet Terraform init, plan, apply and destroy 
   value: 'backend-main-jdld-1.json'
 - name: ArtifactName
@@ -34,7 +36,7 @@ stages:
   - job: Terraform_Plan
     continueOnError: false
     pool:
-      vmImage: 'Ubuntu-16.04'
+      vmImage: $(vmImageName)
     steps:
     - script: echo Build job that will publish an Artifact if Infrastructure changes are identified.
 
@@ -78,7 +80,7 @@ stages:
     # track deployments on the environment
   - deployment: Terraform_Apply
     pool:
-      vmImage: 'Ubuntu-16.04'
+      vmImage: $(vmImageName)
     # creates an environment if it doesn’t exist
     environment: 'staging'
     strategy:
@@ -117,7 +119,7 @@ stages:
     # track deployments on the environment
   - deployment: Terraform_Destroy
     pool:
-      vmImage: 'Ubuntu-16.04'
+      vmImage: $(vmImageName)
     # creates an environment if it doesn’t exist
     environment: 'production'
     strategy:
