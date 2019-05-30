@@ -79,6 +79,12 @@ stages:
       displayName: 'Terraform Plan'
       workingDirectory: './$(ArtifactName)/$(PackageName1)/'
 
+    - powershell: echo "##vso[task.setvariable variable=myOutputVar;isOutput=true]Tadam"
+      name: setvarStep
+
+    - script: echo $(setvarStep.myOutputVar)
+      name: echovar
+
     - script: |
         echo "Compressing ./$(ArtifactName)/$(PackageName1)/ directory ..."
         tar -czf $(PackageName1).tar.gz -C ./$(ArtifactName)/$(PackageName1)/ .
@@ -102,11 +108,16 @@ stages:
       vmImage: $(vmImageName)
     # creates an environment if it doesn’t exist
     environment: 'staging'
+    variables:
+      myVarFromJobTerraform_Plan: $[ dependencies.Terraform_Plan.outputs['setvarStep.myOutputVar'] ]  # map in the variable
     strategy:
       # default deployment strategy
       runOnce:
         deploy:
           steps:
+          - script: echo $(myVarFromJobTerraform_Plan)
+            name: echovar
+
           # Download Pipeline Artifact
           - task: DownloadPipelineArtifact@1
             inputs:
