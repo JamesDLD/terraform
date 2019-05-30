@@ -32,7 +32,7 @@ stages:
 - stage: Build
   jobs:
   - job: Terraform_Plan
-    displayName: Build job - Publish an package if Infrastructure changes are identified
+    displayName: Terraform Plan - Publish an package if Infrastructure changes are identified
     continueOnError: false
     pool:
       vmImage: $(vmImageName)
@@ -79,11 +79,11 @@ stages:
       displayName: 'Terraform Plan'
       workingDirectory: './$(ArtifactName)/$(PackageName1)/'
 
-    - powershell: echo "##vso[task.setvariable variable=myOutputVar;isOutput=true]Tadam"
+    - script: echo "##vso[task.setvariable variable=myOutputVar;isOutput=true]Tadam"
       name: setvarStep
 
-    - script: echo $(setvarStep.myOutputVar)
-      name: echovar
+    - script: echo ! $(setvarStep.myOutputVar) !
+      displayName: echovar
 
     - script: |
         echo "Compressing ./$(ArtifactName)/$(PackageName1)/ directory ..."
@@ -99,11 +99,11 @@ stages:
         targetPath: './ArtifactPublishLocation' # Local path to include in the Artifact
 
 - stage: Deploy
-  dependsOn: Build
+  dependsOn: Terraform_Plan
   jobs:
     # track deployments on the environment
   - deployment: Terraform_Apply
-    displayName: Deployment job in the staging environment
+    displayName: Terraform Plan - Resources creation
     pool:
       vmImage: $(vmImageName)
     # creates an environment if it doesn’t exist
@@ -115,8 +115,8 @@ stages:
       runOnce:
         deploy:
           steps:
-          - script: echo $(myVarFromJobTerraform_Plan)
-            name: echovar
+          - bash: echo $(myVarFromJobTerraform_Plan)
+            displayName: echovar
 
           # Download Pipeline Artifact
           - task: DownloadPipelineArtifact@1
@@ -155,7 +155,7 @@ stages:
   jobs:
     # track deployments on the environment
   - deployment: Terraform_Destroy
-    displayName: Deployment job in the production environment
+    displayName: Terraform Destroy - Scipt ok, now deleting the resources
     pool:
       vmImage: $(vmImageName)
     # creates an environment if it doesn’t exist
