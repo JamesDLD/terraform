@@ -109,7 +109,7 @@ stages:
     # creates an environment if it doesn’t exist
     environment: 'staging'
     variables:
-      myVarFromJobTerraform_Plan: $[ dependencies.Build.outputs['setvarStep.myOutputVar'] ]  # map in the variable
+      myVarFromJobTerraform_Plan: $[ dependencies.Build.Terraform_Plan.outputs['setvarStep.myOutputVar'] ]  # map in the variable
     strategy:
       # default deployment strategy
       runOnce:
@@ -155,7 +155,7 @@ stages:
   jobs:
     # track deployments on the environment
   - deployment: Terraform_Destroy
-    displayName: Terraform Destroy - Scipt ok, now deleting the resources
+    displayName: Terraform Destroy - Script ok, now deleting the resources
     pool:
       vmImage: $(vmImageName)
     # creates an environment if it doesn’t exist
