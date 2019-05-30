@@ -99,7 +99,7 @@ stages:
         targetPath: './ArtifactPublishLocation' # Local path to include in the Artifact
 
 - stage: Deploy
-  dependsOn: Terraform_Plan
+  dependsOn: [Build]
   jobs:
     # track deployments on the environment
   - deployment: Terraform_Apply
@@ -109,7 +109,7 @@ stages:
     # creates an environment if it doesn’t exist
     environment: 'staging'
     variables:
-      myVarFromJobTerraform_Plan: $[ dependencies.Terraform_Plan.outputs['setvarStep.myOutputVar'] ]  # map in the variable
+      myVarFromJobTerraform_Plan: $[ dependencies.Build.outputs['setvarStep.myOutputVar'] ]  # map in the variable
     strategy:
       # default deployment strategy
       runOnce:
