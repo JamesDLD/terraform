@@ -41,7 +41,7 @@ stages:
       displayName: 'Download secure file $(backend_main_secret_file_id1)'
       inputs:
         secureFile: $(backend_main_secret_file_id1)
-        
+
     - checkout: self # self represents the repo where the initial Pipelines YAML file was found
       displayName: 'Checking out source code'
       clean: true # whether to fetch clean each time
@@ -150,7 +150,7 @@ stages:
     # creates an environment if it doesn’t exist
     environment: 'production'
     # variables:
-    #   terraform_destroy: "false"
+    #   terraform_destroy: "false" #Re write the variable contained in the variable group terraform_binary
     strategy:
       # default deployment strategy
       runOnce:
@@ -190,6 +190,6 @@ stages:
               terraformVersion: $(terraform_version)
 
           - script: terraform destroy -var-file="./variable/main-jdld.tfvars" -var-file="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -auto-approve
-            condition: eq(variables['package_available'], 'yes') # this task will only run if the package is available
+            condition: and(eq(variables['terraform_destroy'], 'yes'),eq(variables['package_available'], 'yes')) # this task will only run if the package is available and a terraform apply has been asked
             displayName: 'Terraform Destroy'
             workingDirectory: './$(PackageName1)'
