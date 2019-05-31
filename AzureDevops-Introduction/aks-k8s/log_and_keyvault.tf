@@ -27,7 +27,7 @@ resource "azurerm_log_analytics_solution" "test" {
 data "azurerm_client_config" "current" {}
 
 resource "azurerm_key_vault" "test" {
-  name                = "keyvaultcertexampledemointroaks"
+  name                = "demoazintroaksjdld"
   location            = "${data.azurerm_resource_group.Infr.location}"
   resource_group_name = "${data.azurerm_resource_group.Infr.name}"
   tenant_id           = "${data.azurerm_client_config.current.tenant_id}"
