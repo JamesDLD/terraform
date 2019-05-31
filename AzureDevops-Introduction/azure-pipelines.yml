@@ -149,8 +149,8 @@ stages:
       vmImage: $(vmImageName)
     # creates an environment if it doesn’t exist
     environment: 'production'
-    variables:
-      terraform_destroy: "false"
+    # variables:
+    #   terraform_destroy: "false"
     strategy:
       # default deployment strategy
       runOnce:
