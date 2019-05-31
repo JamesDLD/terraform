@@ -89,69 +89,6 @@ resource "azurerm_key_vault" "test" {
   tags = "${data.azurerm_resource_group.Infr.tags}"
 }
 
-resource "azurerm_key_vault" "test" {
-  name                = "keyvaultcertexample"
-  location            = "${data.azurerm_resource_group.Infr.location}"
-  resource_group_name = "${data.azurerm_resource_group.Infr.name}"
-  tenant_id           = "${data.azurerm_client_config.current.tenant_id}"
-
-  sku {
-    name = "standard"
-  }
-
-  access_policy {
-    tenant_id = "${data.azurerm_client_config.current.tenant_id}"
-    object_id = "${data.azurerm_client_config.current.service_principal_object_id}"
-
-    certificate_permissions = [
-      "create",
-      "delete",
-      "deleteissuers",
-      "get",
-      "getissuers",
-      "import",
-      "list",
-      "listissuers",
-      "managecontacts",
-      "manageissuers",
-      "setissuers",
-      "update",
-    ]
-
-    key_permissions = [
-      "backup",
-      "create",
-      "decrypt",
-      "delete",
-      "encrypt",
-      "get",
-      "import",
-      "list",
-      "purge",
-      "recover",
-      "restore",
-      "sign",
-      "unwrapKey",
-      "update",
-      "verify",
-      "wrapKey",
-    ]
-
-    secret_permissions = [
-      "backup",
-      "delete",
-      "get",
-      "list",
-      "purge",
-      "recover",
-      "restore",
-      "set",
-    ]
-  }
-
-  tags = "${data.azurerm_resource_group.Infr.tags}"
-}
-
 resource "azurerm_key_vault_certificate" "test" {
   name         = "generated-cert"
   key_vault_id = "${azurerm_key_vault.test.id}"
