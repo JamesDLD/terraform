@@ -172,7 +172,6 @@ stages:
           - bash: |
               if [ -f "$(System.ArtifactsDirectory)/$(PackageName1).tar.gz" ]; then
                   echo '##vso[task.setvariable variable=package_available]yes'
-                  echo $(terraform_destroy)
               fi
             displayName: Checking if a package is available 
 
@@ -190,6 +189,6 @@ stages:
               terraformVersion: $(terraform_version)
 
           - script: terraform destroy -var-file="./variable/main-jdld.tfvars" -var-file="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -auto-approve
-            condition: and(eq(variables['terraform_destroy'], 'yes'),eq(variables['package_available'], 'yes')) # this task will only run if the package is available and a terraform apply has been asked
+            condition: and(eq(variables['terraform_destroy'], 'true'),eq(variables['package_available'], 'yes')) # this task will only run if the package is available and a terraform apply has been asked
             displayName: 'Terraform Destroy'
             workingDirectory: './$(PackageName1)'
