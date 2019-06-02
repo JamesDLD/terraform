@@ -1,6 +1,6 @@
 [Previous page >](../)
 
-Step 1 : Create a Kubernetes cluster with Azure Kubernetes Service and Terraform
+Create a Kubernetes cluster with Azure Kubernetes Service and Terraform
 -----
 
 The Terraform code available here has been inspired from those Microsoft guides:

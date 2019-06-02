@@ -1,44 +1,47 @@
 #Call module/resource
-
-resource "azurerm_log_analytics_workspace" "test" {
-  name                = "${var.log_analytics_workspace_name}"
-  location            = "${data.azurerm_resource_group.Infr.location}"
-  resource_group_name = "${data.azurerm_resource_group.Infr.name}"
-  sku                 = "${var.log_analytics_workspace_sku}"
-  tags                = "${data.azurerm_resource_group.Infr.tags}"
+###
+# Use Log Monitor with AKS
+###
+resource "azurerm_log_analytics_workspace" "demo" {
+  name                = var.log_analytics_workspace["name"] 
+  location            = data.azurerm_resource_group.Infr.location
+  resource_group_name = data.azurerm_resource_group.Infr.name
+  sku                 = var.log_analytics_workspace["sku"] 
+  tags                = data.azurerm_resource_group.Infr.tags
 }
 
-resource "azurerm_log_analytics_solution" "test" {
-  solution_name         = "ContainerInsights"
-  location              = "${azurerm_log_analytics_workspace.test.location}"
-  resource_group_name   = "${data.azurerm_resource_group.Infr.name}"
-  workspace_resource_id = "${azurerm_log_analytics_workspace.test.id}"
-  workspace_name        = "${azurerm_log_analytics_workspace.test.name}"
+resource "azurerm_log_analytics_solution" "demo" {
+  count                 = length(var.log_analytics_workspace.solutions)
+  solution_name         = var.log_analytics_workspace.solutions[count.index]["name"]
+  location              = azurerm_log_analytics_workspace.demo.location
+  resource_group_name   = data.azurerm_resource_group.Infr.name
+  workspace_resource_id = azurerm_log_analytics_workspace.demo.id
+  workspace_name        = azurerm_log_analytics_workspace.demo.name
 
   plan {
-    publisher = "Microsoft"
-    product   = "OMSGallery/ContainerInsights"
+    publisher = var.log_analytics_workspace.solutions[count.index]["publisher"]
+    product   = var.log_analytics_workspace.solutions[count.index]["product"]
   }
 }
 
 ###
-# Create a Key vault certifacte that will be re used by the Kubernetes AKS cluster, see https://www.terraform.io/docs/providers/azurerm/r/key_vault_certificate.html
+# Store the Kubernetes AKS cluster credential in the Key Vault
 ###
 data "azurerm_client_config" "current" {}
 
-resource "azurerm_key_vault" "test" {
-  name                = "demoazintroaksjdld"
-  location            = "${data.azurerm_resource_group.Infr.location}"
-  resource_group_name = "${data.azurerm_resource_group.Infr.name}"
-  tenant_id           = "${data.azurerm_client_config.current.tenant_id}"
+resource "azurerm_key_vault" "demo" {
+  name                = var.key_vault["name"] 
+  location            = data.azurerm_resource_group.Infr.location
+  resource_group_name = data.azurerm_resource_group.Infr.name
+  tenant_id           = data.azurerm_client_config.current.tenant_id
 
   sku {
-    name = "standard"
+    name = var.key_vault["sku"] 
   }
 
   access_policy {
-    tenant_id = "${data.azurerm_client_config.current.tenant_id}"
-    object_id = "${data.azurerm_client_config.current.service_principal_object_id}"
+    tenant_id = data.azurerm_client_config.current.tenant_id
+    object_id = data.azurerm_client_config.current.service_principal_object_id
 
     certificate_permissions = [
       "create",
@@ -86,59 +89,19 @@ resource "azurerm_key_vault" "test" {
     ]
   }
 
-  tags = "${data.azurerm_resource_group.Infr.tags}"
-}
+  tags = data.azurerm_resource_group.Infr.tags
+} 
 
-resource "azurerm_key_vault_certificate" "test" {
-  name         = "generated-cert"
-  key_vault_id = "${azurerm_key_vault.test.id}"
+resource "azurerm_key_vault_secret" "demo" {
+  name         = "providerkubernetes"
+  value        = azurerm_kubernetes_cluster.demo.kube_config.0.password
+  key_vault_id = azurerm_key_vault.demo.id
 
-  certificate_policy {
-    issuer_parameters {
-      name = "Self"
-    }
-
-    key_properties {
-      exportable = true
-      key_size   = 2048
-      key_type   = "RSA"
-      reuse_key  = true
-    }
-
-    lifetime_action {
-      action {
-        action_type = "AutoRenew"
-      }
-
-      trigger {
-        days_before_expiry = 30
-      }
-    }
-
-    secret_properties {
-      content_type = "application/x-pkcs12"
-    }
-
-    x509_certificate_properties {
-      # Server Authentication = 1.3.6.1.5.5.7.3.1
-      # Client Authentication = 1.3.6.1.5.5.7.3.2
-      extended_key_usage = ["1.3.6.1.5.5.7.3.1"]
-
-      key_usage = [
-        "cRLSign",
-        "dataEncipherment",
-        "digitalSignature",
-        "keyAgreement",
-        "keyCertSign",
-        "keyEncipherment",
-      ]
-
-      subject_alternative_names {
-        dns_names = ["internal.contoso.com", "domain.hello.world"]
-      }
-
-      subject            = "CN=hello-world"
-      validity_in_months = 12
-    }
+  tags = {
+    host                   = "${azurerm_kubernetes_cluster.demo.kube_config.0.host}"
+    username               = "${azurerm_kubernetes_cluster.demo.kube_config.0.username}"
+    #client_certificate     = "${base64decode(azurerm_kubernetes_cluster.demo.kube_config.0.client_certificate)}"
+    #client_key             = "${base64decode(azurerm_kubernetes_cluster.demo.kube_config.0.client_key)}"
+    #cluster_ca_certificate = "${base64decode(azurerm_kubernetes_cluster.demo.kube_config.0.cluster_ca_certificate)}"
   }
 }
