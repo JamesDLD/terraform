@@ -12,5 +12,5 @@ Reference
 
 | Link  | Description |
 | ------------- | ------------- |
-| [Azure DevOps & Terraform - Concept](https://medium.com/@jamesdld23/a-cicd-journey-with-azure-devops-and-terraform-part-1-358f785b13f3?source=friends_link&sk=33b9e255d9066edb7c450e7f140c5c08) | CI/CD Concept |
-| [Azure DevOps & Terraform - Demo]() | Build your CI/CD pipeline for an Kubernetes cluster with Azure Kubernetes Service through Azure DevOps and Terraform 0.12 |
+| [Azure DevOps & Terraform - Concept](https://medium.com/@jamesdld23/a-cicd-journey-with-azure-devops-and-terraform-part-1-358f785b13f3) | CI/CD Concept |
+| [Azure DevOps & Terraform - Demo](https://medium.com/@jamesdld23/a-ci-cd-journey-with-azure-devops-and-terraform-part-2-524144511294) | Build your CI/CD pipeline for an Kubernetes cluster with Azure Kubernetes Service through Azure DevOps and Terraform 0.12 |
