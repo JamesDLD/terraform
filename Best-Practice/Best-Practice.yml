@@ -299,7 +299,7 @@ stages:
               archiveFilePatterns: '$(System.ArtifactsDirectory)/$(PackageName4).tar.gz'
               destinationFolder: './$(PackageName4)'
               
-          - script: terraform destroy -var-file="./variable/main-jdld.tfvars" -var-file="$(Agent.TempDirectory)/$(main_secret_file_id1)" -auto-approve
+          - script: terraform destroy -var-file="./variable/main-jdld.tfvars" -var-file="$(Agent.TempDirectory)/$(main_secret_file_id1)" -input=false -auto-approve 
             condition: and(eq(variables['terraform_destroy'], 'true'),eq(variables['package_available'], 'yes')) # this task will only run if the package is available and a terraform apply has been asked
             displayName: 'BP4-Terraform Destroy'
             workingDirectory: './$(PackageName4)'
@@ -317,7 +317,7 @@ stages:
               archiveFilePatterns: '$(System.ArtifactsDirectory)/$(PackageName3).tar.gz'
               destinationFolder: './$(PackageName3)'
               
-          - script: terraform destroy -var-file="./variable/main-jdld.tfvars" -var-file="$(Agent.TempDirectory)/$(main_secret_file_id1)" -auto-approve
+          - script: terraform destroy -var-file="./variable/main-jdld.tfvars" -var-file="$(Agent.TempDirectory)/$(main_secret_file_id1)" -input=false -auto-approve
             condition: and(eq(variables['terraform_destroy'], 'true'),eq(variables['package_available'], 'yes')) # this task will only run if the package is available and a terraform apply has been asked
             displayName: 'BP3-Terraform Destroy'
             workingDirectory: './$(PackageName3)'
@@ -335,7 +335,7 @@ stages:
               archiveFilePatterns: '$(System.ArtifactsDirectory)/$(PackageName2).tar.gz'
               destinationFolder: './$(PackageName2)'
               
-          - script: terraform destroy -var-file="./variable/main-jdld.tfvars" -var-file="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -auto-approve
+          - script: terraform destroy -var-file="./variable/main-jdld.tfvars" -var-file="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -input=false -auto-approve
             condition: and(eq(variables['terraform_destroy'], 'true'),eq(variables['package_available'], 'yes')) # this task will only run if the package is available and a terraform apply has been asked
             displayName: 'BP2-Terraform Destroy'
             workingDirectory: './$(PackageName2)'
@@ -358,7 +358,7 @@ stages:
               archiveFilePatterns: '$(System.ArtifactsDirectory)/$(PackageName1).tar.gz'
               destinationFolder: './$(PackageName1)'
 
-          - script: terraform destroy -var-file="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -auto-approve
+          - script: terraform destroy -var-file="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -input=false -auto-approve
             condition: and(eq(variables['terraform_destroy'], 'true'),eq(variables['package_available'], 'yes')) # this task will only run if the package is available and a terraform apply has been asked
             displayName: 'BP1-Terraform Destroy'
             workingDirectory: './$(PackageName1)'
