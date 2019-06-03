@@ -366,7 +366,7 @@ stages:
           - bash: |
             #Variable
             backend_secret_file_id_path="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)"
-            source_file_path="./source_file"
+            source_file_path='./source_file'
             rg_name="infr-jdld-noprd-rg1"
             lb_public_name="bp4-outbound-publiclb1"
             ip_public_name="bp4-outbound-publiclb1_pip1"
@@ -387,4 +387,4 @@ stages:
             
             echo "Deleting the Azure public ip $ip_public_name located in the resource group $rg_name"
             az network public-ip delete -g $rg_name -n $ip_public_name
-            displayName: 'BP4-Delete Public LB and IP'
+            displayName: BP4-Delete Public LB and IP
