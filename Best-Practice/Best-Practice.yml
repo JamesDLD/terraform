@@ -94,6 +94,38 @@ stages:
       displayName: 'BP1-Compress ./$(ArtifactName)/BestPractice-1/ before Artifact publication'
       condition: eq(variables['terraform_plan_exitcode'], '2') # this task will only run if terrafrom has prompted for changes
 
+    - script: |
+        terraform init -backend-config="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -reconfigure
+        terraform plan -var-file="./variable/main-jdld.tfvars" -var-file="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -out="./out_plan_file" -input=false -detailed-exitcode > /dev/null 
+
+        OUT=$?
+        if [ $OUT -eq 0 ];then
+            echo '##vso[task.setvariable variable=terraform_plan_exitcode]0'
+            echo "No changes. Infrastructure is up-to-date!"
+        elif [ $OUT -eq 1 ];then
+            echo '##vso[task.setvariable variable=terraform_plan_exitcode]1'
+            echo "Terraform planned has failed!"
+            exit 1
+        elif [ $OUT -eq 2 ];then
+            echo '##vso[task.setvariable variable=terraform_plan_exitcode]2'
+            echo "Changes have been noticed!"
+            terraform show ./out_plan_file
+        else
+            echo "Terraform planned has failed!"
+            exit 1
+        fi
+
+      displayName: 'BP2-Terraform Plan'
+      workingDirectory: './$(ArtifactName)/BestPractice-2/'
+
+    - script: |
+        echo "Compressing ./$(ArtifactName)/BestPractice-2/ directory ..."
+        tar -czf $(PackageName2).tar.gz -C ./$(ArtifactName)/BestPractice-2/ .
+        echo "Moving this archive directory to this location ./ArtifactPublishLocation ..."
+        mv -f $(PackageName2).tar.gz ./ArtifactPublishLocation/$(PackageName2).tar.gz
+      displayName: 'BP2-Compress ./$(ArtifactName)/BestPractice-2/ before Artifact publication'
+      condition: eq(variables['terraform_plan_exitcode'], '2') # this task will only run if terrafrom has prompted for changes
+
     - task: PublishPipelineArtifact@0
       inputs:
         artifactName: '$(ArtifactName)'
@@ -122,29 +154,46 @@ stages:
               artifactName: '$(ArtifactName)'
               downloadPath: '$(System.ArtifactsDirectory)' 
 
+          - task: TerraformInstaller@0
+            displayName: 'Use Terraform $(terraform_version)'
+            inputs:
+              terraformVersion: $(terraform_version)
+
           - bash: |
               if [ -f "$(System.ArtifactsDirectory)/$(PackageName1).tar.gz" ]; then
                   echo '##vso[task.setvariable variable=package_available]yes'
               fi
-            displayName: Checking if a package is available 
+            displayName: BP1-Checking if a package is available 
 
           - task: ExtractFiles@1
             condition: eq(variables['package_available'], 'yes') # this task will only run if the package is available
-            displayName: 'Extract files for package $(PackageName1)'
+            displayName: 'BP1-Extract files for package $(PackageName1)'
             inputs:
               archiveFilePatterns: '$(System.ArtifactsDirectory)/$(PackageName1).tar.gz'
               destinationFolder: './$(PackageName1)'
-
-          - task: TerraformInstaller@0
-            condition: eq(variables['package_available'], 'yes') # this task will only run if the package is available
-            displayName: 'Use Terraform $(terraform_version)'
-            inputs:
-              terraformVersion: $(terraform_version)
 
           - script: terraform apply "./out_plan_file"
             condition: eq(variables['package_available'], 'yes') # this task will only run if the package is available
             displayName: 'BP1-Terraform Apply'
             workingDirectory: './$(PackageName1)'
+
+          - bash: |
+              if [ -f "$(System.ArtifactsDirectory)/$(PackageName2).tar.gz" ]; then
+                  echo '##vso[task.setvariable variable=package_available]yes'
+              fi
+            displayName: BP2-Checking if a package is available 
+
+          - task: ExtractFiles@1
+            condition: eq(variables['package_available'], 'yes') # this task will only run if the package is available
+            displayName: 'BP2-Extract files for package $(PackageName2)'
+            inputs:
+              archiveFilePatterns: '$(System.ArtifactsDirectory)/$(PackageName2).tar.gz'
+              destinationFolder: './$(PackageName2)'
+
+          - script: terraform apply "./out_plan_file"
+            condition: eq(variables['package_available'], 'yes') # this task will only run if the package is available
+            displayName: 'BP2-Terraform Apply'
+            workingDirectory: './$(PackageName2)'
 
 - stage: Deliver
   dependsOn: Deploy
@@ -176,26 +225,43 @@ stages:
               artifactName: '$(ArtifactName)'
               downloadPath: '$(System.ArtifactsDirectory)' 
 
-          - bash: |
-              if [ -f "$(System.ArtifactsDirectory)/$(PackageName1).tar.gz" ]; then
-                  echo '##vso[task.setvariable variable=package_available]yes'
-              fi
-            displayName: Checking if a package is available 
-
-          - task: ExtractFiles@1
-            condition: eq(variables['package_available'], 'yes') # this task will only run if the package is available
-            displayName: 'Extract files for package $(PackageName1)'
-            inputs:
-              archiveFilePatterns: '$(System.ArtifactsDirectory)/$(PackageName1).tar.gz'
-              destinationFolder: './$(PackageName1)'
-
           - task: TerraformInstaller@0
-            condition: eq(variables['package_available'], 'yes') # this task will only run if the package is available
             displayName: 'Use Terraform $(terraform_version)'
             inputs:
               terraformVersion: $(terraform_version)
 
-          - script: terraform destroy -var-file="./variable/main-jdld.tfvars" -var-file="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -auto-approve
+          - bash: |
+              if [ -f "$(System.ArtifactsDirectory)/$(PackageName1).tar.gz" ]; then
+                  echo '##vso[task.setvariable variable=package_available]yes'
+              fi
+            displayName: BP1-Checking if a package is available 
+
+          - task: ExtractFiles@1
+            condition: eq(variables['package_available'], 'yes') # this task will only run if the package is available
+            displayName: 'BP1-Extract files for package $(PackageName1)'
+            inputs:
+              archiveFilePatterns: '$(System.ArtifactsDirectory)/$(PackageName1).tar.gz'
+              destinationFolder: './$(PackageName1)'
+
+          - script: terraform destroy -var-file="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -auto-approve
             condition: and(eq(variables['terraform_destroy'], 'true'),eq(variables['package_available'], 'yes')) # this task will only run if the package is available and a terraform apply has been asked
             displayName: 'BP1-Terraform Destroy'
             workingDirectory: './$(PackageName1)'
+
+          - bash: |
+              if [ -f "$(System.ArtifactsDirectory)/$(PackageName2).tar.gz" ]; then
+                  echo '##vso[task.setvariable variable=package_available]yes'
+              fi
+            displayName: BP2-Checking if a package is available 
+
+          - task: ExtractFiles@1
+            condition: eq(variables['package_available'], 'yes') # this task will only run if the package is available
+            displayName: 'BP2-Extract files for package $(PackageName2)'
+            inputs:
+              archiveFilePatterns: '$(System.ArtifactsDirectory)/$(PackageName2).tar.gz'
+              destinationFolder: './$(PackageName2)'
+              
+          - script: terraform destroy -var-file="./variable/main-jdld.tfvars" -var-file="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -auto-approve
+            condition: and(eq(variables['terraform_destroy'], 'true'),eq(variables['package_available'], 'yes')) # this task will only run if the package is available and a terraform apply has been asked
+            displayName: 'BP2-Terraform Destroy'
+            workingDirectory: './$(PackageName2)'
