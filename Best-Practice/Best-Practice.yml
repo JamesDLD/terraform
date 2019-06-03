@@ -1,15 +1,22 @@
-# Starter pipeline
-# Doc memo : https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema?view=azure-devops&tabs=schema&viewFallbackFrom=vsts
-# GitHub service connection : https://docs.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops#sep-github
-
+#Multi-stage YAML pipeline.
 name: $(BuildDefinitionName).$(DayOfYear)$(Rev:.r)
 
 variables:
-- group: terraform_binary  # variable group
-- name: main_backend_secret_file_id1234
+- group: terraform_binary  # variable group containing Terraform information like the Terraform version (like terraform_version)
+- name: vmImageName
+  value: 'ubuntu-latest'
+- name: backend_main_secret_file_id1 # secret file used by the following cmdlet Terraform init, plan, apply and destroy 
   value: 'backend-main-jdld-1.json'
-- name: main_secret_file_id34
-  value: 'main-jdld-1.json'
+- name: ArtifactName
+  value: 'Best-Practice'
+- name: PackageName1
+  value: 'BestPractice1'
+- name: PackageName2
+  value: 'BestPractice2'
+- name: PackageName3
+  value: 'BestPractice3'
+- name: PackageName4
+  value: 'BestPractice4'
 
 resources:
   repositories:
@@ -17,12 +24,9 @@ resources:
       type: github
       endpoint: JamesDLD  # name of the service connection to use (for non-Azure Repos types)
       name: JamesDLD/terraform
-      
-pool:
-  vmImage: 'Ubuntu-16.04'
-      
+
 trigger:
-  batch: true #when a build is running, the system waits until the build is completed
+  batch: true # when a build is running, the system waits until the build is completed
   branches:
     include:
       - master
@@ -31,171 +35,167 @@ trigger:
     include:
     - Best-Practice/*
 
-steps:
+stages:
+- stage: Build
+  jobs:
+  - job: Terraform_Plan
+    displayName: Terraform Plan - Publish an package if Infrastructure changes are identified
+    continueOnError: false
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: DownloadSecureFile@1
+      displayName: 'Download secure file $(backend_main_secret_file_id1)'
+      inputs:
+        secureFile: $(backend_main_secret_file_id1)
 
-- checkout: self
-  clean: true
-  persistCredentials: true
+    - checkout: self # self represents the repo where the initial Pipelines YAML file was found
+      displayName: 'Checking out source code'
+      clean: true # whether to fetch clean each time
+      persistCredentials: true # set to 'true' to leave the OAuth token in the Git config after the initial fetch
 
-- task: DownloadSecureFile@1
-  displayName: 'Download secure file $(main_backend_secret_file_id1234)'
-  inputs:
-    secureFile: $(main_backend_secret_file_id1234)
-
-- task: DownloadSecureFile@1
-  displayName: 'Download secure file $(main_secret_file_id34)'
-  inputs:
-    secureFile: $(main_secret_file_id34)
-
-- template: pipeline/terraform.yml@terraform
-  parameters:
-    version: $(terraform_version)
-    path: './Best-Practice/BestPractice-1/'
-    ArtifactName: 'BestPractice1'
-    backend_secret_file_id: $(main_backend_secret_file_id1234)
-    main_secret_file_id: $(main_backend_secret_file_id1234)
-    main_file_path: ''
-    terraform_apply: true
-
-- template: pipeline/terraform.yml@terraform
-  parameters:
-    version: $(terraform_version)
-    path: './Best-Practice/BestPractice-2/'
-    ArtifactName: 'BestPractice2'
-    backend_secret_file_id: $(main_backend_secret_file_id1234)
-    main_secret_file_id: $(main_backend_secret_file_id1234)
-    main_file_path: './main-jdld.tfvars'
-    terraform_apply: true
-
-- template: pipeline/terraform.yml@terraform
-  parameters:
-    version: $(terraform_version)
-    path: './Best-Practice/BestPractice-3/'
-    ArtifactName: 'BestPractice3'
-    backend_secret_file_id: $(main_backend_secret_file_id1234)
-    main_secret_file_id: $(main_secret_file_id34)
-    main_file_path: './main-jdld.tfvars'
-    terraform_apply: true
-
-- template: pipeline/terraform.yml@terraform
-  parameters:
-    version: $(terraform_version)
-    path: './Best-Practice/BestPractice-4/'
-    ArtifactName: 'BestPractice4'
-    backend_secret_file_id: $(main_backend_secret_file_id1234)
-    main_secret_file_id: $(main_secret_file_id34)
-    main_file_path: './main-jdld.tfvars'
-    terraform_apply: true
-
-- template: pipeline/PublishBuildArtifacts.yml@terraform
-  parameters:
-    ArtifactName: 'BestPractice'
-
-# Using template in multi stage pipeline is currently not supported :https://dev.azure.com/mseng/AzureDevOpsRoadmap/_workitems/edit/1454010
-# https://developercommunity.visualstudio.com/content/problem/562069/unable-to-use-step-templates-in-multi-stage-deploy.html
-# Starter pipeline
-# YAML reference documentation : https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema?view=azure-devops&tabs=schema&viewFallbackFrom=vsts
-# GitHub service connection : https://docs.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops#sep-github
-
-# name: $(BuildDefinitionName).$(DayOfYear)$(Rev:.r)
-
-# variables:
-# - group: terraform_binary  # variable group
-# - name: main_backend_secret_file_id1234
-#   value: 'backend-main-jdld-1.json'
-# - name: main_secret_file_id34
-#   value: 'main-jdld-1.json'
+    - script: mkdir -p ./ArtifactPublishLocation
+      displayName: 'Make sure the Artifact folder is avalaible'
       
-# trigger:
-#   batch: true #when a build is running, the system waits until the build is completed
-#   branches:
-#     include:
-#       - master
-#       - feature/*
-#   paths:
-#     include:
-#     - Best-Practice/*
+    - task: TerraformInstaller@0
+      displayName: 'Use Terraform $(terraform_version)'
+      inputs:
+        terraformVersion: $(terraform_version)
 
-# resources:
-#   repositories:
-#     - repository: terraform # identifier (A-Z, a-z, 0-9, and underscore)
-#       type: github
-#       endpoint: JamesDLD  # name of the service connection to use (for non-Azure Repos types)
-#       name: JamesDLD/terraform
-#       ref: refs/heads/feature/terraform0.12 # optional ref to pin to
+    - script: |
+        terraform init -backend-config="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -reconfigure
+        terraform plan -var-file="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -out="./out_plan_file" -input=false -detailed-exitcode > /dev/null 
 
-# stages:
-# - stage: Deployment
-#   jobs:
-#     # track deployments on the environment
-#   - deployment: Terraform_Apply
-#     pool:
-#       vmImage: 'Ubuntu-16.04'
-#     # creates an environment if it doesn’t exist
-#     environment: 'staging'
-#     strategy:
-#       # default deployment strategy
-#       runOnce:
-#         deploy:
-#           steps:
-#           - checkout: self
-#             clean: true
-#             persistCredentials: true
+        OUT=$?
+        if [ $OUT -eq 0 ];then
+            echo '##vso[task.setvariable variable=terraform_plan_exitcode]0'
+            echo "No changes. Infrastructure is up-to-date!"
+        elif [ $OUT -eq 1 ];then
+            echo '##vso[task.setvariable variable=terraform_plan_exitcode]1'
+            echo "Terraform planned has failed!"
+            exit 1
+        elif [ $OUT -eq 2 ];then
+            echo '##vso[task.setvariable variable=terraform_plan_exitcode]2'
+            echo "Changes have been noticed!"
+            terraform show ./out_plan_file
+        else
+            echo "Terraform planned has failed!"
+            exit 1
+        fi
 
-#           - task: DownloadSecureFile@1
-#             displayName: 'Download secure file $(main_backend_secret_file_id1234)'
-#             inputs:
-#               secureFile: $(main_backend_secret_file_id1234)
+      displayName: 'BP1-Terraform Plan'
+      workingDirectory: './$(ArtifactName)/BestPractice-1/'
 
-#           - task: DownloadSecureFile@1
-#             displayName: 'Download secure file $(main_secret_file_id34)'
-#             inputs:
-#               secureFile: $(main_secret_file_id34)
+    - script: |
+        echo "Compressing ./$(ArtifactName)/BestPractice-1/ directory ..."
+        tar -czf $(PackageName1).tar.gz -C ./$(ArtifactName)/BestPractice-1/ .
+        echo "Moving this archive directory to this location ./ArtifactPublishLocation ..."
+        mv -f $(PackageName1).tar.gz ./ArtifactPublishLocation/$(PackageName1).tar.gz
+      displayName: 'BP1-Compress ./$(ArtifactName)/BestPractice-1/ before Artifact publication'
+      condition: eq(variables['terraform_plan_exitcode'], '2') # this task will only run if terrafrom has prompted for changes
 
-#           - template: pipeline/terraform.yml@terraform
-#             parameters:
-#               version: $(terraform_version)
-#               path: './Best-Practice/BestPractice-1/'
-#               ArtifactName: 'BestPractice1'
-#               backend_secret_file_id: $(main_backend_secret_file_id1234)
-#               main_secret_file_id: $(main_backend_secret_file_id1234)
-#               main_file_path: ''
-#               terraform_apply: true
+    - task: PublishPipelineArtifact@0
+      inputs:
+        artifactName: '$(ArtifactName)'
+        targetPath: './ArtifactPublishLocation' # Local path to include in the Artifact
 
-#           - template: pipeline/terraform.yml@terraform
-#             parameters:
-#               version: $(terraform_version)
-#               path: './Best-Practice/BestPractice-2/'
-#               ArtifactName: 'BestPractice2'
-#               backend_secret_file_id: $(main_backend_secret_file_id1234)
-#               main_secret_file_id: $(main_backend_secret_file_id1234)
-#               main_file_path: './main-jdld.tfvars'
-#               terraform_apply: true
+- stage: Deploy
+  dependsOn: Build
+  jobs:
+    # track deployments on the environment
+  - deployment: Terraform_Apply
+    displayName: Terraform Plan - Resources creation
+    pool:
+      vmImage: $(vmImageName)
+    # creates an environment if it doesn’t exist
+    environment: 'staging'
+    strategy:
+      # default deployment strategy
+      runOnce:
+        deploy:
+          steps:
+          # Download Pipeline Artifact
+          - task: DownloadPipelineArtifact@1
+            inputs:
+              buildType: 'current' # Options: current, specific
+              buildVersionToDownload: 'latest' # Required when buildType == Specific. Options: latest, latestFromBranch, specific
+              artifactName: '$(ArtifactName)'
+              downloadPath: '$(System.ArtifactsDirectory)' 
 
-#           - template: pipeline/terraform.yml@terraform
-#             parameters:
-#               version: $(terraform_version)
-#               path: './Best-Practice/BestPractice-3/'
-#               ArtifactName: 'BestPractice3'
-#               backend_secret_file_id: $(main_backend_secret_file_id1234)
-#               main_secret_file_id: $(main_secret_file_id34)
-#               main_file_path: './main-jdld.tfvars'
-#               terraform_apply: true
+          - bash: |
+              if [ -f "$(System.ArtifactsDirectory)/$(PackageName1).tar.gz" ]; then
+                  echo '##vso[task.setvariable variable=package_available]yes'
+              fi
+            displayName: Checking if a package is available 
 
-#           - template: pipeline/terraform.yml@terraform
-#             parameters:
-#               version: $(terraform_version)
-#               path: './Best-Practice/BestPractice-4/'
-#               ArtifactName: 'BestPractice4'
-#               backend_secret_file_id: $(main_backend_secret_file_id1234)
-#               main_secret_file_id: $(main_secret_file_id34)
-#               main_file_path: './main-jdld.tfvars'
-#               terraform_apply: true
+          - task: ExtractFiles@1
+            condition: eq(variables['package_available'], 'yes') # this task will only run if the package is available
+            displayName: 'Extract files for package $(PackageName1)'
+            inputs:
+              archiveFilePatterns: '$(System.ArtifactsDirectory)/$(PackageName1).tar.gz'
+              destinationFolder: './$(PackageName1)'
 
-#           - template: pipeline/PublishBuildArtifacts.yml@terraform
-#             parameters:
-#               ArtifactName: 'BestPractice'
+          - task: TerraformInstaller@0
+            condition: eq(variables['package_available'], 'yes') # this task will only run if the package is available
+            displayName: 'Use Terraform $(terraform_version)'
+            inputs:
+              terraformVersion: $(terraform_version)
 
+          - script: terraform apply "./out_plan_file"
+            condition: eq(variables['package_available'], 'yes') # this task will only run if the package is available
+            displayName: 'BP1-Terraform Apply'
+            workingDirectory: './$(PackageName1)'
 
+- stage: Deliver
+  dependsOn: Deploy
+  jobs:
+    # track deployments on the environment
+  - deployment: Terraform_Destroy
+    displayName: Terraform Destroy - Script ok, now deleting the resources
+    pool:
+      vmImage: $(vmImageName)
+    # creates an environment if it doesn’t exist
+    environment: 'production'
+    # variables:
+    #   terraform_destroy: "false" #Re write the variable contained in the variable group terraform_binary
+    strategy:
+      # default deployment strategy
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadSecureFile@1
+            displayName: 'Download secure file $(backend_main_secret_file_id1)'
+            inputs:
+              secureFile: $(backend_main_secret_file_id1) 
 
+          # Download Pipeline Artifact
+          - task: DownloadPipelineArtifact@1
+            inputs:
+              buildType: 'current' # Options: current, specific
+              buildVersionToDownload: 'latest' # Required when buildType == Specific. Options: latest, latestFromBranch, specific
+              artifactName: '$(ArtifactName)'
+              downloadPath: '$(System.ArtifactsDirectory)' 
 
+          - bash: |
+              if [ -f "$(System.ArtifactsDirectory)/$(PackageName1).tar.gz" ]; then
+                  echo '##vso[task.setvariable variable=package_available]yes'
+              fi
+            displayName: Checking if a package is available 
+
+          - task: ExtractFiles@1
+            condition: eq(variables['package_available'], 'yes') # this task will only run if the package is available
+            displayName: 'Extract files for package $(PackageName1)'
+            inputs:
+              archiveFilePatterns: '$(System.ArtifactsDirectory)/$(PackageName1).tar.gz'
+              destinationFolder: './$(PackageName1)'
+
+          - task: TerraformInstaller@0
+            condition: eq(variables['package_available'], 'yes') # this task will only run if the package is available
+            displayName: 'Use Terraform $(terraform_version)'
+            inputs:
+              terraformVersion: $(terraform_version)
+
+          - script: terraform destroy -var-file="./variable/main-jdld.tfvars" -var-file="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -auto-approve
+            condition: and(eq(variables['terraform_destroy'], 'true'),eq(variables['package_available'], 'yes')) # this task will only run if the package is available and a terraform apply has been asked
+            displayName: 'BP1-Terraform Destroy'
+            workingDirectory: './$(PackageName1)'
