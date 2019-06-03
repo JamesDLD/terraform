@@ -364,24 +364,28 @@ stages:
             workingDirectory: './$(PackageName1)'
 
           - bash: |
-            backend_secret_file_id_path="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)"
-            rg_name="infr-jdld-noprd-rg1"
-            lb_public_name="bp4-outbound-publiclb1"
-            ip_public_name="bp4-outbound-publiclb1_pip1"
-            client_id=$(cat $backend_secret_file_id_path | jq -r  '.client_id')
-            client_secret=$(cat $backend_secret_file_id_path | jq -r  '.client_secret')
-            tenant_id=$(cat $backend_secret_file_id_path | jq -r  '.tenant_id')
-            subscription_id=$(cat $backend_secret_file_id_path | jq -r  '.subscription_id')
-            
-            echo "Connecting to the Azure tenant id"
-            login=$(az login --service-principal -u $client_id -p $client_secret --tenant $tenant_id)
-            
-            echo "Selecting the Azure subscription"
-            az account set --subscription $subscription_id
-            
-            echo "Deleting the Azure load balancer $lb_public_name located in the resource group $rg_name"
-            az network lb delete -g $rg_name -n $lb_public_name
-            
-            echo "Deleting the Azure public ip $ip_public_name located in the resource group $rg_name"
-            az network public-ip delete -g $rg_name -n $ip_public_name
+              #Variable
+              backend_secret_file_id_path="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)"
+              rg_name="infr-jdld-noprd-rg1"
+              lb_public_name="bp4-outbound-publiclb1"
+              ip_public_name="bp4-outbound-publiclb1_pip1"
+              client_id=$(cat $backend_secret_file_id_path | jq -r  '.client_id')
+              client_secret=$(cat $backend_secret_file_id_path | jq -r  '.client_secret')
+              tenant_id=$(cat $backend_secret_file_id_path | jq -r  '.tenant_id')
+              subscription_id=$(cat $backend_secret_file_id_path | jq -r  '.subscription_id')
+              
+              #Action
+              echo "Connecting to the Azure tenant id"
+              login=$(az login --service-principal -u $client_id -p $client_secret --tenant $tenant_id)
+              
+              echo "Selecting the Azure subscription"
+              az account set --subscription $subscription_id
+              
+              echo "Deleting the Azure load balancer $lb_public_name located in the resource group $rg_name"
+              az network lb delete -g $rg_name -n $lb_public_name
+              
+              echo "Deleting the Azure public ip $ip_public_name located in the resource group $rg_name"
+              az network public-ip delete -g $rg_name -n $ip_public_name
             displayName: BP4-Delete Public LB and IP
+
+
