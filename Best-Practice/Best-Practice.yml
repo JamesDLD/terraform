@@ -364,7 +364,6 @@ stages:
             workingDirectory: './$(PackageName1)'
 
           - bash: |
-            #Variable
             backend_secret_file_id_path="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)"
             rg_name="infr-jdld-noprd-rg1"
             lb_public_name="bp4-outbound-publiclb1"
@@ -374,7 +373,6 @@ stages:
             tenant_id=$(cat $backend_secret_file_id_path | jq -r  '.tenant_id')
             subscription_id=$(cat $backend_secret_file_id_path | jq -r  '.subscription_id')
             
-            #Action
             echo "Connecting to the Azure tenant id"
             login=$(az login --service-principal -u $client_id -p $client_secret --tenant $tenant_id)
             
