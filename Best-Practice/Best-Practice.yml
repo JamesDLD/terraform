@@ -377,10 +377,10 @@ stages:
             
             #Action
             echo "Connecting to the Azure tenant id"
-            login=$(az login --service-principal -u ${arm_client_id} -p ${arm_client_secret} --tenant ${arm_tenant_id})
+            login=$(az login --service-principal -u ${client_id} -p ${client_secret} --tenant ${tenant_id})
             
             echo "Selecting the Azure subscription"
-            az account set --subscription $arm_subscription_id
+            az account set --subscription $subscription_id
             
             echo "Deleting the Azure load balancer $lb_public_name located in the resource group $rg_name"
             az network lb delete -g $rg_name -n $lb_public_name
