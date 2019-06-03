@@ -362,3 +362,29 @@ stages:
             condition: and(eq(variables['terraform_destroy'], 'true'),eq(variables['package_available'], 'yes')) # this task will only run if the package is available and a terraform apply has been asked
             displayName: 'BP1-Terraform Destroy'
             workingDirectory: './$(PackageName1)'
+
+          - bash: |
+            #Variable
+            backend_secret_file_id_path="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)"
+            source_file_path="./source_file"
+            rg_name="infr-jdld-noprd-rg1"
+            lb_public_name="bp4-outbound-publiclb1"
+            ip_public_name="bp4-outbound-publiclb1_pip1"
+            
+            #Source file
+            sed 's/[[:blank:]]//g' $backend_secret_file_id_path > $source_file_path
+            source $source_file_path
+            
+            #Action
+            echo "Connecting to the Azure tenant id"
+            login=$(az login --service-principal -u ${arm_client_id} -p ${arm_client_secret} --tenant ${arm_tenant_id})
+            
+            echo "Selecting the Azure subscription"
+            az account set --subscription $arm_subscription_id
+            
+            echo "Deleting the Azure load balancer $lb_public_name located in the resource group $rg_name"
+            az network lb delete -g $rg_name -n $lb_public_name
+            
+            echo "Deleting the Azure public ip $ip_public_name located in the resource group $rg_name"
+            az network public-ip delete -g $rg_name -n $ip_public_name
+            displayName: 'BP4-Delete Public LB and IP'
