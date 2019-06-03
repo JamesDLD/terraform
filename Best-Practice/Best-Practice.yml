@@ -97,26 +97,7 @@ stages:
 
     - script: |
         terraform init -backend-config="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -reconfigure
-        terraform plan -var-file="./variable/main-jdld.tfvars" -var-file="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -out="./out_plan_file" -input=false -detailed-exitcode > /dev/null 
-
-        OUT=$?
-        if [ $OUT -eq 0 ];then
-            echo '##vso[task.setvariable variable=terraform_plan_exitcode]0'
-            echo "No changes. Infrastructure is up-to-date!"
-        elif [ $OUT -eq 1 ];then
-            echo '##vso[task.setvariable variable=terraform_plan_exitcode]1'
-            echo "Terraform planned has failed!"
-            exit 1
-        elif [ $OUT -eq 2 ];then
-            echo '##vso[task.setvariable variable=terraform_plan_exitcode]2'
-            echo "Changes have been noticed!"
-            terraform show ./out_plan_file
-        else
-            echo "Terraform planned has failed!"
-            exit 1
-        fi
-
-      displayName: 'BP2-Terraform Plan'
+      displayName: 'BP2-Terraform Init'
       workingDirectory: './$(ArtifactName)/BestPractice-2/'
 
     - script: |
@@ -147,6 +128,11 @@ stages:
       runOnce:
         deploy:
           steps:
+          - task: DownloadSecureFile@1
+            displayName: 'Download secure file $(backend_main_secret_file_id1)'
+            inputs:
+              secureFile: $(backend_main_secret_file_id1) 
+
           # Download Pipeline Artifact
           - task: DownloadPipelineArtifact@1
             inputs:
@@ -191,7 +177,7 @@ stages:
               archiveFilePatterns: '$(System.ArtifactsDirectory)/$(PackageName2).tar.gz'
               destinationFolder: './$(PackageName2)'
 
-          - script: terraform apply "./out_plan_file"
+          - script: terraform apply -var-file="./variable/main-jdld.tfvars" -var-file="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -input=false -auto-approve
             condition: eq(variables['package_available'], 'yes') # this task will only run if the package is available
             displayName: 'BP2-Terraform Apply'
             workingDirectory: './$(PackageName2)'
