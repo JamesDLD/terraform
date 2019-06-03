@@ -31,6 +31,7 @@ trigger:
     include:
       - master
       - feature/*
+      - release/*
   paths:
     include:
     - Best-Practice/*
