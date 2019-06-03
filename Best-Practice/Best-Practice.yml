@@ -286,6 +286,11 @@ stages:
               artifactName: '$(ArtifactName)'
               downloadPath: '$(System.ArtifactsDirectory)' 
 
+          - task: TerraformInstaller@0
+            displayName: 'Use Terraform $(terraform_version)'
+            inputs:
+              terraformVersion: $(terraform_version)
+
           - bash: |
               if [ -f "$(System.ArtifactsDirectory)/$(PackageName4).tar.gz" ]; then
                   echo '##vso[task.setvariable variable=package_available]yes'
@@ -339,11 +344,6 @@ stages:
             condition: and(eq(variables['terraform_destroy'], 'true'),eq(variables['package_available'], 'yes')) # this task will only run if the package is available and a terraform apply has been asked
             displayName: 'BP2-Terraform Destroy'
             workingDirectory: './$(PackageName2)'
-
-          - task: TerraformInstaller@0
-            displayName: 'Use Terraform $(terraform_version)'
-            inputs:
-              terraformVersion: $(terraform_version)
 
           - bash: |
               if [ -f "$(System.ArtifactsDirectory)/$(PackageName1).tar.gz" ]; then
