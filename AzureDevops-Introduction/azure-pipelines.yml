@@ -98,7 +98,7 @@ stages:
   jobs:
     # track deployments on the environment
   - deployment: Terraform_Apply
-    displayName: Terraform Plan - Resources creation
+    displayName: Terraform Apply - Resources creation
     pool:
       vmImage: $(vmImageName)
     # creates an environment if it doesn’t exist
