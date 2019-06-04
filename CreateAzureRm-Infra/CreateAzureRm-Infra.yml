@@ -8,7 +8,7 @@ variables:
 - name: backend_main_secret_file_id1 # secret file used by the following cmdlet Terraform init, plan, apply and destroy 
   value: 'backend-main-jdld-1.json'
 - name: main_secret_file_id2 # secret file used by the following cmdlet Terraform init, plan, apply and destroy 
-  value: 'main-jdld-2.json'
+  value: 'main-jdld-2.tfvars'
 - name: ArtifactName
   value: 'Best-Practice'
 - name: PackageName1
