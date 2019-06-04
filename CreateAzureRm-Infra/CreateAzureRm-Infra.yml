@@ -10,7 +10,7 @@ variables:
 - name: main_secret_file_id2 # secret file used by the following cmdlet Terraform init, plan, apply and destroy 
   value: 'main-jdld-2.tfvars'
 - name: ArtifactName
-  value: 'Best-Practice'
+  value: 'CreateAzureRm-Infra'
 - name: PackageName1
   value: 'infra'
 - name: PackageName2
