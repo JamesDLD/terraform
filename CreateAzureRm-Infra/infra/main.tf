@@ -147,9 +147,9 @@ module "Az-RoleDefinition-Apps" {
 }
 
 module "Az-RoleAssignment-Apps" {
-  source                     = "git::https://github.com/JamesDLD/terraform.git//module/Az-RoleAssignment?ref=master"
+  source                  = "git::https://github.com/JamesDLD/terraform.git//module/Az-RoleAssignment?ref=master"
   ass_countRoleAssignment = length(var.roles)
-  ass_scopes   = [
+  ass_scopes = [
     data.azurerm_resource_group.Apps.id,
     module.Az-VirtualNetwork-Infra.vnet_ids[0],
     module.Az-RouteTable-Infra.rt_ids[0],
@@ -159,7 +159,7 @@ module "Az-RoleAssignment-Apps" {
     data.azurerm_storage_account.Infr.id,
   ]
   ass_role_definition_ids = module.Az-RoleDefinition-Apps.role_ids
-  ass_principal_id = var.service_principals[1]["Application_object_id"]
+  ass_principal_id        = var.service_principals[1]["Application_object_id"]
 
   providers = {
     azurerm = azurerm.service_principal_infra
@@ -178,7 +178,7 @@ module "Az-Firewall-Infr" {
     azurerm = azurerm.service_principal_infra
   }
 }
-/*
+
 module "Az-PolicyAssignment-Infra-nsg-on-apps-subnet" {
   source                     = "git::https://github.com/JamesDLD/terraform.git//module/Az-PolicyAssignment?ref=master"
   p_ass_name                 = "enforce-nsg-under-vnet-${module.Az-VirtualNetwork-Infra.vnet_names[1]}"
@@ -203,4 +203,3 @@ module "Az-PolicyAssignment-Infra-udr-on-subnet" {
     azurerm = azurerm.service_principal_infra
   }
 }
-*/
