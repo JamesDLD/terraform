@@ -38,18 +38,24 @@ resource "azurerm_subnet_route_table_association" "associations" {
 }
 
 resource "azurerm_subnet" "subnets" {
-  count                = length(var.snet_list)
-  name                 = var.snet_list[count.index]["name"]
-  resource_group_name  = var.subnet_resource_group_name
-  virtual_network_name = element(var.vnet_names, var.snet_list[count.index]["vnet_name_id"])
-  address_prefix       = var.snet_list[count.index]["cidr_block"]
-  service_endpoints    = compact(split(" ", var.snet_list[count.index]["service_endpoints"]))
-
+  count                     = length(var.snet_list)
+  name                      = var.snet_list[count.index]["name"]
+  resource_group_name       = var.subnet_resource_group_name
+  virtual_network_name      = element(var.vnet_names, var.snet_list[count.index]["vnet_name_id"])
+  address_prefix            = var.snet_list[count.index]["cidr_block"]
+  service_endpoints         = compact(split(" ", var.snet_list[count.index]["service_endpoints"]))
+  network_security_group_id = var.snet_list[count.index]["nsg_id"] == 777 ? null : element(var.nsgs_ids, var.snet_list[count.index]["nsg_id"])
+  route_table_id = var.snet_list[count.index]["route_table_id"] == 777 ? null : element(
+    var.route_table_ids,
+    var.snet_list[count.index]["route_table_id"],
+  )
+  /*
   lifecycle {
     ignore_changes = [
       route_table_id,
       network_security_group_id,
     ]
   }
+  */
 }
 

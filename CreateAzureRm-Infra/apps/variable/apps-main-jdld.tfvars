@@ -29,18 +29,18 @@ apps_snets = [
   {
     name              = "frontend"
     cidr_block        = "198.18.2.224/28"
-    nsg_id            = "0"               #Id of the Network Security Group, set to 777 if there is no Network Security Groups
-    route_table_id    = "0"               #Id of the Route table, set to 777 if there is no Route table
-    vnet_name_id      = "1"               #Id of the vnet
-    service_endpoints = ""                #Service Endpoints list sperated by an espace, if you don't need to set it to "" or "777"
+    nsg_id            = "0" #Id of the Network Security Group, set to 777 if there is no Network Security Groups
+    route_table_id    = "0" #Id of the Route table, set to 777 if there is no Route table
+    vnet_name_id      = "1" #Id of the vnet
+    service_endpoints = ""  #Service Endpoints list sperated by an espace, if you don't need to set it to "" or "777"
   },
   {
     name              = "backend"
     cidr_block        = "198.18.2.240/28"
-    nsg_id            = "0"               #Id of the Network Security Group, set to 777 if there is no Network Security Groups
-    route_table_id    = "0"               #Id of the Route table, set to 777 if there is no Route table
-    vnet_name_id      = "1"               #Id of the vnet
-    service_endpoints = ""                #Service Endpoints list sperated by an espace, if you don't need to set it to "" or "777"
+    nsg_id            = "0" #Id of the Network Security Group, set to 777 if there is no Network Security Groups
+    route_table_id    = "0" #Id of the Route table, set to 777 if there is no Route table
+    vnet_name_id      = "1" #Id of the vnet
+    service_endpoints = ""  #Service Endpoints list sperated by an espace, if you don't need to set it to "" or "777"
   },
 ]
 
@@ -95,26 +95,26 @@ Lb_sku = "Standard" #"Basic"
 Lbs = [
   {
     suffix_name = "ssh"
-    Id_Subnet   = "0"            #Id of the Subnet
+    Id_Subnet   = "0" #Id of the Subnet
     static_ip   = "198.18.2.238"
   },
   {
     suffix_name = "gfs"
-    Id_Subnet   = "1"            #Id of the Subnet
+    Id_Subnet   = "1" #Id of the Subnet
     static_ip   = "198.18.2.254"
   },
   {
     suffix_name = "rds"
-    Id_Subnet   = "1"            #Id of the Subnet
+    Id_Subnet   = "1" #Id of the Subnet
     static_ip   = "198.18.2.253"
   },
 ]
 
 LbRules = [
   {
-    Id                = "1"       #Id of a the rule within the Load Balancer 
-    Id_Lb             = "0"       #Id of the Load Balancer
-    suffix_name       = "ssh"     #MUST match the Lbs suffix_name
+    Id                = "1"   #Id of a the rule within the Load Balancer 
+    Id_Lb             = "0"   #Id of the Load Balancer
+    suffix_name       = "ssh" #MUST match the Lbs suffix_name
     lb_port           = "80"
     backend_port      = "80"
     probe_port        = "80"
@@ -123,9 +123,9 @@ LbRules = [
     load_distribution = "Default"
   },
   {
-    Id                = "2"       #Id of a the rule within the Load Balancer 
-    Id_Lb             = "0"       #Id of the Load Balancer
-    suffix_name       = "ssh"     #MUST match the Lbs suffix_name
+    Id                = "2"   #Id of a the rule within the Load Balancer 
+    Id_Lb             = "0"   #Id of the Load Balancer
+    suffix_name       = "ssh" #MUST match the Lbs suffix_name
     lb_port           = "22"
     backend_port      = "22"
     probe_port        = "22"
@@ -134,9 +134,9 @@ LbRules = [
     load_distribution = "Default"
   },
   {
-    Id                = "1"       #Id of a the rule within the Load Balancer 
-    Id_Lb             = "1"       #Id of the Load Balancer
-    suffix_name       = "gfs"     #MUST match the Lbs suffix_name
+    Id                = "1"   #Id of a the rule within the Load Balancer 
+    Id_Lb             = "1"   #Id of the Load Balancer
+    suffix_name       = "gfs" #MUST match the Lbs suffix_name
     lb_port           = "22"
     backend_port      = "22"
     probe_port        = "22"
@@ -145,9 +145,9 @@ LbRules = [
     load_distribution = "Default"
   },
   {
-    Id                = "1"       #Id of a the rule within the Load Balancer 
-    Id_Lb             = "2"       #Id of the Load Balancer
-    suffix_name       = "rds"     #MUST match the Lbs suffix_name
+    Id                = "1"   #Id of a the rule within the Load Balancer 
+    Id_Lb             = "2"   #Id of the Load Balancer
+    suffix_name       = "rds" #MUST match the Lbs suffix_name
     lb_port           = "3389"
     backend_port      = "3389"
     probe_port        = "3389"
@@ -192,10 +192,10 @@ Linux_Vms = [
 
 Linux_DataDisks = [
   {
-    id                = "0"           #Id of the VM from the upper list
-    suffix_name       = "ssh1"        #MUST match the VM suffix_name + the id of the VM
-    id_disk           = "1"           #Id of the disk
-    zone              = "1"           #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to ""
+    id                = "0"    #Id of the VM from the upper list
+    suffix_name       = "ssh1" #MUST match the VM suffix_name + the id of the VM
+    id_disk           = "1"    #Id of the disk
+    zone              = "1"    #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to ""
     managed_disk_type = "Premium_LRS"
     lun               = "0"
     disk_size_gb      = "32"
@@ -213,14 +213,14 @@ Linux_storage_image_reference = {
 Windows_Vms = [
   {
     suffix_name                   = "rdg"
-    id                            = "1"               #Id of the VM
-    Id_Lb                         = "777"             #Id of the Load Balancer, set to 777 if there is no Load Balancer
-    Id_Lb_Public                  = "777"             #Id of the public Load Balancer, set to 777 if there is no public Load Balancer
-    Id_Ip_Public                  = "777"             #Id of the public Ip, set to 777 if there is no public Ip
-    Id_Subnet                     = "0"               #Id of the Subnet
-    zone                          = "1"               #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to "", WARNING you could not have Availabilitysets and AvailabilityZones
-    Id_Nsg                        = "1"               #Id of the Network Security Group, set to 777 if there is no Network Security Groups
-    BackupPolicyName              = "777"             #Set 777 to disable backup (WARNING, this will delete previous backup) otherwise set a backup policy like BackupPolicy-Schedule1
+    id                            = "1"   #Id of the VM
+    Id_Lb                         = "777" #Id of the Load Balancer, set to 777 if there is no Load Balancer
+    Id_Lb_Public                  = "777" #Id of the public Load Balancer, set to 777 if there is no public Load Balancer
+    Id_Ip_Public                  = "777" #Id of the public Ip, set to 777 if there is no public Ip
+    Id_Subnet                     = "0"   #Id of the Subnet
+    zone                          = "1"   #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to "", WARNING you could not have Availabilitysets and AvailabilityZones
+    Id_Nsg                        = "1"   #Id of the Network Security Group, set to 777 if there is no Network Security Groups
+    BackupPolicyName              = "777" #Set 777 to disable backup (WARNING, this will delete previous backup) otherwise set a backup policy like BackupPolicy-Schedule1
     static_ip                     = "198.18.2.230"
     enable_accelerated_networking = "false"
     vm_size                       = "Standard_DS1_v2"
@@ -228,14 +228,14 @@ Windows_Vms = [
   },
   {
     suffix_name                   = "rdg"
-    id                            = "2"               #Id of the VM
-    Id_Lb                         = "777"             #Id of the Load Balancer, set to 777 if there is no Load Balancer
-    Id_Lb_Public                  = "777"             #Id of the public Load Balancer, set to 777 if there is no public Load Balancer
-    Id_Ip_Public                  = "777"             #Id of the public Ip, set to 777 if there is no public Ip
-    Id_Subnet                     = "0"               #Id of the Subnet
-    zone                          = "2"               #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to "", WARNING you could not have Availabilitysets and AvailabilityZones
-    Id_Nsg                        = "1"               #Id of the Network Security Group, set to 777 if there is no Network Security Groups
-    BackupPolicyName              = "777"             #Set 777 to disable backup (WARNING, this will delete previous backup) otherwise set a backup policy like BackupPolicy-Schedule1
+    id                            = "2"   #Id of the VM
+    Id_Lb                         = "777" #Id of the Load Balancer, set to 777 if there is no Load Balancer
+    Id_Lb_Public                  = "777" #Id of the public Load Balancer, set to 777 if there is no public Load Balancer
+    Id_Ip_Public                  = "777" #Id of the public Ip, set to 777 if there is no public Ip
+    Id_Subnet                     = "0"   #Id of the Subnet
+    zone                          = "2"   #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to "", WARNING you could not have Availabilitysets and AvailabilityZones
+    Id_Nsg                        = "1"   #Id of the Network Security Group, set to 777 if there is no Network Security Groups
+    BackupPolicyName              = "777" #Set 777 to disable backup (WARNING, this will delete previous backup) otherwise set a backup policy like BackupPolicy-Schedule1
     static_ip                     = "198.18.2.231"
     enable_accelerated_networking = "false"
     vm_size                       = "Standard_DS1_v2"
@@ -271,10 +271,10 @@ Windows_DataDisks = [
 Linux_Ss_Vms = [
   {
     suffix_name         = "gfs"
-    id                  = "1"               #Id of the VM
-    Id_Lb               = "1"               #Id of the Load Balancer, set to 777 if there is no Load Balancer
-    Id_Subnet           = "1"               #Id of the Subnet
-    Id_Nsg              = "1"               #Id of the Network Security Group, set to 777 if there is no Network Security Groups
+    id                  = "1" #Id of the VM
+    Id_Lb               = "1" #Id of the Load Balancer, set to 777 if there is no Load Balancer
+    Id_Subnet           = "1" #Id of the Subnet
+    Id_Nsg              = "1" #Id of the Network Security Group, set to 777 if there is no Network Security Groups
     upgrade_policy_mode = "Manual"
     sku_name            = "Standard_DS1_v2"
     sku_tier            = "Standard"
@@ -290,11 +290,11 @@ Linux_Ss_Vms = [
 
 Windows_Ss_Vms = [
   {
-    suffix_name         = "rds"                    #Windows computer name prefix cannot be more than 9 characters long
-    id                  = "1"                      #Id of the VM
-    Id_Lb               = "2"                      #Id of the Load Balancer, set to 777 if there is no Load Balancer
-    Id_Subnet           = "1"                      #Id of the Subnet
-    Id_Nsg              = "1"                      #Id of the Network Security Group, set to 777 if there is no Network Security Groups
+    suffix_name         = "rds" #Windows computer name prefix cannot be more than 9 characters long
+    id                  = "1"   #Id of the VM
+    Id_Lb               = "2"   #Id of the Load Balancer, set to 777 if there is no Load Balancer
+    Id_Subnet           = "1"   #Id of the Subnet
+    Id_Nsg              = "1"   #Id of the Network Security Group, set to 777 if there is no Network Security Groups
     upgrade_policy_mode = "Manual"
     sku_name            = "Standard_DS1_v2"
     sku_tier            = "Standard"

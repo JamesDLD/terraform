@@ -16,14 +16,14 @@ provider "azurerm" {
 
 ## Prerequisistes Inventory
 data "azurerm_resource_group" "Infr" {
-  name = var.rg_infr_name
+  name     = var.rg_infr_name
   provider = azurerm.service_principal_apps
 }
 
 data "azurerm_storage_account" "Infr" {
   name                = var.sa_infr_name
   resource_group_name = var.rg_infr_name
-  provider = azurerm.service_principal_apps
+  provider            = azurerm.service_principal_apps
 }
 
 ####################################################
@@ -32,20 +32,20 @@ data "azurerm_storage_account" "Infr" {
 
 ## Prerequisistes Inventory
 data "azurerm_resource_group" "MyApps" {
-  name = var.rg_apps_name
+  name     = var.rg_apps_name
   provider = azurerm.service_principal_apps
 }
 
 data "azurerm_route_table" "Infr" {
   name                = "jdld-infr-core-rt1"
   resource_group_name = data.azurerm_resource_group.Infr.name
-  provider = azurerm.service_principal_apps
+  provider            = azurerm.service_principal_apps
 }
 
 data "azurerm_network_security_group" "Infr" {
   name                = "jdld-infr-snet-apps-nsg1"
   resource_group_name = var.rg_infr_name
-  provider = azurerm.service_principal_apps
+  provider            = azurerm.service_principal_apps
 }
 
 ## Core Network components
@@ -57,13 +57,13 @@ module "Az-NetworkSecurityGroup-Apps" {
   nsg_location            = data.azurerm_resource_group.MyApps.location
   nsg_resource_group_name = data.azurerm_resource_group.MyApps.name
   nsg_tags                = data.azurerm_resource_group.MyApps.tags
-    providers = {
+  providers = {
     azurerm = azurerm.service_principal_apps
   }
 }
 
 module "Az-Subnet-Apps" {
-  source                     = "git::https://github.com/JamesDLD/terraform.git//module/Az-Subnet?ref=master"
+  source                     = "git::https://github.com/JamesDLD/terraform.git//module/Az-Subnet?ref=feature/subnetpolicy"
   subscription_id            = var.subscription_id
   subnet_resource_group_name = var.rg_infr_name
   snet_list                  = var.apps_snets
@@ -165,4 +165,3 @@ module "Az-RecoveryServicesBackupProtection-Apps" {
 
 ## Infra common services
 #N/A
-
