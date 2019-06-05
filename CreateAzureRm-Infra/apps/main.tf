@@ -63,7 +63,7 @@ module "Az-NetworkSecurityGroup-Apps" {
 }
 
 module "Az-Subnet-Apps" {
-  source                     = "git::https://github.com/JamesDLD/terraform.git//module/Az-Subnet?ref=feature/subnetpolicy"
+  source                     = "git::https://github.com/JamesDLD/terraform.git//module/Az-Subnet?ref=master" #feature/subnetpolicy"
   subscription_id            = var.subscription_id
   subnet_resource_group_name = var.rg_infr_name
   snet_list                  = var.apps_snets

@@ -178,7 +178,8 @@ module "Az-Firewall-Infr" {
     azurerm = azurerm.service_principal_infra
   }
 }
-
+/*
+Currently not using those policies because the terraform resources with the suffix "association" generate an error when using terraform destroy cmdlet
 module "Az-PolicyAssignment-Infra-nsg-on-apps-subnet" {
   source                     = "git::https://github.com/JamesDLD/terraform.git//module/Az-PolicyAssignment?ref=master"
   p_ass_name                 = "enforce-nsg-under-vnet-${module.Az-VirtualNetwork-Infra.vnet_names[1]}"
@@ -203,3 +204,4 @@ module "Az-PolicyAssignment-Infra-udr-on-subnet" {
     azurerm = azurerm.service_principal_infra
   }
 }
+*/

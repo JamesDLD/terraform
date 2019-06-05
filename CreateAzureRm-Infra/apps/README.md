@@ -30,6 +30,6 @@ terraform apply -var-file="variable/apps-main-jdld.tfvars" -var-file="../secret/
 To destroy the associated resources.
 ```hcl
 
-terraform destroy -var-file="apps-main-jdld.tfvars" -var-file="../secret/main-jdld.tfvars"
+terraform destroy -var-file="variable/apps-main-jdld.tfvars" -var-file="../secret/main-jdld.tfvars"
 
 ```

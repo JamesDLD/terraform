@@ -130,164 +130,34 @@ PROTECTED_SETTINGS
 }
 */
 resource "azurerm_virtual_machine" "Linux_Vms" {
-count               = length(var.Linux_Vms)
-name                = "${var.vm_prefix}${var.Linux_Vms[count.index]["suffix_name"]}${var.Linux_Vms[count.index]["id"]}"
-location            = var.vm_location
-resource_group_name = var.vm_resource_group_name
-# TF-UPGRADE-TODO: In Terraform v0.10 and earlier, it was sometimes necessary to
-# force an interpolation expression to be interpreted as a list by wrapping it
-# in an extra set of list brackets. That form was supported for compatibilty in
-# v0.11, but is no longer supported in Terraform v0.12.
-#
-# If the expression in the following list itself returns a list, remove the
-# brackets to avoid interpretation as a list of lists. If the expression
-# returns a single list item then leave it as-is and remove this TODO comment.
-network_interface_ids = [element(var.Linux_nics_ids, count.index)]
-zones = compact(
-split(
-" ",
-var.Linux_Vms[count.index]["zone"] == 777 ? "" : var.Linux_Vms[count.index]["zone"],
-),
-)
-vm_size = var.Linux_Vms[count.index]["vm_size"]
+  count                 = length(var.Linux_Vms)
+  name                  = "${var.vm_prefix}${var.Linux_Vms[count.index]["suffix_name"]}${var.Linux_Vms[count.index]["id"]}"
+  location              = var.vm_location
+  resource_group_name   = var.vm_resource_group_name
+  network_interface_ids = [element(var.Linux_nics_ids, count.index)]
+  zones = compact(
+    split(
+      " ",
+      var.Linux_Vms[count.index]["zone"] == 777 ? "" : var.Linux_Vms[count.index]["zone"],
+    ),
+  )
+  vm_size = var.Linux_Vms[count.index]["vm_size"]
 
-# Uncomment this line to delete the OS disk automatically when deleting the VM
-delete_os_disk_on_termination = true
+  # Uncomment this line to delete the OS disk automatically when deleting the VM
+  delete_os_disk_on_termination = true
 
-# Uncomment this line to delete the data disks automatically when deleting the VM
-delete_data_disks_on_termination = false
+  # Uncomment this line to delete the data disks automatically when deleting the VM
+  delete_data_disks_on_termination = false
 
-storage_os_disk {
-name              = "${var.vm_prefix}${var.Linux_Vms[count.index]["suffix_name"]}${var.Linux_Vms[count.index]["id"]}osdk"
-caching           = "ReadWrite"
-create_option     = "FromImage"
-managed_disk_type = var.Linux_Vms[count.index]["managed_disk_type"]
-}
+  storage_os_disk {
+    name              = "${var.vm_prefix}${var.Linux_Vms[count.index]["suffix_name"]}${var.Linux_Vms[count.index]["id"]}osdk"
+    caching           = "ReadWrite"
+    create_option     = "FromImage"
+    managed_disk_type = var.Linux_Vms[count.index]["managed_disk_type"]
+  }
 
-dynamic "storage_image_reference" {
-for_each = [var.Linux_storage_image_reference]
-content {
-id        = lookup(storage_image_reference.value, "id", null)
-offer     = lookup(storage_image_reference.value, "offer", null)
-publisher = lookup(storage_image_reference.value, "publisher", null)
-sku       = lookup(storage_image_reference.value, "sku", null)
-version   = lookup(storage_image_reference.value, "version", null)
-}
-}
-
-os_profile {
-computer_name  = "${var.vm_prefix}${var.Linux_Vms[count.index]["suffix_name"]}${var.Linux_Vms[count.index]["id"]}"
-admin_username = var.app_admin
-admin_password = var.pass
-}
-
-os_profile_linux_config {
-disable_password_authentication = var.disable_password_authentication
-
-ssh_keys {
-path     = "/home/${var.app_admin}/.ssh/authorized_keys"
-key_data = var.ssh_key #"${file("./${var.ssh_key}")}"
-}
-}
-
-boot_diagnostics {
-enabled     = "true"
-storage_uri = var.sa_bootdiag_storage_uri
-}
-
-tags = var.vm_tags
-}
-
-#Windows_Vms
-resource "null_resource" "windows_managed_disk_vm_ids" {
-count = length(var.Windows_DataDisks)
-
-triggers = {
-managed_disk_id    = "/subscriptions/${var.subscription_id}/resourceGroups/${var.vm_resource_group_name}/providers/Microsoft.Compute/disks/${var.vm_prefix}${var.Windows_DataDisks[count.index]["suffix_name"]}${var.Windows_DataDisks[count.index]["id_disk"]}-datadk${var.Windows_DataDisks[count.index]["lun"]}"
-lun                = var.Windows_DataDisks[count.index]["lun"]
-caching            = var.Windows_DataDisks[count.index]["caching"]
-virtual_machine_id = "/subscriptions/${var.subscription_id}/resourceGroups/${var.vm_resource_group_name}/providers/Microsoft.Compute/virtualMachines/${var.vm_prefix}${var.Windows_DataDisks[count.index]["suffix_name"]}"
-}
-}
-
-locals {
-windows_managed_disk_ids = compact(
-null_resource.windows_managed_disk_vm_ids.*.triggers.managed_disk_id,
-)
-windows_luns     = compact(null_resource.windows_managed_disk_vm_ids.*.triggers.lun)
-windows_cachings = compact(null_resource.windows_managed_disk_vm_ids.*.triggers.caching)
-windows_virtual_machine_ids = compact(
-null_resource.windows_managed_disk_vm_ids.*.triggers.virtual_machine_id,
-)
-}
-
-resource "azurerm_managed_disk" "Windows_Vms_DataDisks" {
-count                = length(var.Windows_DataDisks)
-name                 = "${var.vm_prefix}${var.Windows_DataDisks[count.index]["suffix_name"]}${var.Windows_DataDisks[count.index]["id_disk"]}-datadk${var.Windows_DataDisks[count.index]["lun"]}"
-resource_group_name  = var.vm_resource_group_name
-create_option        = "Empty"
-location             = var.vm_location
-storage_account_type = var.Windows_DataDisks[count.index]["managed_disk_type"]
-disk_size_gb         = var.Windows_DataDisks[count.index]["disk_size_gb"]
-tags                 = var.vm_tags
-zones = compact(
-split(
-" ",
-var.Windows_DataDisks[count.index]["zone"] == 777 ? "" : var.Windows_DataDisks[count.index]["zone"],
-),
-)
-}
-
-resource "azurerm_virtual_machine_data_disk_attachment" "Windows" {
-depends_on = [
-azurerm_virtual_machine.Windows_Vms,
-azurerm_managed_disk.Windows_Vms_DataDisks,
-]
-count              = length(local.windows_managed_disk_ids)
-managed_disk_id    = element(local.windows_managed_disk_ids, count.index)
-virtual_machine_id = element(local.windows_virtual_machine_ids, count.index)
-lun                = element(local.windows_luns, count.index)
-caching            = element(local.windows_cachings, count.index)
-}
-
-resource "azurerm_virtual_machine" "Windows_Vms" {
-count               = length(var.Windows_Vms)
-name                = "${var.vm_prefix}${var.Windows_Vms[count.index]["suffix_name"]}${var.Windows_Vms[count.index]["id"]}"
-location            = var.vm_location
-resource_group_name = var.vm_resource_group_name
-# TF-UPGRADE-TODO: In Terraform v0.10 and earlier, it was sometimes necessary to
-# force an interpolation expression to be interpreted as a list by wrapping it
-# in an extra set of list brackets. That form was supported for compatibilty in
-# v0.11, but is no longer supported in Terraform v0.12.
-#
-# If the expression in the following list itself returns a list, remove the
-# brackets to avoid interpretation as a list of lists. If the expression
-# returns a single list item then leave it as-is and remove this TODO comment.
-network_interface_ids = [element(var.Windows_nics_ids, count.index)] #network_interface_ids = ["${element(var.Windows_nics_ids,length(var.Linux_Vms)+count.index)}"]
-zones = compact(
-split(
-" ",
-var.Windows_Vms[count.index]["zone"] == 777 ? "" : var.Windows_Vms[count.index]["zone"],
-),
-)
-vm_size = var.Windows_Vms[count.index]["vm_size"]
-
-# Uncomment this line to delete the OS disk automatically when deleting the VM
-delete_os_disk_on_termination = true
-
-# Uncomment this line to delete the data disks automatically when deleting the VM
-delete_data_disks_on_termination = false
-
-#license_type = "${lookup(var.Windows_Vms[count.index], "license_type")}"
-
-storage_os_disk {
-  name              = "${var.vm_prefix}${var.Windows_Vms[count.index]["suffix_name"]}${var.Windows_Vms[count.index]["id"]}osdk"
-  caching           = "ReadWrite"
-  create_option     = "FromImage"
-  managed_disk_type = var.Windows_Vms[count.index]["managed_disk_type"]
-}
-dynamic "storage_image_reference" {
-  for_each = [var.Windows_storage_image_reference]
+  dynamic "storage_image_reference" {
+    for_each = [var.Linux_storage_image_reference]
     content {
       id        = lookup(storage_image_reference.value, "id", null)
       offer     = lookup(storage_image_reference.value, "offer", null)
@@ -295,18 +165,132 @@ dynamic "storage_image_reference" {
       sku       = lookup(storage_image_reference.value, "sku", null)
       version   = lookup(storage_image_reference.value, "version", null)
     }
-}
-os_profile {
-computer_name  = "${var.vm_prefix}${var.Windows_Vms[count.index]["suffix_name"]}${var.Windows_Vms[count.index]["id"]}"
-admin_username = var.app_admin
-admin_password = var.pass
-#custom_data    = "Param($ComputerName = \"${var.vm_prefix}${lookup(var.Windows_Vms[count.index], "suffix_name")}${lookup(var.Windows_Vms[count.index], "id")}\") ${local.custom_data_content}"
-}
-os_profile_windows_config {
-provision_vm_agent        = true
-enable_automatic_upgrades = true
+  }
 
-/*
+  os_profile {
+    computer_name  = "${var.vm_prefix}${var.Linux_Vms[count.index]["suffix_name"]}${var.Linux_Vms[count.index]["id"]}"
+    admin_username = var.app_admin
+    admin_password = var.pass
+  }
+
+  os_profile_linux_config {
+    disable_password_authentication = var.disable_password_authentication
+
+    ssh_keys {
+      path     = "/home/${var.app_admin}/.ssh/authorized_keys"
+      key_data = var.ssh_key #"${file("./${var.ssh_key}")}"
+    }
+  }
+
+  boot_diagnostics {
+    enabled     = "true"
+    storage_uri = var.sa_bootdiag_storage_uri
+  }
+
+  tags = var.vm_tags
+}
+
+#Windows_Vms
+resource "null_resource" "windows_managed_disk_vm_ids" {
+  count = length(var.Windows_DataDisks)
+
+  triggers = {
+    managed_disk_id    = "/subscriptions/${var.subscription_id}/resourceGroups/${var.vm_resource_group_name}/providers/Microsoft.Compute/disks/${var.vm_prefix}${var.Windows_DataDisks[count.index]["suffix_name"]}${var.Windows_DataDisks[count.index]["id_disk"]}-datadk${var.Windows_DataDisks[count.index]["lun"]}"
+    lun                = var.Windows_DataDisks[count.index]["lun"]
+    caching            = var.Windows_DataDisks[count.index]["caching"]
+    virtual_machine_id = "/subscriptions/${var.subscription_id}/resourceGroups/${var.vm_resource_group_name}/providers/Microsoft.Compute/virtualMachines/${var.vm_prefix}${var.Windows_DataDisks[count.index]["suffix_name"]}"
+  }
+}
+
+locals {
+  windows_managed_disk_ids = compact(
+    null_resource.windows_managed_disk_vm_ids.*.triggers.managed_disk_id,
+  )
+  windows_luns     = compact(null_resource.windows_managed_disk_vm_ids.*.triggers.lun)
+  windows_cachings = compact(null_resource.windows_managed_disk_vm_ids.*.triggers.caching)
+  windows_virtual_machine_ids = compact(
+    null_resource.windows_managed_disk_vm_ids.*.triggers.virtual_machine_id,
+  )
+}
+
+resource "azurerm_managed_disk" "Windows_Vms_DataDisks" {
+  count                = length(var.Windows_DataDisks)
+  name                 = "${var.vm_prefix}${var.Windows_DataDisks[count.index]["suffix_name"]}${var.Windows_DataDisks[count.index]["id_disk"]}-datadk${var.Windows_DataDisks[count.index]["lun"]}"
+  resource_group_name  = var.vm_resource_group_name
+  create_option        = "Empty"
+  location             = var.vm_location
+  storage_account_type = var.Windows_DataDisks[count.index]["managed_disk_type"]
+  disk_size_gb         = var.Windows_DataDisks[count.index]["disk_size_gb"]
+  tags                 = var.vm_tags
+  zones = compact(
+    split(
+      " ",
+      var.Windows_DataDisks[count.index]["zone"] == 777 ? "" : var.Windows_DataDisks[count.index]["zone"],
+    ),
+  )
+}
+
+resource "azurerm_virtual_machine_data_disk_attachment" "Windows" {
+  depends_on = [
+    azurerm_virtual_machine.Windows_Vms,
+    azurerm_managed_disk.Windows_Vms_DataDisks,
+  ]
+  count              = 0 #length(local.windows_managed_disk_ids)
+  managed_disk_id    = element(local.windows_managed_disk_ids, count.index)
+  virtual_machine_id = element(local.windows_virtual_machine_ids, count.index)
+  lun                = element(local.windows_luns, count.index)
+  caching            = element(local.windows_cachings, count.index)
+}
+
+resource "azurerm_virtual_machine" "Windows_Vms" {
+  count                 = length(var.Windows_Vms)
+  name                  = "${var.vm_prefix}${var.Windows_Vms[count.index]["suffix_name"]}${var.Windows_Vms[count.index]["id"]}"
+  location              = var.vm_location
+  resource_group_name   = var.vm_resource_group_name
+  network_interface_ids = [element(var.Windows_nics_ids, count.index)]
+  zones = compact(
+    split(
+      " ",
+      var.Windows_Vms[count.index]["zone"] == 777 ? "" : var.Windows_Vms[count.index]["zone"],
+    ),
+  )
+  vm_size = var.Windows_Vms[count.index]["vm_size"]
+
+  # Uncomment this line to delete the OS disk automatically when deleting the VM
+  delete_os_disk_on_termination = true
+
+  # Uncomment this line to delete the data disks automatically when deleting the VM
+  delete_data_disks_on_termination = false
+
+  #license_type = "${lookup(var.Windows_Vms[count.index], "license_type")}"
+
+  storage_os_disk {
+    name              = "${var.vm_prefix}${var.Windows_Vms[count.index]["suffix_name"]}${var.Windows_Vms[count.index]["id"]}osdk"
+    caching           = "ReadWrite"
+    create_option     = "FromImage"
+    managed_disk_type = var.Windows_Vms[count.index]["managed_disk_type"]
+  }
+  dynamic "storage_image_reference" {
+    for_each = [var.Windows_storage_image_reference]
+    content {
+      id        = lookup(storage_image_reference.value, "id", null)
+      offer     = lookup(storage_image_reference.value, "offer", null)
+      publisher = lookup(storage_image_reference.value, "publisher", null)
+      sku       = lookup(storage_image_reference.value, "sku", null)
+      version   = lookup(storage_image_reference.value, "version", null)
+    }
+  }
+  os_profile {
+    computer_name  = "${var.vm_prefix}${var.Windows_Vms[count.index]["suffix_name"]}${var.Windows_Vms[count.index]["id"]}"
+    admin_username = var.app_admin
+    admin_password = var.pass
+    #custom_data    = "Param($ComputerName = \"${var.vm_prefix}${lookup(var.Windows_Vms[count.index], "suffix_name")}${lookup(var.Windows_Vms[count.index], "id")}\") ${local.custom_data_content}"
+  }
+  os_profile_windows_config {
+    provision_vm_agent        = true
+    enable_automatic_upgrades = true
+
+    /*
 # Auto-Login's required to configure WinRM
 additional_unattend_config {
 pass         = "oobeSystem"
@@ -323,9 +307,9 @@ setting_name = "FirstLogonCommands"
 content      = file("${path.module}/files/FirstLogonCommands.xml")
 }
 */
-}
+  }
 
-/*
+  /*
 os_profile_secrets {
 source_vault_id = var.key_vault_id
 
@@ -338,12 +322,12 @@ certificate_store = "My"
 }
 }
 */
-boot_diagnostics {
-enabled     = "true"
-storage_uri = var.sa_bootdiag_storage_uri
-}
+  boot_diagnostics {
+    enabled     = "true"
+    storage_uri = var.sa_bootdiag_storage_uri
+  }
 
-/*
+  /*
 provisioner "remote-exec" {
 connection {
 host     = ""    # TF-UPGRADE-TODO: Set this to the IP address of the machine's primary network interface
@@ -365,11 +349,11 @@ inline = [
 }
 */
 
-tags = var.vm_tags
+  tags = var.vm_tags
 }
 
 locals {
-custom_data_content = file("${path.module}/files/InitializeVM.ps1")
+  custom_data_content = file("${path.module}/files/InitializeVM.ps1")
 }
 
 /*
