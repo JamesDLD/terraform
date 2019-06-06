@@ -1,6 +1,6 @@
 #Set the terraform backend
 terraform {
-  required_version = "0.12.0"
+  required_version = "0.12.1"
 
   backend "azurerm" {
     storage_account_name = "infrsand1vpcjdld1"
@@ -12,7 +12,7 @@ terraform {
 
 #Set the Provider
 provider "azurerm" {
-  version         = "1.27.1"
+  version         = "1.29.0"
   subscription_id = var.subscription_id
   client_id       = var.client_id
   client_secret   = var.client_secret
@@ -63,7 +63,7 @@ module "Az-LoadBalancer-Demo" {
 module "Az-NetworkInterface-Demo" {
   source                  = "git::https://github.com/JamesDLD/terraform.git//module/Az-NetworkInterface?ref=master"
   subscription_id         = var.subscription_id
-  Linux_Vms               = []                #If no need just fill "Linux_Vms = []" in the tfvars file
+  Linux_Vms               = []              #If no need just fill "Linux_Vms = []" in the tfvars file
   Windows_Vms             = var.Windows_Vms #If no need just fill "Windows_Vms = []" in the tfvars file
   nic_prefix              = "bp3-"
   nic_suffix              = "-nic1"
