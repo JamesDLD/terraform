@@ -4,11 +4,11 @@
 terraform {
   backend "azurerm" {
   }
-  required_version = "0.12.0"
+  required_version = "0.12.1"
 }
 
 provider "azurerm" {
-  version = "1.27.1"
+  version = "1.29.0"
 }
 
 provider "random" {
@@ -17,12 +17,12 @@ provider "random" {
 
 variable "subscription_id" {
   description = "Azure subscription Id."
-  type=string
+  type        = string
 }
 
 variable "tenant_id" {
   description = "Azure tenant Id."
-  type=string
+  type        = string
 }
 
 variable "service_principals" {
@@ -33,12 +33,12 @@ variable "service_principals" {
 #Common
 variable "app_name" {
   description = "Application name used in objects naming convention."
-  type=string
+  type        = string
 }
 
 variable "env_name" {
   description = "Environment name used in objects naming convention."
-  type=string
+  type        = string
 }
 
 variable "default_tags" {
@@ -48,22 +48,22 @@ variable "default_tags" {
 
 variable "rg_apps_name" {
   description = "Apps resource group name."
-  type=string
+  type        = string
 }
 
 variable "rg_infr_name" {
   description = "infra resource group name."
-  type=string
+  type        = string
 }
 
 variable "sa_infr_name" {
   description = "Infra storage account name."
-  type=string
+  type        = string
 }
 
 variable "bck_rsv_name" {
   description = "Infra recovery services vault name."
-  type=string
+  type        = string
 }
 
 #Subnet & Network Security group
@@ -81,7 +81,7 @@ variable "apps_nsgs" {
 #Load Balancers & Availability Set & Virtual Machines
 variable "Lb_sku" {
   description = "The SKU of the Azure Load Balancer. Accepted values are Basic and Standard. Defaults to Basic."
-  type=string
+  type        = string
 }
 
 variable "Lbs" {
@@ -134,30 +134,30 @@ variable "Windows_Ss_Vms" {
 
 variable "app_admin" {
   description = "Specifies the name of the administrator account on the VM."
-  type=string
+  type        = string
 }
 
 variable "pass" {
   description = "Specifies the password of the administrator account on the VM."
-  type=string
+  type        = string
 }
 
 variable "ssh_key" {
   description = "Specifies the ssh public key to login on Linux VM."
-  type=string
+  type        = string
 }
 
 variable "auto_sku" {
   description = "Specifies the automation account SKU."
-  type=string
+  type        = string
 }
 
 variable "key_vaults" {
-  description="List containing your key vaults."
+  description = "List containing your key vaults."
   type = list(object({
-    suffix_name    = string
-    policy1_tenant_id =  string
-    policy1_object_id              = string
-    policy1_application_id              = string
+    suffix_name            = string
+    policy1_tenant_id      = string
+    policy1_object_id      = string
+    policy1_application_id = string
   }))
 }
