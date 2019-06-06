@@ -25,6 +25,7 @@ trigger:
     include:
       - master
       - feature/*
+      - release/*
   paths:
     include:
     - AzureDevops-Introduction/*
