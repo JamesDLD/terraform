@@ -12,7 +12,7 @@ terraform {
 
 #Set the Provider
 provider "azurerm" {
-  version         = "1.29.0"
+  version         = "1.30.1"
   subscription_id = var.subscription_id
   client_id       = var.client_id
   client_secret   = var.client_secret
