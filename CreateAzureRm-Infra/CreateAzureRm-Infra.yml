@@ -152,7 +152,7 @@ stages:
               secureFile: $(main_secret_file_id2) 
 
           # Download Pipeline Artifact
-          - task: DownloadPipelineArtifact@1
+          - task: DownloadBuildArtifacts@0
             inputs:
               buildType: 'current' # Options: current, specific
               buildVersionToDownload: 'latest' # Required when buildType == Specific. Options: latest, latestFromBranch, specific
@@ -247,7 +247,7 @@ stages:
               secureFile: $(main_secret_file_id2) 
 
           # Download Pipeline Artifact
-          - task: DownloadPipelineArtifact@1
+          - task: DownloadBuildArtifacts@0
             inputs:
               buildType: 'current' # Options: current, specific
               buildVersionToDownload: 'latest' # Required when buildType == Specific. Options: latest, latestFromBranch, specific
