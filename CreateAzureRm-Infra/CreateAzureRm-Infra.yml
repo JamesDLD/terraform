@@ -129,7 +129,7 @@ stages:
     - task: PublishBuildArtifacts@1
       inputs:
         artifactName: '$(ArtifactName)'
-        targetPath: './ArtifactPublishLocation' # Local path to include in the Artifact
+        pathtoPublish: './ArtifactPublishLocation' # Local path to include in the Artifact
 
 - stage: Deploy
   dependsOn: Build
