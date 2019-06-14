@@ -126,7 +126,7 @@ stages:
     #   displayName: 'Apps-Compress ./$(ArtifactName)/$(PackageName3)/ before Artifact publication'
     #   condition: eq(variables['terraform_plan_exitcode'], '2') # this task will only run if terrafrom has prompted for changes
 
-    - task: PublishPipelineArtifact@0
+    - task: PublishBuildArtifacts@1
       inputs:
         artifactName: '$(ArtifactName)'
         targetPath: './ArtifactPublishLocation' # Local path to include in the Artifact
