@@ -67,7 +67,8 @@ data "azurerm_storage_account" "Infr" {
 
 ## Core Network components
 module "Az-VirtualNetwork-Infra" {
-  source                   = "git::https://github.com/JamesDLD/terraform.git//module/Az-VirtualNetwork?ref=master"
+  source = "../../module/Az-VirtualNetwork/"
+  #git::https://github.com/JamesDLD/terraform.git//module/Az-VirtualNetwork?ref=master"
   vnets                    = var.vnets
   vnet_prefix              = "infra-${var.app_name}-${var.env_name}-"
   vnet_suffix              = "-net1"

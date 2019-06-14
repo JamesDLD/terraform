@@ -105,26 +105,26 @@ stages:
       displayName: 'InfraPeering-Terraform Init'
       workingDirectory: './$(ArtifactName)/$(PackageName2)/'
 
-    - script: |
-        echo "Compressing ./$(ArtifactName)/$(PackageName2)/ directory ..."
-        tar -czf $(PackageName2).tar.gz -C ./$(ArtifactName)/$(PackageName2)/ .
-        echo "Moving this archive directory to this location ./ArtifactPublishLocation ..."
-        mv -f $(PackageName2).tar.gz ./ArtifactPublishLocation/$(PackageName2).tar.gz
-      displayName: 'InfraPeering-Compress ./$(ArtifactName)/$(PackageName2)/ before Artifact publication'
-      condition: eq(variables['terraform_plan_exitcode'], '2') # this task will only run if terrafrom has prompted for changes
+    # - script: |
+    #     echo "Compressing ./$(ArtifactName)/$(PackageName2)/ directory ..."
+    #     tar -czf $(PackageName2).tar.gz -C ./$(ArtifactName)/$(PackageName2)/ .
+    #     echo "Moving this archive directory to this location ./ArtifactPublishLocation ..."
+    #     mv -f $(PackageName2).tar.gz ./ArtifactPublishLocation/$(PackageName2).tar.gz
+    #   displayName: 'InfraPeering-Compress ./$(ArtifactName)/$(PackageName2)/ before Artifact publication'
+    #   condition: eq(variables['terraform_plan_exitcode'], '2') # this task will only run if terrafrom has prompted for changes
 
     - script: |
         terraform init -backend-config="variable/apps-backend-jdld.tfvars" -backend-config="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)" -reconfigure
       displayName: 'Apps-Terraform Init'
       workingDirectory: './$(ArtifactName)/$(PackageName3)/'
 
-    - script: |
-        echo "Compressing ./$(ArtifactName)/$(PackageName3)/ directory ..."
-        tar -czf $(PackageName3).tar.gz -C ./$(ArtifactName)/$(PackageName3)/ .
-        echo "Moving this archive directory to this location ./ArtifactPublishLocation ..."
-        mv -f $(PackageName3).tar.gz ./ArtifactPublishLocation/$(PackageName3).tar.gz
-      displayName: 'Apps-Compress ./$(ArtifactName)/$(PackageName3)/ before Artifact publication'
-      condition: eq(variables['terraform_plan_exitcode'], '2') # this task will only run if terrafrom has prompted for changes
+    # - script: |
+    #     echo "Compressing ./$(ArtifactName)/$(PackageName3)/ directory ..."
+    #     tar -czf $(PackageName3).tar.gz -C ./$(ArtifactName)/$(PackageName3)/ .
+    #     echo "Moving this archive directory to this location ./ArtifactPublishLocation ..."
+    #     mv -f $(PackageName3).tar.gz ./ArtifactPublishLocation/$(PackageName3).tar.gz
+    #   displayName: 'Apps-Compress ./$(ArtifactName)/$(PackageName3)/ before Artifact publication'
+    #   condition: eq(variables['terraform_plan_exitcode'], '2') # this task will only run if terrafrom has prompted for changes
 
     - task: PublishPipelineArtifact@0
       inputs:
@@ -228,8 +228,8 @@ stages:
       vmImage: $(vmImageName)
     # creates an environment if it doesn’t exist
     environment: 'production'
-    # variables:
-    #   terraform_destroy: "false" #Re write the variable contained in the variable group terraform_binary
+    variables:
+      terraform_destroy: "false" #Re write the variable contained in the variable group terraform_binary
     strategy:
       # default deployment strategy
       runOnce:
