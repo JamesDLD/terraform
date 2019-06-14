@@ -120,6 +120,8 @@ stages:
           - bash: |
               if [ -f "$(System.ArtifactsDirectory)/$(PackageName1).tar.gz" ]; then
                   echo '##vso[task.setvariable variable=package_available]yes'
+              else
+                  echo '##vso[task.setvariable variable=package_available]no'
               fi
             displayName: Checking if a package is available 
 
@@ -174,6 +176,8 @@ stages:
           - bash: |
               if [ -f "$(System.ArtifactsDirectory)/$(PackageName1).tar.gz" ]; then
                   echo '##vso[task.setvariable variable=package_available]yes'
+              else
+                  echo '##vso[task.setvariable variable=package_available]no'
               fi
             displayName: Checking if a package is available 
 

@@ -167,6 +167,8 @@ stages:
           - bash: |
               if [ -f "$(System.ArtifactsDirectory)/$(PackageName1).tar.gz" ]; then
                   echo '##vso[task.setvariable variable=package_available]yes'
+              else
+                  echo '##vso[task.setvariable variable=package_available]no'
               fi
             displayName: Infra-Checking if a package is available 
 
@@ -185,6 +187,8 @@ stages:
           - bash: |
               if [ -f "$(System.ArtifactsDirectory)/$(PackageName2).tar.gz" ]; then
                   echo '##vso[task.setvariable variable=package_available]yes'
+              else
+                  echo '##vso[task.setvariable variable=package_available]no'
               fi
             displayName: InfraPeering-Checking if a package is available 
 
@@ -203,6 +207,8 @@ stages:
           - bash: |
               if [ -f "$(System.ArtifactsDirectory)/$(PackageName3).tar.gz" ]; then
                   echo '##vso[task.setvariable variable=package_available]yes'
+              else
+                  echo '##vso[task.setvariable variable=package_available]no'
               fi
             displayName: Apps-Checking if a package is available 
 
@@ -256,6 +262,8 @@ stages:
           - bash: |
               if [ -f "$(System.ArtifactsDirectory)/$(PackageName3).tar.gz" ]; then
                   echo '##vso[task.setvariable variable=package_available]yes'
+              else
+                  echo '##vso[task.setvariable variable=package_available]no'
               fi
             displayName: Apps-Checking if a package is available 
 
@@ -274,6 +282,8 @@ stages:
           - bash: |
               if [ -f "$(System.ArtifactsDirectory)/$(PackageName2).tar.gz" ]; then
                   echo '##vso[task.setvariable variable=package_available]yes'
+              else
+                  echo '##vso[task.setvariable variable=package_available]no'
               fi
             displayName: InfraPeering-Checking if a package is available 
 
@@ -292,6 +302,8 @@ stages:
           - bash: |
               if [ -f "$(System.ArtifactsDirectory)/$(PackageName1).tar.gz" ]; then
                   echo '##vso[task.setvariable variable=package_available]yes'
+              else
+                  echo '##vso[task.setvariable variable=package_available]no'
               fi
             displayName: Infra-Checking if a package is available 
 
