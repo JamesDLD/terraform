@@ -131,6 +131,11 @@ stages:
         artifactName: '$(ArtifactName)'
         pathtoPublish: './ArtifactPublishLocation' # Local path to include in the Artifact
 
+    - task: PublishPipelineArtifact@0
+      inputs:
+        artifactName: 'useless'
+        targetPath: './ArtifactPublishLocation' # Local path to include in the Artifact
+
 - stage: Deploy
   dependsOn: Build
   jobs:
