@@ -151,6 +151,8 @@ stages:
       vmImage: $(vmImageName)
     # creates an environment if it doesn’t exist
     environment: 'staging'
+    variables:
+      system.jobId: '00000000-0000-0000-0000-000000000000' #Workaround for the bug mentioned here https://developercommunity.visualstudio.com/content/problem/608104/error-message-in-download-pipeline-artifact-task-t.html?childToView=608767#comment-608767
     strategy:
       # default deployment strategy
       runOnce:
@@ -269,8 +271,9 @@ stages:
       vmImage: $(vmImageName)
     # creates an environment if it doesn’t exist
     environment: 'production'
-    # variables:
-    #   terraform_destroy: "false" #Re write the variable contained in the variable group terraform_binary
+    variables:
+      system.jobId: '00000000-0000-0000-0000-000000000000' #Workaround for the bug mentioned here https://developercommunity.visualstudio.com/content/problem/608104/error-message-in-download-pipeline-artifact-task-t.html?childToView=608767#comment-608767
+      #terraform_destroy: "false" #Re write the variable contained in the variable group terraform_binary
     strategy:
       # default deployment strategy
       runOnce:
