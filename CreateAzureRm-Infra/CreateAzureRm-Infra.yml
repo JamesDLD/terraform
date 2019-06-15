@@ -126,15 +126,10 @@ stages:
     #   displayName: 'Apps-Compress ./$(ArtifactName)/$(PackageName3)/ before Artifact publication'
     #   condition: eq(variables['terraform_plan_exitcode'], '2') # this task will only run if terrafrom has prompted for changes
 
-    - task: PublishBuildArtifacts@1
+    - task: PublishPipelineArtifact@0
       inputs:
         artifactName: '$(ArtifactName)'
-        pathtoPublish: './ArtifactPublishLocation' # Local path to include in the Artifact
-
-    # - task: PublishPipelineArtifact@0
-    #   inputs:
-    #     artifactName: 'useless'
-    #     targetPath: './ArtifactPublishLocation' # Local path to include in the Artifact
+        targetPath: './ArtifactPublishLocation' # Local path to include in the Artifact
 
 - stage: Deploy
   dependsOn: Build
@@ -146,6 +141,8 @@ stages:
       vmImage: $(vmImageName)
     # creates an environment if it doesn’t exist
     environment: 'staging'
+    variables:
+      system.jobId: '00000000-0000-0000-0000-000000000000' #Workaround for the mentioned here https://developercommunity.visualstudio.com/content/problem/608104/error-message-in-download-pipeline-artifact-task-t.html?childToView=608767#comment-608767
     strategy:
       # default deployment strategy
       runOnce:
@@ -157,7 +154,7 @@ stages:
               secureFile: $(main_secret_file_id2) 
 
           # Download Pipeline Artifact
-          - task: DownloadBuildArtifacts@0
+          - task: DownloadPipelineArtifact@1
             inputs:
               buildType: 'current' # Options: current, specific
               buildVersionToDownload: 'latest' # Required when buildType == Specific. Options: latest, latestFromBranch, specific
@@ -240,7 +237,8 @@ stages:
     # creates an environment if it doesn’t exist
     environment: 'production'
     variables:
-      terraform_destroy: "false" #Re write the variable contained in the variable group terraform_binary
+      #terraform_destroy: "false" #Re write the variable contained in the variable group terraform_binary
+      system.jobId: '00000000-0000-0000-0000-000000000000' #Workaround for the mentioned here https://developercommunity.visualstudio.com/content/problem/608104/error-message-in-download-pipeline-artifact-task-t.html?childToView=608767#comment-608767
     strategy:
       # default deployment strategy
       runOnce:
@@ -252,7 +250,7 @@ stages:
               secureFile: $(main_secret_file_id2) 
 
           # Download Pipeline Artifact
-          - task: DownloadBuildArtifacts@0
+          - task: DownloadPipelineArtifact@1
             inputs:
               buildType: 'current' # Options: current, specific
               buildVersionToDownload: 'latest' # Required when buildType == Specific. Options: latest, latestFromBranch, specific
