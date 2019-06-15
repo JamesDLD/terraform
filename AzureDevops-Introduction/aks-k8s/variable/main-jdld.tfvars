@@ -31,5 +31,5 @@ key_vault = {
 ###
 kubernetes_cluster = {
   name       = "aks-demo-jdld"
-  dns_prefix = "aksdemojdld"   #Please see https://aka.ms/aks-naming-rules
+  dns_prefix = "aksdemojdld" #Please see https://aka.ms/aks-naming-rules
 }

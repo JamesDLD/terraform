@@ -1,9 +1,9 @@
 #Call module/resource
 resource "azurerm_kubernetes_cluster" "demo" {
-  name                = var.kubernetes_cluster["name"] 
+  name                = var.kubernetes_cluster["name"]
   location            = data.azurerm_resource_group.Infr.location
   resource_group_name = data.azurerm_resource_group.Infr.name
-  dns_prefix          = var.kubernetes_cluster["dns_prefix"] 
+  dns_prefix          = var.kubernetes_cluster["dns_prefix"]
 
   agent_pool_profile {
     name            = "default"
