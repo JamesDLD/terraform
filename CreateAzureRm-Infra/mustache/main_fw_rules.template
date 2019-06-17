@@ -15,7 +15,7 @@ resource "azurerm_firewall_nat_rule_collection" "{{nat_rule_collection_name}}" {
     name                  = "{{name}}"
     source_addresses      = {{{source_addresses}}}
     destination_ports     = {{{destination_ports}}}
-    destination_addresses = {{{destination_addresses}}}
+    destination_addresses = ["${azurerm_public_ip.pip.ip_address}"]
     protocols             = {{{protocols}}}
     translated_address    = "{{translated_address}}"
     translated_port       = "{{translated_port}}"

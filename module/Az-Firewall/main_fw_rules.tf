@@ -14,9 +14,9 @@ resource "azurerm_firewall_nat_rule_collection" "sec_common_services-ncol1" {
     name                  = "rdg-rule1"
     source_addresses      = ["*"]
     destination_ports     = ["3389"]
-    destination_addresses = ["40.66.63.194"]
+    destination_addresses = ["${azurerm_public_ip.pip.ip_address}"]
     protocols             = ["TCP"]
-    translated_address    = "192.168.2.228"
+    translated_address    = "198.18.2.228"
     translated_port       = "3389"
   }
 
@@ -186,13 +186,13 @@ resource "azurerm_firewall_application_rule_collection" "apps_common_services-ac
   action              = "Allow"
 
   rule {
-    name             = "sample-rule1"
-    source_addresses = ["*"]
-    target_fqdns     = ["*.mydomain.com"]
+    name             = "http-proxy-private-dns-rule1"
+    source_addresses = ["198.18.2.228"]
+    target_fqdns     = ["test.sec.az"]
 
       protocol {
-        port =  443
-        type =  "Https"
+        port =  80
+        type =  "Http"
       }
   }
 }
