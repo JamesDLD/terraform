@@ -169,7 +169,10 @@ module "Az-RoleAssignment-Apps" {
 }
 
 module "Az-Firewall-Infr" {
-  source                 = "git::https://github.com/JamesDLD/terraform.git//module/Az-Firewall?ref=master"
+  source = "git::https://github.com/JamesDLD/terraform.git//module/Az-Firewall?ref=feature/privatedns"
+  #source = "../../module/Az-Firewall/"
+  #source = git::https://github.com/JamesDLD/terraform.git//module/Az-Firewall?ref=master"
+
   fw_resource_group_name = data.azurerm_resource_group.Infr.name
   fw_location            = data.azurerm_resource_group.Infr.location
   fw_prefix              = "${var.app_name}-${var.env_name}-fw1"
@@ -180,6 +183,8 @@ module "Az-Firewall-Infr" {
     azurerm = azurerm.service_principal_infra
   }
 }
+
+
 /*
 Currently not using those policies because the terraform resources with the suffix "association" generate an error when using terraform destroy cmdlet
 module "Az-PolicyAssignment-Infra-nsg-on-apps-subnet" {

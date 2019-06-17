@@ -3,10 +3,32 @@
 ####
 # Network Rule Collection
 ####
+resource "azurerm_firewall_nat_rule_collection" "sec_common_services-ncol1" {
+  name                = "sec_common_services-ncol1"
+  azure_firewall_name = "${azurerm_firewall.fw.name}"
+  resource_group_name = "${azurerm_firewall.fw.resource_group_name}"
+  priority            = 200
+  action              = "Dnat"
+
+  rule {
+    name                  = "rdg-rule1"
+    source_addresses      = ["*"]
+    destination_ports     = ["3389"]
+    destination_addresses = ["40.66.63.194"]
+    protocols             = ["TCP"]
+    translated_address    = "192.168.2.228"
+    translated_port       = "3389"
+  }
+
+}
+
+####
+# Network Rule Collection
+####
 resource "azurerm_firewall_network_rule_collection" "infra_common_services-ncol1" {
   name                = "infra_common_services-ncol1"
-  azure_firewall_name = azurerm_firewall.fw.name
-  resource_group_name = azurerm_firewall.fw.resource_group_name
+  azure_firewall_name = "${azurerm_firewall.fw.name}"
+  resource_group_name = "${azurerm_firewall.fw.resource_group_name}"
   priority            = 100
   action              = "Allow"
 
@@ -17,6 +39,7 @@ resource "azurerm_firewall_network_rule_collection" "infra_common_services-ncol1
     destination_addresses = ["*"]
     protocols             = ["TCP", "UDP"]
   }
+
 }
 
 ####
@@ -24,8 +47,8 @@ resource "azurerm_firewall_network_rule_collection" "infra_common_services-ncol1
 ####
 resource "azurerm_firewall_network_rule_collection" "sec_common_services-ncol1" {
   name                = "sec_common_services-ncol1"
-  azure_firewall_name = azurerm_firewall.fw.name
-  resource_group_name = azurerm_firewall.fw.resource_group_name
+  azure_firewall_name = "${azurerm_firewall.fw.name}"
+  resource_group_name = "${azurerm_firewall.fw.resource_group_name}"
   priority            = 200
   action              = "Allow"
 
@@ -36,6 +59,7 @@ resource "azurerm_firewall_network_rule_collection" "sec_common_services-ncol1" 
     destination_addresses = ["*"]
     protocols             = ["TCP", "UDP"]
   }
+
 }
 
 ####
@@ -43,8 +67,8 @@ resource "azurerm_firewall_network_rule_collection" "sec_common_services-ncol1" 
 ####
 resource "azurerm_firewall_network_rule_collection" "apps_common_services-ncol1" {
   name                = "apps_common_services-ncol1"
-  azure_firewall_name = azurerm_firewall.fw.name
-  resource_group_name = azurerm_firewall.fw.resource_group_name
+  azure_firewall_name = "${azurerm_firewall.fw.name}"
+  resource_group_name = "${azurerm_firewall.fw.resource_group_name}"
   priority            = 300
   action              = "Allow"
 
@@ -55,6 +79,7 @@ resource "azurerm_firewall_network_rule_collection" "apps_common_services-ncol1"
     destination_addresses = ["*"]
     protocols             = ["TCP", "UDP"]
   }
+
 }
 
 ####
@@ -62,8 +87,8 @@ resource "azurerm_firewall_network_rule_collection" "apps_common_services-ncol1"
 ####
 resource "azurerm_firewall_network_rule_collection" "bounce_common_services-ncol1" {
   name                = "bounce_common_services-ncol1"
-  azure_firewall_name = azurerm_firewall.fw.name
-  resource_group_name = azurerm_firewall.fw.resource_group_name
+  azure_firewall_name = "${azurerm_firewall.fw.name}"
+  resource_group_name = "${azurerm_firewall.fw.resource_group_name}"
   priority            = 400
   action              = "Allow"
 
@@ -74,6 +99,7 @@ resource "azurerm_firewall_network_rule_collection" "bounce_common_services-ncol
     destination_addresses = ["*"]
     protocols             = ["TCP", "UDP"]
   }
+
 }
 
 ####
@@ -81,8 +107,8 @@ resource "azurerm_firewall_network_rule_collection" "bounce_common_services-ncol
 ####
 resource "azurerm_firewall_network_rule_collection" "apps_services-ncol1" {
   name                = "apps_services-ncol1"
-  azure_firewall_name = azurerm_firewall.fw.name
-  resource_group_name = azurerm_firewall.fw.resource_group_name
+  azure_firewall_name = "${azurerm_firewall.fw.name}"
+  resource_group_name = "${azurerm_firewall.fw.resource_group_name}"
   priority            = 1000
   action              = "Allow"
 
@@ -93,6 +119,7 @@ resource "azurerm_firewall_network_rule_collection" "apps_services-ncol1" {
     destination_addresses = ["*"]
     protocols             = ["TCP", "UDP"]
   }
+
 }
 
 ####
@@ -100,8 +127,8 @@ resource "azurerm_firewall_network_rule_collection" "apps_services-ncol1" {
 ####
 resource "azurerm_firewall_application_rule_collection" "infra_common_services-acol1" {
   name                = "infra_common_services-acol1"
-  azure_firewall_name = azurerm_firewall.fw.name
-  resource_group_name = azurerm_firewall.fw.resource_group_name
+  azure_firewall_name = "${azurerm_firewall.fw.name}"
+  resource_group_name = "${azurerm_firewall.fw.resource_group_name}"
   priority            = 100
   action              = "Allow"
 
@@ -113,16 +140,16 @@ resource "azurerm_firewall_application_rule_collection" "infra_common_services-a
   rule {
     name             = "OsMgmt-rule1"
     source_addresses = ["198.18.2.0/24"]
-    target_fqdns     = ["google.com", "debian.anexia.at", "debian.asis.io", "debian.balt.net", "debian.bhs.mirrors.ovh.net", "debian.blizoo.mk", "debian.bononia.it", "debian.c3sl.ufpr.br", "debian.carnet.hr", "debian.cc.lehigh.edu", "debian.charite.de", "debian.co.il", "debian.connesi.it", "debian.cs.binghamton.edu", "debian.csail.mit.edu", "debian.cse.msu.edu"]
+    target_fqdns     = ["google.com","debian.anexia.at","debian.asis.io","debian.balt.net","debian.bhs.mirrors.ovh.net","debian.blizoo.mk","debian.bononia.it","debian.c3sl.ufpr.br","debian.carnet.hr","debian.cc.lehigh.edu","debian.charite.de","debian.co.il","debian.connesi.it","debian.cs.binghamton.edu","debian.csail.mit.edu","debian.cse.msu.edu"]
 
-    protocol {
-      port = 443
-      type = "Https"
-    }
-    protocol {
-      port = 80
-      type = "Http"
-    }
+      protocol {
+        port =  443
+        type =  "Https"
+      }
+      protocol {
+        port =  80
+        type =  "Http"
+      }
   }
 }
 
@@ -131,8 +158,8 @@ resource "azurerm_firewall_application_rule_collection" "infra_common_services-a
 ####
 resource "azurerm_firewall_application_rule_collection" "sec_common_services-acol1" {
   name                = "sec_common_services-acol1"
-  azure_firewall_name = azurerm_firewall.fw.name
-  resource_group_name = azurerm_firewall.fw.resource_group_name
+  azure_firewall_name = "${azurerm_firewall.fw.name}"
+  resource_group_name = "${azurerm_firewall.fw.resource_group_name}"
   priority            = 200
   action              = "Allow"
 
@@ -141,10 +168,10 @@ resource "azurerm_firewall_application_rule_collection" "sec_common_services-aco
     source_addresses = ["*"]
     target_fqdns     = ["*.mydomain.com"]
 
-    protocol {
-      port = 443
-      type = "Https"
-    }
+      protocol {
+        port =  443
+        type =  "Https"
+      }
   }
 }
 
@@ -153,8 +180,8 @@ resource "azurerm_firewall_application_rule_collection" "sec_common_services-aco
 ####
 resource "azurerm_firewall_application_rule_collection" "apps_common_services-acol1" {
   name                = "apps_common_services-acol1"
-  azure_firewall_name = azurerm_firewall.fw.name
-  resource_group_name = azurerm_firewall.fw.resource_group_name
+  azure_firewall_name = "${azurerm_firewall.fw.name}"
+  resource_group_name = "${azurerm_firewall.fw.resource_group_name}"
   priority            = 300
   action              = "Allow"
 
@@ -163,10 +190,10 @@ resource "azurerm_firewall_application_rule_collection" "apps_common_services-ac
     source_addresses = ["*"]
     target_fqdns     = ["*.mydomain.com"]
 
-    protocol {
-      port = 443
-      type = "Https"
-    }
+      protocol {
+        port =  443
+        type =  "Https"
+      }
   }
 }
 
@@ -175,8 +202,8 @@ resource "azurerm_firewall_application_rule_collection" "apps_common_services-ac
 ####
 resource "azurerm_firewall_application_rule_collection" "bounce_common_services-acol1" {
   name                = "bounce_common_services-acol1"
-  azure_firewall_name = azurerm_firewall.fw.name
-  resource_group_name = azurerm_firewall.fw.resource_group_name
+  azure_firewall_name = "${azurerm_firewall.fw.name}"
+  resource_group_name = "${azurerm_firewall.fw.resource_group_name}"
   priority            = 400
   action              = "Allow"
 
@@ -185,10 +212,10 @@ resource "azurerm_firewall_application_rule_collection" "bounce_common_services-
     source_addresses = ["*"]
     target_fqdns     = ["*.mydomain.com"]
 
-    protocol {
-      port = 443
-      type = "Https"
-    }
+      protocol {
+        port =  443
+        type =  "Https"
+      }
   }
 }
 
@@ -197,8 +224,8 @@ resource "azurerm_firewall_application_rule_collection" "bounce_common_services-
 ####
 resource "azurerm_firewall_application_rule_collection" "apps_services-acol1" {
   name                = "apps_services-acol1"
-  azure_firewall_name = azurerm_firewall.fw.name
-  resource_group_name = azurerm_firewall.fw.resource_group_name
+  azure_firewall_name = "${azurerm_firewall.fw.name}"
+  resource_group_name = "${azurerm_firewall.fw.resource_group_name}"
   priority            = 1000
   action              = "Allow"
 
@@ -207,11 +234,12 @@ resource "azurerm_firewall_application_rule_collection" "apps_services-acol1" {
     source_addresses = ["*"]
     target_fqdns     = ["*.mydomain.com"]
 
-    protocol {
-      port = 443
-      type = "Https"
-    }
+      protocol {
+        port =  443
+        type =  "Https"
+      }
   }
 }
 
 ####
+
