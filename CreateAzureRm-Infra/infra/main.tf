@@ -67,9 +67,7 @@ data "azurerm_storage_account" "Infr" {
 
 ## Core Network components
 module "Az-VirtualNetwork-Infra" {
-  source = "git::https://github.com/JamesDLD/terraform.git//module/Az-VirtualNetwork?ref=feature/privatedns"
-  #"../../module/Az-VirtualNetwork/"
-  #git::https://github.com/JamesDLD/terraform.git//module/Az-VirtualNetwork?ref=master"
+  source                   = "git::https://github.com/JamesDLD/terraform.git//module/Az-VirtualNetwork?ref=master"
   vnets                    = var.vnets
   vnet_prefix              = "infra-${var.app_name}-${var.env_name}-"
   vnet_suffix              = "-net1"
@@ -169,10 +167,7 @@ module "Az-RoleAssignment-Apps" {
 }
 
 module "Az-Firewall-Infr" {
-  source = "git::https://github.com/JamesDLD/terraform.git//module/Az-Firewall?ref=feature/privatedns"
-  #source = "../../module/Az-Firewall/"
-  #source = git::https://github.com/JamesDLD/terraform.git//module/Az-Firewall?ref=master"
-
+  source                 = "git::https://github.com/JamesDLD/terraform.git//module/Az-Firewall?ref=master"
   fw_resource_group_name = data.azurerm_resource_group.Infr.name
   fw_location            = data.azurerm_resource_group.Infr.location
   fw_prefix              = "${var.app_name}-${var.env_name}-fw1"
