@@ -1,6 +1,24 @@
 {
     "fw_rules": [
         {
+            "nat_rule_collection": [
+                {
+                    "nat_rule_collection_name": "sec_common_services-ncol1",
+                    "priority": 200,
+                    "action": "Dnat",
+                    "rules": [
+                        {
+                            "name": "rdg-rule1",
+                            "source_addresses": "[\"*\"]",
+                            "destination_ports": "[\"3389\"]",
+                            "destination_addresses": "[\"40.66.63.194\"]",
+                            "protocols": "[\"TCP\"]",
+                            "translated_address": "198.18.2.228",
+                            "translated_port": "3389"
+                        }
+                    ]
+                }
+            ],
             "network_rule_collection": [
                 {
                     "network_rule_collection_name": "infra_common_services-ncol1",
@@ -127,13 +145,13 @@
                     "action": "Allow",
                     "rules_for_target_fqdns": [
                         {
-                            "name": "sample-rule1",
-                            "source_addresses": "[\"*\"]",
-                            "target_fqdns": "[\"*.mydomain.com\"]",
+                            "name": "http-proxy-private-dns-rule1",
+                            "source_addresses": "[\"198.18.2.228\"]",
+                            "target_fqdns": "[\"test.sec.az\"]",
                             "protocol": [
                                 {
-                                    "port": 443,
-                                    "type": "Https"
+                                    "port": 80,
+                                    "type": "Http"
                                 }
                             ]
                         }

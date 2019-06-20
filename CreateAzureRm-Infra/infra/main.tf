@@ -67,7 +67,9 @@ data "azurerm_storage_account" "Infr" {
 
 ## Core Network components
 module "Az-VirtualNetwork-Infra" {
-  source                   = "git::https://github.com/JamesDLD/terraform.git//module/Az-VirtualNetwork?ref=master"
+  source = "git::https://github.com/JamesDLD/terraform.git//module/Az-VirtualNetwork?ref=feature/privatedns"
+  #"../../module/Az-VirtualNetwork/"
+  #git::https://github.com/JamesDLD/terraform.git//module/Az-VirtualNetwork?ref=master"
   vnets                    = var.vnets
   vnet_prefix              = "infra-${var.app_name}-${var.env_name}-"
   vnet_suffix              = "-net1"
@@ -167,7 +169,10 @@ module "Az-RoleAssignment-Apps" {
 }
 
 module "Az-Firewall-Infr" {
-  source                 = "git::https://github.com/JamesDLD/terraform.git//module/Az-Firewall?ref=master"
+  source = "git::https://github.com/JamesDLD/terraform.git//module/Az-Firewall?ref=feature/privatedns"
+  #source = "../../module/Az-Firewall/"
+  #source = git::https://github.com/JamesDLD/terraform.git//module/Az-Firewall?ref=master"
+
   fw_resource_group_name = data.azurerm_resource_group.Infr.name
   fw_location            = data.azurerm_resource_group.Infr.location
   fw_prefix              = "${var.app_name}-${var.env_name}-fw1"
@@ -178,6 +183,47 @@ module "Az-Firewall-Infr" {
     azurerm = azurerm.service_principal_infra
   }
 }
+
+resource "azurerm_log_analytics_workspace" "infra" {
+  name                = "${var.app_name}-${var.env_name}-lm1" #The log analytics workspace name must be unique
+  sku                 = "PerGB2018"                           #Refer https://azure.microsoft.com/pricing/details/monitor/ for log analytics pricing 
+  location            = data.azurerm_resource_group.Infr.location
+  resource_group_name = data.azurerm_resource_group.Infr.name
+  tags                = data.azurerm_resource_group.Infr.tags
+  provider            = azurerm.service_principal_infra
+}
+
+resource "azurerm_monitor_diagnostic_setting" "fw" {
+  name                       = module.Az-Firewall-Infr.fw_name
+  target_resource_id         = module.Az-Firewall-Infr.fw_id
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.infra.id
+
+  log {
+    category = "AzureFirewallApplicationRule"
+
+    retention_policy {
+      enabled = true
+    }
+  }
+
+  log {
+    category = "AzureFirewallNetworkRule"
+
+    retention_policy {
+      enabled = true
+    }
+  }
+
+  metric {
+    category = "AllMetrics"
+
+    retention_policy {
+      enabled = true
+    }
+  }
+  provider = azurerm.service_principal_infra
+}
+
 /*
 Currently not using those policies because the terraform resources with the suffix "association" generate an error when using terraform destroy cmdlet
 module "Az-PolicyAssignment-Infra-nsg-on-apps-subnet" {

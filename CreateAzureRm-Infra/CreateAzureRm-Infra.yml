@@ -146,6 +146,7 @@ stages:
       runOnce:
         deploy:
           steps:
+          - download: none #Avoid the default download artifact task. See https://developercommunity.visualstudio.com/content/problem/608104/error-message-in-download-pipeline-artifact-task-t.html?childToView=610103#comment-610103
           - task: DownloadSecureFile@1
             displayName: 'Download secure file $(main_secret_file_id2)'
             inputs:
@@ -167,6 +168,8 @@ stages:
           - bash: |
               if [ -f "$(System.ArtifactsDirectory)/$(PackageName1).tar.gz" ]; then
                   echo '##vso[task.setvariable variable=package_available]yes'
+              else
+                  echo '##vso[task.setvariable variable=package_available]no'
               fi
             displayName: Infra-Checking if a package is available 
 
@@ -185,6 +188,8 @@ stages:
           - bash: |
               if [ -f "$(System.ArtifactsDirectory)/$(PackageName2).tar.gz" ]; then
                   echo '##vso[task.setvariable variable=package_available]yes'
+              else
+                  echo '##vso[task.setvariable variable=package_available]no'
               fi
             displayName: InfraPeering-Checking if a package is available 
 
@@ -203,6 +208,8 @@ stages:
           - bash: |
               if [ -f "$(System.ArtifactsDirectory)/$(PackageName3).tar.gz" ]; then
                   echo '##vso[task.setvariable variable=package_available]yes'
+              else
+                  echo '##vso[task.setvariable variable=package_available]no'
               fi
             displayName: Apps-Checking if a package is available 
 
@@ -235,6 +242,7 @@ stages:
       runOnce:
         deploy:
           steps:
+          - download: none #Avoid the default download artifact task. See https://developercommunity.visualstudio.com/content/problem/608104/error-message-in-download-pipeline-artifact-task-t.html?childToView=610103#comment-610103
           - task: DownloadSecureFile@1
             displayName: 'Download secure file $(main_secret_file_id2)'
             inputs:
@@ -256,6 +264,8 @@ stages:
           - bash: |
               if [ -f "$(System.ArtifactsDirectory)/$(PackageName3).tar.gz" ]; then
                   echo '##vso[task.setvariable variable=package_available]yes'
+              else
+                  echo '##vso[task.setvariable variable=package_available]no'
               fi
             displayName: Apps-Checking if a package is available 
 
@@ -274,6 +284,8 @@ stages:
           - bash: |
               if [ -f "$(System.ArtifactsDirectory)/$(PackageName2).tar.gz" ]; then
                   echo '##vso[task.setvariable variable=package_available]yes'
+              else
+                  echo '##vso[task.setvariable variable=package_available]no'
               fi
             displayName: InfraPeering-Checking if a package is available 
 
@@ -292,6 +304,8 @@ stages:
           - bash: |
               if [ -f "$(System.ArtifactsDirectory)/$(PackageName1).tar.gz" ]; then
                   echo '##vso[task.setvariable variable=package_available]yes'
+              else
+                  echo '##vso[task.setvariable variable=package_available]no'
               fi
             displayName: Infra-Checking if a package is available 
 

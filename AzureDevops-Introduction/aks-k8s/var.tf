@@ -22,7 +22,7 @@ variable "rg_infr_name" {
 
 variable log_analytics_workspace {
   description = "The log analytics workspace"
-  type        = any 
+  type        = any
   /* Following code is currently raising an error
   map(object({
 
@@ -39,7 +39,7 @@ variable log_analytics_workspace {
 
 variable "key_vault" {
   description = "The key vault"
-  type = map(string)
+  type        = map(string)
   # type = map(object({
   #   name    = string #The key vault name must be unique
   #   sku     = string
@@ -48,5 +48,5 @@ variable "key_vault" {
 
 variable "kubernetes_cluster" {
   description = "Kubernetes cluster with Azure Kubernetes Service"
-  type = any
+  type        = any
 }
