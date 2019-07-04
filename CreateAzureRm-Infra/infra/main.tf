@@ -169,7 +169,7 @@ module "Az-RoleAssignment-Apps" {
 /*
 Currently having this error after 2 hours :
 Error: Error waiting for creation/update of Azure Firewall "jdld-infr-fw1" (Resource Group "infr-jdld-noprd-rg1"): Code="GwmOperationTimeOut" Message="Operation timed out. Please retry after some time or contact support." Details=[]
-
+*/
 module "Az-Firewall-Infr" {
   source                 = "git::https://github.com/JamesDLD/terraform.git//module/Az-Firewall?ref=master"
   fw_resource_group_name = data.azurerm_resource_group.Infr.name
@@ -222,7 +222,7 @@ resource "azurerm_monitor_diagnostic_setting" "fw" {
   }
   provider = azurerm.service_principal_infra
 }
-*/
+
 /*
 Currently not using those policies because the terraform resources with the suffix "association" generate an error when using terraform destroy cmdlet
 module "Az-PolicyAssignment-Infra-nsg-on-apps-subnet" {
