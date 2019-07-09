@@ -44,7 +44,7 @@ module "Create-AzureRmRecoveryServicesVault-Infr" {
 }
 
 module "Az-KeyVault-Infr" {
-  source                 = "git::https://github.com/JamesDLD/terraform.git//module/Az-KeyVault?ref=release/0.1.4"
+  source                 = "git::https://github.com/JamesDLD/terraform.git//module/Az-KeyVault?ref=master"
   key_vaults             = var.key_vaults
   kv_tenant_id           = var.tenant_id
   kv_prefix              = "${var.app_name}-${var.env_name}-"
