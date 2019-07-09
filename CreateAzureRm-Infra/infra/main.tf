@@ -44,7 +44,8 @@ module "Create-AzureRmRecoveryServicesVault-Infr" {
 }
 
 module "Az-KeyVault-Infr" {
-  source                 = "git::https://github.com/JamesDLD/terraform.git//module/Az-KeyVault?ref=master"
+  #source = "../../module/Az-KeyVault/"
+  source                 = "git::https://github.com/JamesDLD/terraform.git//module/Az-KeyVault?ref=feature/Terraform0.12.3AzureRm1.31.0azuread0.4.0"
   key_vaults             = var.key_vaults
   kv_tenant_id           = var.tenant_id
   kv_prefix              = "${var.app_name}-${var.env_name}-"
@@ -165,7 +166,10 @@ module "Az-RoleAssignment-Apps" {
     azurerm = azurerm.service_principal_infra
   }
 }
-
+/*
+Currently having this error after 2 hours :
+Error: Error waiting for creation/update of Azure Firewall "jdld-infr-fw1" (Resource Group "infr-jdld-noprd-rg1"): Code="GwmOperationTimeOut" Message="Operation timed out. Please retry after some time or contact support." Details=[]
+*/
 module "Az-Firewall-Infr" {
   source                 = "git::https://github.com/JamesDLD/terraform.git//module/Az-Firewall?ref=master"
   fw_resource_group_name = data.azurerm_resource_group.Infr.name
