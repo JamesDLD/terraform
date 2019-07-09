@@ -7,7 +7,7 @@ terraform {
 
 #Set the Provider
 provider "azurerm" {
-  version         = "1.30.1"
+  version         = "1.31.0"
   subscription_id = "${var.subscription_id}"
   client_id       = "${var.client_id}"
   client_secret   = "${var.client_secret}"
@@ -15,7 +15,7 @@ provider "azurerm" {
 }
 
 provider "azuread" {
-  version         = "0.3.1"
+  version         = "0.4.0"
   subscription_id = "${var.subscription_id}"
   client_id       = "${var.client_id}"
   client_secret   = "${var.client_secret}"

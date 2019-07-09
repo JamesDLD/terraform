@@ -165,7 +165,10 @@ module "Az-RoleAssignment-Apps" {
     azurerm = azurerm.service_principal_infra
   }
 }
-
+/*
+Currently having this error after 2 hours :
+Error: Error waiting for creation/update of Azure Firewall "jdld-infr-fw1" (Resource Group "infr-jdld-noprd-rg1"): Code="GwmOperationTimeOut" Message="Operation timed out. Please retry after some time or contact support." Details=[]
+*/
 module "Az-Firewall-Infr" {
   source                 = "git::https://github.com/JamesDLD/terraform.git//module/Az-Firewall?ref=master"
   fw_resource_group_name = data.azurerm_resource_group.Infr.name

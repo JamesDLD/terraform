@@ -7,10 +7,7 @@ resource "azurerm_key_vault" "key_vaults" {
   enabled_for_deployment          = true
   enabled_for_disk_encryption     = true
   enabled_for_template_deployment = true
-
-  sku {
-    name = "${var.kv_sku}"
-  }
+  sku_name                        = "${var.kv_sku}"
 
   tags = "${var.kv_tags}"
 
