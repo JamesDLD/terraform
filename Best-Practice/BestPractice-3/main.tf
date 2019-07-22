@@ -60,47 +60,25 @@ module "Az-LoadBalancer-Demo" {
   LbRules                = []
 }
 
-module "Az-NetworkInterface-Demo" {
-  source                  = "git::https://github.com/JamesDLD/terraform.git//module/Az-NetworkInterface?ref=master"
-  subscription_id         = var.subscription_id
-  Linux_Vms               = []              #If no need just fill "Linux_Vms = []" in the tfvars file
-  Windows_Vms             = var.Windows_Vms #If no need just fill "Windows_Vms = []" in the tfvars file
-  nic_prefix              = "bp3-"
-  nic_suffix              = "-nic1"
-  nic_location            = data.azurerm_resource_group.infr.location
-  nic_resource_group_name = data.azurerm_resource_group.infr.name
-  subnets_ids             = module.Az-Subnet-Demo.subnets_ids
-  lb_backend_ids          = module.Az-LoadBalancer-Demo.lb_backend_ids
-  lb_backend_Public_ids   = ["null"]
-  nic_tags                = data.azurerm_resource_group.infr.tags
-  nsgs_ids                = [""]
-}
-
 module "Az-Vm-Demo" {
-  source                             = "git::https://github.com/JamesDLD/terraform.git//module/Az-Vm?ref=master"
-  subscription_id                    = var.subscription_id
+  source                             = "git::https://github.com/JamesDLD/terraform.git//module/Az-Vm?ref=feature/nomoreusingnull_resource"
   sa_bootdiag_storage_uri            = data.azurerm_storage_account.infr.primary_blob_endpoint
+  nsgs_ids                           = [""]
+  public_ip_ids                      = ["null"]
+  internal_lb_backend_ids            = module.Az-LoadBalancer-Demo.lb_backend_ids
+  public_lb_backend_ids              = ["null"]
   key_vault_id                       = ""
   disable_log_analytics_dependencies = "true"
   workspace_resource_group_name      = ""
   workspace_name                     = ""
-
-  Linux_Vms                     = [] #If no need just fill "Linux_Vms = []" in the tfvars file
-  Linux_nics_ids                = []
-  Linux_storage_image_reference = {}
-  Linux_DataDisks               = []
-  ssh_key                       = ""
-
-  Windows_Vms                     = var.Windows_Vms #If no need just fill "Windows_Vms = []" in the tfvars file
-  Windows_nics_ids                = module.Az-NetworkInterface-Demo.Windows_nics_ids
-  Windows_storage_image_reference = var.Windows_storage_image_reference #If no need just fill "Windows_storage_image_reference = []" in the tfvars file
-  Windows_DataDisks               = []
-
-  vm_location            = data.azurerm_resource_group.infr.location
-  vm_resource_group_name = data.azurerm_resource_group.infr.name
-  vm_prefix              = "bp3-"
-  vm_tags                = data.azurerm_resource_group.infr.tags
-  app_admin              = var.app_admin
-  pass                   = var.pass
+  subnets_ids                        = module.Az-Subnet-Demo.subnets_ids
+  vms                                = var.vms
+  windows_storage_image_reference    = var.windows_storage_image_reference #If no need just fill "windows_storage_image_reference = []" in the tfvars file
+  vm_location                        = data.azurerm_resource_group.infr.location
+  vm_resource_group_name             = data.azurerm_resource_group.infr.name
+  vm_prefix                          = "bp3-"
+  vm_tags                            = data.azurerm_resource_group.infr.tags
+  admin_username                     = var.app_admin
+  admin_password                     = var.pass
 }
 
