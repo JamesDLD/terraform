@@ -181,6 +181,7 @@ module "Az-Vm-Demo" {
   internal_lb_backend_ids            = module.Create-AzureRmLoadBalancer-Demo.lb_backend_ids
   public_lb_backend_ids              = ["public_backend_id1", "public_backend_id1"]
   key_vault_id                       = ""
+  rsv_id                             = ""
   disable_log_analytics_dependencies = "true"
   workspace_resource_group_name      = ""
   workspace_name                     = ""

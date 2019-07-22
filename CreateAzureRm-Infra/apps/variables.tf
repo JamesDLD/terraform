@@ -79,6 +79,10 @@ variable "apps_nsgs" {
 }
 
 #Load Balancers & Availability Set & Virtual Machines
+variable "vms" {
+  description = "VMs list."
+  type        = any
+}
 variable "Lb_sku" {
   description = "The SKU of the Azure Load Balancer. Accepted values are Basic and Standard. Defaults to Basic."
   type        = string

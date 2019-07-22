@@ -26,6 +26,12 @@ data "azurerm_storage_account" "Infr" {
   provider            = azurerm.service_principal_apps
 }
 
+data "azurerm_recovery_services_vault" "vault" {
+  name                = var.bck_rsv_name
+  resource_group_name = data.azurerm_resource_group.Infr.name
+  provider            = azurerm.service_principal_apps
+}
+
 ####################################################
 ##########              Apps              ##########
 ####################################################
@@ -101,6 +107,7 @@ module "Az-Vm-Apps" {
   internal_lb_backend_ids            = module.Az-LoadBalancer-Apps.lb_backend_ids
   public_lb_backend_ids              = ["null"]
   key_vault_id                       = ""
+  rsv_id                             = data.azurerm_recovery_services_vault.vault.id
   disable_log_analytics_dependencies = "true"
   workspace_resource_group_name      = ""
   workspace_name                     = ""
@@ -121,24 +128,7 @@ module "Az-Vm-Apps" {
 }
 
 # Infra cross services for Apps
-module "Az-RecoveryServicesBackupProtection-Apps" {
-  source          = "git::https://github.com/JamesDLD/terraform.git//module/Az-RecoveryServicesBackupProtection?ref=master"
-  subscription_id = var.subscription_id
-  bck_vms_names = concat(
-    module.Az-Vm-Apps.linux_vms_names,
-    module.Az-Vm-Apps.windows_vms_names,
-  ) #Names of the resources to backup
-  bck_vms_resource_group_names = concat(
-    module.Az-Vm-Apps.linux_vms_resource_group_names,
-    module.Az-Vm-Apps.windows_vms_resource_group_names,
-  ) #Resource Group Names of the resources to backup
-  bck_vms                     = concat(var.vms)
-  bck_rsv_name                = var.bck_rsv_name
-  bck_rsv_resource_group_name = data.azurerm_resource_group.Infr.name
-  providers = {
-    azurerm = azurerm.service_principal_apps
-  }
-}
+#N/A
 
 ## Infra common services
 #N/A

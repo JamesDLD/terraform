@@ -65,6 +65,12 @@ variable "key_vault_id" {
   description = "Key vault id to store VM certificates."
 }
 
+variable "rsv_id" {
+  description = "Recovery service vault id to use for VM's backup."
+  default     = ""
+}
+
+
 variable "disable_log_analytics_dependencies" {
 }
 
