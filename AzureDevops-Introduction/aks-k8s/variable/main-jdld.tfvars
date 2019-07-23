@@ -12,7 +12,7 @@ rg_infr_name = "infr-jdld-noprd-rg1"
 
 log_analytics_workspace = {
   name = "demojdldloganwk1" #The log analytics workspace name must be unique
-  sku  = "PerGB2018"        #Refer https://azure.microsoft.com/pricing/details/monitor/ for log analytics pricing 
+  sku  = "PerGB2018"        #Refer to https://azure.microsoft.com/pricing/details/monitor/ for log analytics pricing 
 
   solutions = [{
     name      = "ContainerInsights"
