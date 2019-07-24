@@ -33,13 +33,11 @@ data "azurerm_resource_group" "infr" {
 }
 
 #Action
-module "Az-Subnet-Demo" {
-  source                     = "git::https://github.com/JamesDLD/terraform.git//module/Az-Subnet?ref=master"
-  subscription_id            = var.subscription_id
-  subnet_resource_group_name = data.azurerm_resource_group.infr.name
-  snet_list                  = var.subnets
-  vnet_names                 = module.Get-AzureRmVirtualNetwork.vnet_names
-  nsgs_ids                   = ["null"]
-  route_table_ids            = ["null"]
+resource "azurerm_subnet" "DemoBP2" {
+  count                = length(var.subnets)
+  name                 = var.subnets[count.index]["name"]
+  resource_group_name  = data.azurerm_resource_group.infr.name
+  virtual_network_name = element(module.Get-AzureRmVirtualNetwork.vnet_names, var.subnets[count.index]["vnet_name_id"])
+  address_prefix       = var.subnets[count.index]["cidr_block"]
+  service_endpoints    = lookup(var.subnets[count.index], "service_endpoints", null)
 }
-

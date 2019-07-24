@@ -37,14 +37,13 @@ data "azurerm_storage_account" "infr" {
 }
 
 #Action
-module "Az-Subnet-Demo" {
-  source                     = "git::https://github.com/JamesDLD/terraform.git//module/Az-Subnet?ref=master"
-  subscription_id            = var.subscription_id
-  subnet_resource_group_name = data.azurerm_resource_group.infr.name
-  snet_list                  = var.subnets
-  vnet_names                 = module.Get-AzureRmVirtualNetwork.vnet_names
-  nsgs_ids                   = ["null"]
-  route_table_ids            = ["null"]
+resource "azurerm_subnet" "DemoBP3" {
+  count                = length(var.subnets)
+  name                 = var.subnets[count.index]["name"]
+  resource_group_name  = data.azurerm_resource_group.infr.name
+  virtual_network_name = element(module.Get-AzureRmVirtualNetwork.vnet_names, var.subnets[count.index]["vnet_name_id"])
+  address_prefix       = var.subnets[count.index]["cidr_block"]
+  service_endpoints    = lookup(var.subnets[count.index], "service_endpoints", null)
 }
 
 module "Az-LoadBalancer-Demo" {
@@ -55,7 +54,7 @@ module "Az-LoadBalancer-Demo" {
   lb_location            = data.azurerm_resource_group.infr.location
   lb_resource_group_name = data.azurerm_resource_group.infr.name
   Lb_sku                 = "Standard"
-  subnets_ids            = module.Az-Subnet-Demo.subnets_ids
+  subnets_ids            = azurerm_subnet.DemoBP3.*.id
   lb_tags                = data.azurerm_resource_group.infr.tags
   LbRules                = []
 }
@@ -71,7 +70,7 @@ module "Az-Vm-Demo" {
   disable_log_analytics_dependencies = "true"
   workspace_resource_group_name      = ""
   workspace_name                     = ""
-  subnets_ids                        = module.Az-Subnet-Demo.subnets_ids
+  subnets_ids                        = azurerm_subnet.DemoBP3.*.id
   vms                                = var.vms
   windows_storage_image_reference    = var.windows_storage_image_reference #If no need just fill "windows_storage_image_reference = []" in the tfvars file
   vm_location                        = data.azurerm_resource_group.infr.location

@@ -44,7 +44,7 @@ variable "roles" {
 
 #Call module
 module "Az-RoleDefinition-Demo" {
-  source                     = "../../Az-RoleDefinition"
+  source                     = "github.com/JamesDLD/terraform/module/Az-RoleDefinition"
   roles   = var.roles
   role_prefix = "jdld-demo-"
   role_suffix = "-role1"
