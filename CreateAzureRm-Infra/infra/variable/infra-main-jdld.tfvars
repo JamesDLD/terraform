@@ -110,16 +110,16 @@ route_tables = [
 
 vnets = [
   {
-    id             = "1"
-    prefix         = "sec"
-    address_spaces = ["198.18.1.0/24"]
-    bastion        = false
+    id            = "1"
+    prefix        = "sec"
+    address_space = ["198.18.1.0/24"]
+    bastion       = false
   },
   {
-    id             = "1"
-    prefix         = "apps"
-    address_spaces = ["198.18.2.0/24"]
-    bastion        = false
+    id            = "1"
+    prefix        = "apps"
+    address_space = ["198.18.2.0/24"]
+    bastion       = false
   },
 ]
 
