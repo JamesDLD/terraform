@@ -4,9 +4,7 @@ subnets = [
   {
     name              = "bp3-front-snet1"
     cidr_block        = "10.0.3.0/24"
-    nsg_id            = "777" #Id of the Network Security Group, set to 777 if there is no Network Security Groups
-    route_table_id    = "777" #Id of the Route, set to 777 if there is no Routes
-    vnet_name_id      = "0"   #Id of the vnet
+    vnet_name_id      = "0" #Id of the vnet
     service_endpoints = ["Microsoft.Storage", "Microsoft.Sql", "Microsoft.AzureActiveDirectory", "Microsoft.AzureCosmosDB", "Microsoft.ServiceBus"]
   },
 ]
@@ -23,6 +21,7 @@ vms = [
   {
     suffix_name           = "rdg"             #(Mandatory) suffix of the vm
     id                    = "1"               #(Mandatory) Id of the VM
+    static_ip             = "10.0.3.5"        #(Optional) Set null to get dynamic IP or delete this line
     internal_lb_iteration = "0"               #(Optional) Id of the Internal Load Balancer, set to null or delete the line if there is no Load Balancer
     os_type               = "windows"         #(Mandatory) Support "linux" or "windows"
     storage_data_disks    = []                #(Mandatory) For no data disks set []
