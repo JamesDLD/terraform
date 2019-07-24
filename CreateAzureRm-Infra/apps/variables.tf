@@ -68,11 +68,6 @@ variable "bck_rsv_name" {
 
 #Subnet & Network Security group
 
-variable "apps_snets" {
-  type        = list
-  description = "Subnet list."
-}
-
 variable "apps_nsgs" {
   type        = any
   description = "Apps Network Security Groups list containing the following keys : suffix_name."

@@ -117,11 +117,7 @@ variable "backup_policies" {
 #Vnet & Subnet & Network Security group
 variable "vnets" {
   description = "Virtual Networks list."
-  type = list(object({
-    vnet_suffix_name = string
-    address_spaces   = string #For multiple values add spaces between values
-    dns_servers      = string #For multiple values add spaces between values
-  }))
+  type        = any
 }
 
 variable "snets" {
