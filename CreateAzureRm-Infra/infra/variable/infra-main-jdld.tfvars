@@ -149,7 +149,7 @@ snets = [
 infra_nsgs = [
   {
     id = "1"
-    rules = [
+    security_rules = [
       {
         description                = "Demo1"
         direction                  = "Inbound"
