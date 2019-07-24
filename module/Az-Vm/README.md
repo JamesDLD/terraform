@@ -28,34 +28,28 @@ variable "client_secret" {
 
 #Set resource variables
 
-variable "vnets" {
+variable "virtual_networks" {
   default = [
     {
-      vnet_suffix_name                   = "demovm1"
-      address_spaces                     = "10.0.128.0/24 198.18.2.0/24" #For multiple values add spaces between values
-      dns_servers                        = ""                            #For multiple values add spaces between values
-      dns_zone_for_the_registration_vnet = "demovm1.jdld.test"           #If you remove this key the zone name will be "vnet_suffix_name.az"
+      id            = "1"
+      prefix        = "demovm"
+      address_space = ["10.0.128.0/24", "198.18.2.0/24"]
+      bastion       = false
     },
   ]
 }
 
-variable "snets" {
+variable "subnets" {
   default = [
     {
-      name              = "demo1"
-      cidr_block        = "10.0.128.0/28"
-      nsg_id            = "777"                                                             #Id of the Network Security Group, set to 777 if there is no Network Security Groups
-      route_table_id    = "777"                                                             #Id of the Route table, set to 777 if there is no Route table
-      vnet_name_id      = "0"                                                               #Id of the vnet
-      service_endpoints = "Microsoft.AzureActiveDirectory Microsoft.KeyVault Microsoft.Sql" #Service Endpoints list sperated by an espace, if you don't need to set it to "" or "777"
+      virtual_network_iteration = "0"             #(Mandatory) 
+      name                      = "demo1"         #(Mandatory) 
+      address_prefix            = "10.0.128.0/28" #(Mandatory) 
     },
     {
-      name              = "demo2"
-      cidr_block        = "10.0.128.16/28"
-      nsg_id            = "777" #Id of the Network Security Group, set to 777 if there is no Network Security Groups
-      route_table_id    = "777" #Id of the Route table, set to 777 if there is no Route table
-      vnet_name_id      = "0"   #Id of the vnet
-      service_endpoints = ""    #Service Endpoints list sperated by an espace, if you don't need to set it to "" or "777"
+      virtual_network_iteration = "0"              #(Mandatory) 
+      name                      = "demo2"          #(Mandatory) 
+      address_prefix            = "10.0.128.16/28" #(Mandatory) 
     },
   ]
 }
@@ -72,6 +66,17 @@ variable "Lbs" {
 
 variable "vms" {
   default = [
+    {
+      suffix_name          = "nva"             #(Mandatory) suffix of the vm
+      id                   = "1"               #(Mandatory) Id of the VM
+      os_type              = "linux"           #(Mandatory) Support "linux" or "windows"
+      storage_data_disks   = []                #(Mandatory) For no data disks set []
+      subnet_iteration     = "1"               #(Mandatory) Id of the Subnet
+      zones                = ["1"]             #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to "", WARNING you could not have Availabilitysets and AvailabilityZones
+      vm_size              = "Standard_DS1_v2" #(Mandatory) 
+      managed_disk_type    = "Premium_LRS"     #(Mandatory) 
+      enable_ip_forwarding = true              #(Optiona)
+    },
     {
       suffix_name = "rdg"   #(Mandatory) suffix of the vm
       id          = "1"     #(Mandatory)Id of the VM
@@ -141,40 +146,31 @@ variable "default_tags" {
 
 #Call module
 module "Az-VirtualNetwork-Demo" {
-  source                   = "../../Az-VirtualNetwork"
-  vnets                    = var.vnets
-  vnet_prefix              = "infra-demo-"
-  vnet_suffix              = "-net1"
-  vnet_resource_group_name = "infr-jdld-noprd-rg1"
-  vnet_location            = "francecentral"
-  vnet_tags                = var.default_tags
-}
-
-module "Az-Subnet-Demo" {
-  source                     = "../../Az-Subnet"
-  subscription_id            = var.subscription_id
-  subnet_resource_group_name = "infr-jdld-noprd-rg1"
-  snet_list                  = var.snets
-  vnet_names                 = module.Az-VirtualNetwork-Demo.vnet_names
-  nsgs_ids                   = ["null"]
-  route_table_ids            = ["null"]
+  source                      = "github.com/JamesDLD/terraform/module/Az-VirtualNetwork"
+  net_prefix                  = "testvm"
+  network_resource_group_name = "infr-jdld-noprd-rg2"
+  virtual_networks            = var.virtual_networks
+  subnets                     = var.subnets
+  route_tables                = []
+  network_security_groups     = []
+  net_tags                    = var.default_tags
 }
 
 module "Create-AzureRmLoadBalancer-Demo" {
-  source                 = "../../Az-LoadBalancer"
+  source                 = "github.com/JamesDLD/terraform/module/Az-LoadBalancer"
   Lbs                    = var.Lbs
   lb_prefix              = "jdld-sand1-"
   lb_suffix              = "-lb1"
-  lb_location            = "francecentral"
-  lb_resource_group_name = "infr-jdld-noprd-rg1"
+  lb_location            = "westeurope"
+  lb_resource_group_name = "infr-jdld-noprd-rg2"
   Lb_sku                 = "basic"
-  subnets_ids            = module.Az-Subnet-Demo.subnets_ids
+  subnets_ids            = module.Az-VirtualNetwork-Demo.subnet_ids
   lb_tags                = var.default_tags
   LbRules                = []
 }
 
 module "Az-Vm-Demo" {
-  source                             = "../../Az-Vm"
+  source                             = "github.com/JamesDLD/terraform/module/Az-Vm"
   sa_bootdiag_storage_uri            = "https://infrsand1vpcjdld1.blob.core.windows.net/" #(Mandatory)
   nsgs_ids                           = ["nsg_id1", "nsg_id2"]
   public_ip_ids                      = ["public_ip_id1", "public_ip_id2"]
@@ -185,13 +181,14 @@ module "Az-Vm-Demo" {
   disable_log_analytics_dependencies = "true"
   workspace_resource_group_name      = ""
   workspace_name                     = ""
-  subnets_ids                        = module.Az-Subnet-Demo.subnets_ids
+  subnets_ids                        = module.Az-VirtualNetwork-Demo.subnet_ids
   vms                                = var.vms
-  vm_location                        = "francecentral"
-  vm_resource_group_name             = "infr-jdld-noprd-rg1"
+  vm_location                        = "westeurope"
+  vm_resource_group_name             = "infr-jdld-noprd-rg2"
   vm_prefix                          = "jdld-sand1-"
   admin_username                     = "myadmlogin"
   admin_password                     = "Myadmlogin_StoredInASecretFile?"
   vm_tags                            = var.default_tags
 }
+
 ```

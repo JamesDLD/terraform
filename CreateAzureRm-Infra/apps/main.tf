@@ -55,17 +55,33 @@ data "azurerm_network_security_group" "Infr" {
 }
 
 ## Core Network components
-module "Az-NetworkSecurityGroup-Apps" {
-  source                  = "git::https://github.com/JamesDLD/terraform.git//module/Az-NetworkSecurityGroup?ref=master"
-  nsgs                    = var.apps_nsgs
-  nsg_prefix              = "${var.app_name}-${var.env_name}-"
-  nsg_suffix              = "-nsg1"
-  nsg_location            = data.azurerm_resource_group.MyApps.location
-  nsg_resource_group_name = data.azurerm_resource_group.MyApps.name
-  nsg_tags                = data.azurerm_resource_group.MyApps.tags
-  providers = {
-    azurerm = azurerm.service_principal_apps
+resource "azurerm_network_security_group" "apps_nsgs" {
+  count               = length(var.apps_nsgs)
+  name                = "${var.app_name}-${var.env_name}-nsg${var.apps_nsgs[count.index]["id"]}"
+  location            = data.azurerm_resource_group.MyApps.location
+  resource_group_name = data.azurerm_resource_group.MyApps.name
+
+  dynamic "security_rule" {
+    for_each = var.apps_nsgs[count.index]["security_rules"]
+    content {
+      description                  = lookup(security_rule.value, "description", null)
+      direction                    = lookup(security_rule.value, "direction", null)
+      name                         = lookup(security_rule.value, "name", null)
+      access                       = lookup(security_rule.value, "access", null)
+      priority                     = lookup(security_rule.value, "priority", null)
+      source_address_prefix        = lookup(security_rule.value, "source_address_prefix", null)
+      source_address_prefixes      = lookup(security_rule.value, "source_address_prefixes", null)
+      destination_address_prefix   = lookup(security_rule.value, "destination_address_prefix", null)
+      destination_address_prefixes = lookup(security_rule.value, "destination_address_prefixes", null)
+      destination_port_range       = lookup(security_rule.value, "destination_port_range", null)
+      destination_port_ranges      = lookup(security_rule.value, "destination_port_ranges", null)
+      protocol                     = lookup(security_rule.value, "protocol", null)
+      source_port_range            = lookup(security_rule.value, "source_port_range", null)
+      source_port_ranges           = lookup(security_rule.value, "source_port_ranges", null)
+    }
   }
+  tags     = data.azurerm_resource_group.MyApps.tags
+  provider = azurerm.service_principal_apps
 }
 
 module "Az-Subnet-Apps" {
@@ -102,7 +118,7 @@ module "Az-LoadBalancer-Apps" {
 module "Az-Vm-Apps" {
   source                             = "git::https://github.com/JamesDLD/terraform.git//module/Az-Vm?ref=feature/nomoreusingnull_resource"
   sa_bootdiag_storage_uri            = data.azurerm_storage_account.Infr.primary_blob_endpoint
-  nsgs_ids                           = module.Az-NetworkSecurityGroup-Apps.nsgs_ids
+  nsgs_ids                           = azurerm_network_security_group.apps_nsgs.*.id
   public_ip_ids                      = ["null"]
   internal_lb_backend_ids            = module.Az-LoadBalancer-Apps.lb_backend_ids
   public_lb_backend_ids              = ["null"]

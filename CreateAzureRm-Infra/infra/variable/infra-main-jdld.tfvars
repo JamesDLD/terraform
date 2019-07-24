@@ -96,48 +96,57 @@ kv_sku = "standard"
 
 route_tables = [
   {
-    rt_suffix_name = "core"
-  },
-]
-
-routes = [
-  {
-    name                   = "all_to_firewall"
-    Id_rt                  = "0"
-    address_prefix         = "0.0.0.0/0"
-    next_hop_type          = "VirtualAppliance"
-    next_hop_in_ip_address = "198.18.1.4"
+    id = "1"
+    routes = [
+      {
+        name                   = "all_to_firewall"
+        address_prefix         = "0.0.0.0/0"
+        next_hop_type          = "VirtualAppliance"
+        next_hop_in_ip_address = "198.18.1.4"
+      },
+    ]
   },
 ]
 
 vnets = [
   {
-    vnet_suffix_name = "sec"
-    address_spaces   = "198.18.1.0/24" #For multiple values add spaces between values
-    dns_servers      = ""              #For multiple values add spaces between values
+    id             = "1"
+    prefix         = "sec"
+    address_spaces = ["198.18.1.0/24"]
   },
   {
-    vnet_suffix_name = "apps"
-    address_spaces   = "198.18.2.0/24" #For multiple values add spaces between values
-    dns_servers      = ""              #For multiple values add spaces between values
+    id             = "1"
+    prefix         = "apps"
+    address_spaces = ["198.18.2.0/24"]
   },
 ]
 
 snets = [
   {
-    name              = "AzureFirewallSubnet"
-    cidr_block        = "198.18.1.0/26"
-    nsg_id            = "777"                                                                                                                                               #Id of the Network Security Group, set to 777 if there is no Network Security Groups
-    route_table_id    = "777"                                                                                                                                               #Id of the Route table, set to 777 if there is no Route table
-    vnet_name_id      = "0"                                                                                                                                                 #Id of the vnet
-    service_endpoints = "Microsoft.AzureActiveDirectory Microsoft.AzureCosmosDB Microsoft.EventHub Microsoft.KeyVault Microsoft.ServiceBus Microsoft.Sql Microsoft.Storage" #Service Endpoints list sperated by an espace, if you don't need to set it to "" or "777"
+    virtual_network_iteration = "0" #Id of the vnet
+    name                      = "AzureFirewallSubnet"
+    address_prefix            = "198.18.1.0/26"
+    service_endpoints         = ["Microsoft.AzureActiveDirectory", "Microsoft.AzureCosmosDB", "Microsoft.EventHub", "Microsoft.KeyVault", "Microsoft.ServiceBus", "Microsoft.Sql", "Microsoft.Storage"]
+  },
+  {
+    virtual_network_iteration = "1" #Id of the vnet
+    name                      = "frontend"
+    address_prefix            = "198.18.2.224/28"
+    security_group_iteration  = "0" #(Optional) delete this line for no NSG
+    route_table_iteration     = "0" #(Optional) delete this line for no Route Table
+  },
+  {
+    virtual_network_iteration = "1" #Id of the vnet
+    name                      = "backend"
+    address_prefix            = "198.18.2.240/28"
+    security_group_iteration  = "0" #(Optional) delete this line for no NSG
+    route_table_iteration     = "0" #(Optional) delete this line for no Route Table
   },
 ]
 
 infra_nsgs = [
   {
-    suffix_name = "snet-apps"
-
+    id = "1"
     rules = [
       {
         description                = "Demo1"

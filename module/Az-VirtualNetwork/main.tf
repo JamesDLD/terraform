@@ -64,7 +64,6 @@ resource "azurerm_subnet" "subnets" {
 # -
 # - Route Table
 # -
-
 resource "azurerm_route_table" "rts" {
   count                         = length(var.route_tables)
   name                          = "${var.net_prefix}-${local.location}-rt${var.route_tables[count.index]["id"]}"

@@ -27,3 +27,6 @@ output "subnet_ids" {
 output "network_security_group_ids" {
   value = azurerm_network_security_group.nsgs.*.id
 }
+output "route_table_ids" {
+  value = azurerm_route_table.rts.*.id
+}

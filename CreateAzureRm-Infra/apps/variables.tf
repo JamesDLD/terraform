@@ -74,7 +74,7 @@ variable "apps_snets" {
 }
 
 variable "apps_nsgs" {
-  type        = list
+  type        = any
   description = "Apps Network Security Groups list containing the following keys : suffix_name."
 }
 

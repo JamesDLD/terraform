@@ -46,9 +46,8 @@ apps_snets = [
 
 apps_nsgs = [
   {
-    suffix_name = "nic-all"
-
-    rules = [
+    id = "1"
+    security_rules = [
       {
         description                = "Demo1"
         direction                  = "Inbound"
