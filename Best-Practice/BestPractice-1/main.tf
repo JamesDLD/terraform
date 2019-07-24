@@ -47,5 +47,5 @@ resource "azurerm_role_assignment" "test" {
 
 output "subnet_ids" {
   description = "The subnet Ids."
-  value = azurerm_virtual_network.bp1-vnet1.subnet.*.id
+  value       = azurerm_virtual_network.bp1-vnet1.subnet.*.id
 }
