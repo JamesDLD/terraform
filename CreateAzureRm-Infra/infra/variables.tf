@@ -4,11 +4,7 @@
 terraform {
   backend "azurerm" {
   }
-  required_version = "0.12.3"
-}
-
-provider "azurerm" {
-  version = "1.31.0"
+  required_version = "0.12.5"
 }
 
 provider "random" {
@@ -117,45 +113,21 @@ variable "backup_policies" {
 #Vnet & Subnet & Network Security group
 variable "vnets" {
   description = "Virtual Networks list."
-  type = list(object({
-    vnet_suffix_name = string
-    address_spaces   = string #For multiple values add spaces between values
-    dns_servers      = string #For multiple values add spaces between values
-  }))
+  type        = any
 }
 
 variable "snets" {
   description = "Subnet list."
-  type = list(object({
-    name              = string
-    cidr_block        = string
-    nsg_id            = number #Id of the Network Security Group, set to 777 if there is no Network Security Groups
-    route_table_id    = number #Id of the Route table, set to 777 if there is no Route table
-    vnet_name_id      = number #Id of the vnet
-    service_endpoints = string #Service Endpoints list sperated by an espace, if you don't need to set it to "" or "777"
-  }))
+  type        = any
 }
 
 variable "route_tables" {
   description = "Route table."
-  type = list(object({
-    rt_suffix_name = string
-  }))
-}
-
-variable "routes" {
-  description = "Routes list."
-  type = list(object({
-    name                   = string
-    Id_rt                  = number
-    address_prefix         = string
-    next_hop_type          = string
-    next_hop_in_ip_address = string
-  }))
+  type        = any
 }
 
 variable "infra_nsgs" {
-  type        = list
+  type        = any
   description = "Infra Network Security Groups list containing the following keys : suffix_name."
 }
 

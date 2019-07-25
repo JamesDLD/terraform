@@ -4,11 +4,7 @@
 terraform {
   backend "azurerm" {
   }
-  required_version = "0.12.3"
-}
-
-provider "azurerm" {
-  version = "1.31.0"
+  required_version = "0.12.5"
 }
 
 provider "random" {
@@ -69,16 +65,23 @@ variable "bck_rsv_name" {
 #Subnet & Network Security group
 
 variable "apps_snets" {
-  type        = list
-  description = "Subnet list."
+  description = "Subnets properties."
+  type = list(object({
+    vnet_name   = string
+    subnet_name = string
+  }))
 }
 
 variable "apps_nsgs" {
-  type        = list
+  type        = any
   description = "Apps Network Security Groups list containing the following keys : suffix_name."
 }
 
 #Load Balancers & Availability Set & Virtual Machines
+variable "vms" {
+  description = "VMs list."
+  type        = any
+}
 variable "Lb_sku" {
   description = "The SKU of the Azure Load Balancer. Accepted values are Basic and Standard. Defaults to Basic."
   type        = string
@@ -86,7 +89,7 @@ variable "Lb_sku" {
 
 variable "Lbs" {
   type        = list
-  description = "Load Balancer list containing the following keys : suffix_name, Id_Subnet, static_ip."
+  description = "Load Balancer list containing the following keys : suffix_name, subnet_iteration, static_ip."
 }
 
 variable "LbRules" {
@@ -94,42 +97,14 @@ variable "LbRules" {
   description = "Load Balancer rules list."
 }
 
-variable "Linux_Vms" {
-  type        = list
-  description = "Linux VM list"
-}
-
-variable "Linux_DataDisks" {
-  type = list
-}
-
-variable "Linux_storage_image_reference" {
+variable "linux_storage_image_reference" {
   type        = map(string)
   description = "Could containt an 'id' of a custom image or the following parameters for an Azure public 'image publisher','offer','sku', 'version'"
 }
 
-variable "Windows_Vms" {
-  type        = list
-  description = "Windows VM list"
-}
-
-variable "Windows_DataDisks" {
-  type = list
-}
-
-variable "Windows_storage_image_reference" {
+variable "windows_storage_image_reference" {
   type        = map(string)
   description = "Could containt an 'id' of a custom image or the following parameters for an Azure public 'image publisher','offer','sku', 'version'"
-}
-
-variable "Linux_Ss_Vms" {
-  type        = list
-  description = "Linux VM Scale Set list"
-}
-
-variable "Windows_Ss_Vms" {
-  type        = list
-  description = "Windows VM Scale Set list"
 }
 
 variable "app_admin" {

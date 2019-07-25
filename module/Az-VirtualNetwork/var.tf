@@ -1,43 +1,74 @@
-variable "vnets" {
-  description = "Virtual Networks list."
-  type        = any #typing any because I didn't found a way to set the following key as optional : dns_zone_for_the_registration_vnet
-  /*
-  type = list(object({
-    vnet_suffix_name                   = string
-    address_spaces                     = string #For multiple values add spaces between values
-    dns_servers                        = string #For multiple values add spaces between values
-    dns_zone_for_the_registration_vnet = string #If you remove this key the zone name will be "vnet_suffix_name.az"
-  }))
-  */
+# -
+# - Core object
+# -
+variable "net_location" {
+  description = "Network resources location if different that the resource group's location."
+  type        = string
+  default     = ""
 }
 
-variable "vnet_prefix" {
+variable "net_tags" {
+  description = "Network resources tags."
+  type        = map(string)
+  default     = {}
+}
+
+variable "net_prefix" {
   description = "Virtual Network name prefix."
   type        = string
 }
 
-variable "vnet_suffix" {
-  description = "Virtual Network name suffix."
+variable "network_resource_group_name" {
+  description = "The resource group name of the network resources."
   type        = string
 }
 
-variable "vnet_resource_group_name" {
-  description = "Virtual Network resource group name."
-  type        = string
+variable "network_ddos_protection_plan" {
+  description = "Network network ddos protection plan parameters."
+  type        = any
+  default     = []
 }
 
-variable "vnet_location" {
-  description = "Virtual Network location."
-  type        = string
+# -
+# - Network object
+# -
+variable "virtual_networks" {
+  description = "The virtal networks with their properties."
+  type        = any
+  /*
+  #This implies a crash described here https://github.com/hashicorp/terraform/issues/22082 -->
+  type = list(object({
+    id            = string
+    address_space = list(string)
+    subnets       = any
+    bastion       = bool
+  }))
+  */
+}
+variable "subnets" {
+  description = "The virtal networks subnets with their properties."
+  type        = any
+}
+# -
+# - Route Table
+# -
+variable "route_tables" {
+  description = "The route tables with their properties."
+  type        = any
 }
 
-variable "vnet_tags" {
-  description = "Virtual Network tags."
-  type        = map(string)
-}
-
-variable "emptylist" {
-  type    = list(string)
-  default = ["null", "null"]
+# -
+# - Network Security Group
+# -
+variable "network_security_groups" {
+  description = "The network security groups with their properties."
+  type        = any
+  /*
+  #This implies a crash described here https://github.com/hashicorp/terraform/issues/22082 -->
+  type = list(object({
+    id             = string
+    security_rules = any
+  }))
+  */
 }
 

@@ -2,6 +2,7 @@
 *.tfstate
 *.tfstate.backup
 *.DS_Store
+*.tfstate.lock.info
 
 # Directory
 .terraform/
