@@ -32,7 +32,7 @@ The Terraform executable file, the AzureRm provider and our modules version will
 Declare Terraform required version 
 ```hcl
 terraform {
-  required_version = "0.12.3"
+  required_version = "0.12.5"
 
   backend "azurerm" {
     storage_account_name = "infrsand1vpcjdld1"

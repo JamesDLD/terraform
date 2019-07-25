@@ -1,24 +1,12 @@
-output "Linux_Vms_names" {
-  value = azurerm_virtual_machine.Linux_Vms.*.name
+output "linux_vms_resource_group_names" {
+  value = azurerm_virtual_machine.linux_vms.*.resource_group_name
 }
-
-output "Linux_Vms_rgnames" {
-  value = azurerm_virtual_machine.Linux_Vms.*.resource_group_name
+output "linux_vms_names" {
+  value = azurerm_virtual_machine.linux_vms.*.name
 }
-
-output "Linux_Vms_ids" {
-  value = azurerm_virtual_machine.Linux_Vms.*.id
+output "windows_vms_resource_group_names" {
+  value = azurerm_virtual_machine.windows_vms.*.resource_group_name
 }
-
-output "Windows_Vms_names" {
-  value = azurerm_virtual_machine.Windows_Vms.*.name
+output "windows_vms_names" {
+  value = azurerm_virtual_machine.windows_vms.*.name
 }
-
-output "Windows_Vms_rgnames" {
-  value = azurerm_virtual_machine.Windows_Vms.*.resource_group_name
-}
-
-output "Windows_Vms_ids" {
-  value = azurerm_virtual_machine.Windows_Vms.*.id
-}
-

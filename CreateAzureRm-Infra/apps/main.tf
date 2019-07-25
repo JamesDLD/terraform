@@ -5,10 +5,10 @@ provider "azurerm" {
   client_id       = var.service_principals[1]["Application_Id"]
   client_secret   = var.service_principals[1]["Application_Secret"]
   tenant_id       = var.tenant_id
-  alias           = "service_principal_apps"
+  version         = "1.31.0"
 }
 
-# Module
+# Call Resources and Modules
 
 ####################################################
 ##########           Infra                ##########
@@ -16,14 +16,24 @@ provider "azurerm" {
 
 ## Prerequisistes Inventory
 data "azurerm_resource_group" "Infr" {
-  name     = var.rg_infr_name
-  provider = azurerm.service_principal_apps
+  name = var.rg_infr_name
 }
 
 data "azurerm_storage_account" "Infr" {
   name                = var.sa_infr_name
   resource_group_name = var.rg_infr_name
-  provider            = azurerm.service_principal_apps
+}
+
+data "azurerm_recovery_services_vault" "vault" {
+  name                = var.bck_rsv_name
+  resource_group_name = data.azurerm_resource_group.Infr.name
+}
+
+data "azurerm_subnet" "snets" {
+  count                = length(var.apps_snets)
+  name                 = var.apps_snets[count.index]["subnet_name"]
+  virtual_network_name = var.apps_snets[count.index]["vnet_name"]
+  resource_group_name  = data.azurerm_resource_group.Infr.name
 }
 
 ####################################################
@@ -32,48 +42,43 @@ data "azurerm_storage_account" "Infr" {
 
 ## Prerequisistes Inventory
 data "azurerm_resource_group" "MyApps" {
-  name     = var.rg_apps_name
-  provider = azurerm.service_principal_apps
+  name = var.rg_apps_name
 }
 
 data "azurerm_route_table" "Infr" {
-  name                = "jdld-infr-core-rt1"
+  name                = "infra-jdld-infr-francecentral-rt1"
   resource_group_name = data.azurerm_resource_group.Infr.name
-  provider            = azurerm.service_principal_apps
-}
-
-data "azurerm_network_security_group" "Infr" {
-  name                = "jdld-infr-snet-apps-nsg1"
-  resource_group_name = var.rg_infr_name
-  provider            = azurerm.service_principal_apps
 }
 
 ## Core Network components
-module "Az-NetworkSecurityGroup-Apps" {
-  source                  = "git::https://github.com/JamesDLD/terraform.git//module/Az-NetworkSecurityGroup?ref=master"
-  nsgs                    = var.apps_nsgs
-  nsg_prefix              = "${var.app_name}-${var.env_name}-"
-  nsg_suffix              = "-nsg1"
-  nsg_location            = data.azurerm_resource_group.MyApps.location
-  nsg_resource_group_name = data.azurerm_resource_group.MyApps.name
-  nsg_tags                = data.azurerm_resource_group.MyApps.tags
-  providers = {
-    azurerm = azurerm.service_principal_apps
+resource "azurerm_network_security_group" "apps_nsgs" {
+  count               = length(var.apps_nsgs)
+  name                = "${var.app_name}-${var.env_name}-nsg${var.apps_nsgs[count.index]["id"]}"
+  location            = data.azurerm_resource_group.MyApps.location
+  resource_group_name = data.azurerm_resource_group.MyApps.name
+
+  dynamic "security_rule" {
+    for_each = var.apps_nsgs[count.index]["security_rules"]
+    content {
+      description                  = lookup(security_rule.value, "description", null)
+      direction                    = lookup(security_rule.value, "direction", null)
+      name                         = lookup(security_rule.value, "name", null)
+      access                       = lookup(security_rule.value, "access", null)
+      priority                     = lookup(security_rule.value, "priority", null)
+      source_address_prefix        = lookup(security_rule.value, "source_address_prefix", null)
+      source_address_prefixes      = lookup(security_rule.value, "source_address_prefixes", null)
+      destination_address_prefix   = lookup(security_rule.value, "destination_address_prefix", null)
+      destination_address_prefixes = lookup(security_rule.value, "destination_address_prefixes", null)
+      destination_port_range       = lookup(security_rule.value, "destination_port_range", null)
+      destination_port_ranges      = lookup(security_rule.value, "destination_port_ranges", null)
+      protocol                     = lookup(security_rule.value, "protocol", null)
+      source_port_range            = lookup(security_rule.value, "source_port_range", null)
+      source_port_ranges           = lookup(security_rule.value, "source_port_ranges", null)
+    }
   }
+  tags = data.azurerm_resource_group.MyApps.tags
 }
 
-module "Az-Subnet-Apps" {
-  source                     = "git::https://github.com/JamesDLD/terraform.git//module/Az-Subnet?ref=master"
-  subscription_id            = var.subscription_id
-  subnet_resource_group_name = var.rg_infr_name
-  snet_list                  = var.apps_snets
-  vnet_names                 = ["infra-jdld-infr-apps-net1"]
-  nsgs_ids                   = [data.azurerm_network_security_group.Infr.id]
-  route_table_ids            = [data.azurerm_route_table.Infr.id]
-  providers = {
-    azurerm = azurerm.service_principal_apps
-  }
-}
 
 ## Virtual Machines components
 
@@ -81,87 +86,41 @@ module "Az-LoadBalancer-Apps" {
   source                 = "git::https://github.com/JamesDLD/terraform.git//module/Az-LoadBalancer?ref=master"
   Lbs                    = var.Lbs
   lb_prefix              = "${var.app_name}-${var.env_name}-"
-  lb_suffix              = "-lb1"
   lb_location            = data.azurerm_resource_group.MyApps.location
   lb_resource_group_name = data.azurerm_resource_group.MyApps.name
   Lb_sku                 = var.Lb_sku
-  subnets_ids            = module.Az-Subnet-Apps.subnets_ids
+  subnets_ids            = data.azurerm_subnet.snets.*.id
   lb_tags                = data.azurerm_resource_group.MyApps.tags
   LbRules                = var.LbRules
-  providers = {
-    azurerm = azurerm.service_principal_apps
-  }
-}
-
-module "Az-NetworkInterface-Apps" {
-  source                  = "git::https://github.com/JamesDLD/terraform.git//module/Az-NetworkInterface?ref=master"
-  subscription_id         = var.subscription_id
-  Linux_Vms               = var.Linux_Vms   #If no need just fill "Linux_Vms = []" in the tfvars file
-  Windows_Vms             = var.Windows_Vms #If no need just fill "Windows_Vms = []" in the tfvars file
-  nic_prefix              = "${var.app_name}-${var.env_name}-"
-  nic_suffix              = "-nic1"
-  nic_location            = data.azurerm_resource_group.MyApps.location
-  nic_resource_group_name = data.azurerm_resource_group.MyApps.name
-  subnets_ids             = module.Az-Subnet-Apps.subnets_ids
-  lb_backend_ids          = module.Az-LoadBalancer-Apps.lb_backend_ids
-  lb_backend_Public_ids   = ["null"]
-  nic_tags                = data.azurerm_resource_group.MyApps.tags
-  nsgs_ids                = module.Az-NetworkSecurityGroup-Apps.nsgs_ids
-  providers = {
-    azurerm = azurerm.service_principal_apps
-  }
 }
 
 module "Az-Vm-Apps" {
   source                             = "git::https://github.com/JamesDLD/terraform.git//module/Az-Vm?ref=master"
-  subscription_id                    = var.subscription_id
   sa_bootdiag_storage_uri            = data.azurerm_storage_account.Infr.primary_blob_endpoint
+  nsgs_ids                           = azurerm_network_security_group.apps_nsgs.*.id
+  public_ip_ids                      = ["null"]
+  internal_lb_backend_ids            = module.Az-LoadBalancer-Apps.lb_backend_ids
+  public_lb_backend_ids              = ["null"]
   key_vault_id                       = ""
+  rsv_id                             = data.azurerm_recovery_services_vault.vault.id
   disable_log_analytics_dependencies = "true"
   workspace_resource_group_name      = ""
   workspace_name                     = ""
-
-  Linux_Vms                     = var.Linux_Vms #If no need just fill "Linux_Vms = []" in the tfvars file
-  Linux_nics_ids                = module.Az-NetworkInterface-Apps.Linux_nics_ids
-  Linux_storage_image_reference = var.Linux_storage_image_reference
-  Linux_DataDisks               = var.Linux_DataDisks
-  ssh_key                       = var.ssh_key
-
-  Windows_Vms                     = var.Windows_Vms #If no need just fill "Windows_Vms = []" in the tfvars file
-  Windows_nics_ids                = module.Az-NetworkInterface-Apps.Windows_nics_ids
-  Windows_storage_image_reference = var.Windows_storage_image_reference #If no need just fill "Windows_storage_image_reference = []" in the tfvars file
-  Windows_DataDisks               = var.Windows_DataDisks
-
-  vm_location            = data.azurerm_resource_group.MyApps.location
-  vm_resource_group_name = data.azurerm_resource_group.MyApps.name
-  vm_prefix              = "${var.app_name}-${var.env_name}-"
-  vm_tags                = data.azurerm_resource_group.MyApps.tags
-  app_admin              = var.app_admin
-  pass                   = var.pass
-  providers = {
-    azurerm = azurerm.service_principal_apps
-  }
+  subnets_ids                        = data.azurerm_subnet.snets.*.id
+  vms                                = var.vms
+  linux_storage_image_reference      = var.linux_storage_image_reference
+  windows_storage_image_reference    = var.windows_storage_image_reference #If no need just fill "windows_storage_image_reference = []" in the tfvars file
+  vm_location                        = data.azurerm_resource_group.MyApps.location
+  vm_resource_group_name             = data.azurerm_resource_group.MyApps.name
+  vm_prefix                          = "${var.app_name}-${var.env_name}-"
+  admin_username                     = var.app_admin
+  admin_password                     = var.pass
+  ssh_key                            = var.ssh_key
+  vm_tags                            = data.azurerm_resource_group.MyApps.tags
 }
 
 # Infra cross services for Apps
-module "Az-RecoveryServicesBackupProtection-Apps" {
-  source          = "git::https://github.com/JamesDLD/terraform.git//module/Az-RecoveryServicesBackupProtection?ref=master"
-  subscription_id = var.subscription_id
-  bck_vms_names = concat(
-    module.Az-Vm-Apps.Linux_Vms_names,
-    module.Az-Vm-Apps.Windows_Vms_names,
-  ) #Names of the resources to backup
-  bck_vms_resource_group_names = concat(
-    module.Az-Vm-Apps.Linux_Vms_rgnames,
-    module.Az-Vm-Apps.Windows_Vms_rgnames,
-  ) #Resource Group Names of the resources to backup
-  bck_vms                     = concat(var.Linux_Vms, var.Windows_Vms)
-  bck_rsv_name                = var.bck_rsv_name
-  bck_rsv_resource_group_name = data.azurerm_resource_group.Infr.name
-  providers = {
-    azurerm = azurerm.service_principal_apps
-  }
-}
+#N/A
 
 ## Infra common services
 #N/A

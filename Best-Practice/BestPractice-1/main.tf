@@ -16,6 +16,28 @@ provider "azurerm" {
   tenant_id       = var.tenant_id
 }
 
+#Variables
+variable "subnets" {
+  description = "Subnets list."
+
+  type = list(object({
+    name           = string
+    address_prefix = string
+  }))
+
+  default = [
+    {
+      name           = "bp1-front-snet1"
+      address_prefix = "10.0.1.0/24"
+    },
+    {
+      name           = "bp1-front-snet2"
+      address_prefix = "10.0.6.0/24"
+    }
+  ]
+}
+
+
 #Call module/resource
 resource "azurerm_virtual_network" "bp1-vnet1" {
   name                = "bp1-vnet1"
@@ -23,9 +45,13 @@ resource "azurerm_virtual_network" "bp1-vnet1" {
   resource_group_name = "infr-jdld-noprd-rg1"
   address_space       = ["10.0.0.0/16"]
 
-  subnet {
-    name           = "bp1-front-snet1"
-    address_prefix = "10.0.1.0/24"
+  dynamic "subnet" {
+    for_each = var.subnets
+
+    content {
+      name           = lookup(subnet.value, "name", null)
+      address_prefix = lookup(subnet.value, "address_prefix", null)
+    }
   }
 
   tags = {
@@ -47,5 +73,5 @@ resource "azurerm_role_assignment" "test" {
 
 output "subnet_ids" {
   description = "The subnet Ids."
-  value = azurerm_virtual_network.bp1-vnet1.subnet.*.id
+  value       = azurerm_virtual_network.bp1-vnet1.subnet.*.id
 }

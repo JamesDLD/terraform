@@ -32,7 +32,7 @@ Usage
 General Requirements
 ------------
 
--	[Terraform](https://www.Terraform.io/downloads.html) 0.12.3
+-	[Terraform](https://www.Terraform.io/downloads.html) 0.12.5
 -	[AzureRM Terraform Provider](https://github.com/Terraform-providers/Terraform-provider-azurerm/blob/master/README.md)
 -	[AzureRM Terraform Provider - Authentication](https://www.Terraform.io/docs/providers/azurerm/)
 -   The called "Infra" Azure Service Principal has the following privileges :
