@@ -16,7 +16,7 @@ Azure Firewall Rules - Model
                     "rules": [
                         {
                             "name": "dns-rule1",
-                            "source_addresses": "[\"198.18.2.0/24\"]",
+                            "source_addresses": "[\"10.0.2.0/24\"]",
                             "destination_ports": "[\"53\"]",
                             "destination_addresses": "[\"*\"]",
                             "protocols": "[\"TCP\", \"UDP\"]"
@@ -25,7 +25,7 @@ Azure Firewall Rules - Model
                             "name": "rbd-rule1",
                             "source_addresses": "[\"*\"]",
                             "destination_ports": "[\"3389\", \"22\"]",
-                            "destination_addresses": "[\"198.18.2.230\", \"198.18.2.231\", \"198.18.2.228\"]",
+                            "destination_addresses": "[\"10.0.2.230\", \"10.0.2.231\", \"10.0.2.228\"]",
                             "protocols": "[\"TCP\"]"
                         }
                     ]
@@ -39,14 +39,14 @@ Azure Firewall Rules - Model
                     "rules_for_fqdn_tags": [
                         {
                             "name": "AzureTags-All-rule1",
-                            "source_addresses": "[\"198.18.2.0/24\"]",
+                            "source_addresses": "[\"10.0.2.0/24\"]",
                             "fqdn_tags": "[\"MicrosoftActiveProtectionService\", \"WindowsDiagnostics\", \"WindowsUpdate\", \"AppServiceEnvironment\", \"AzureBackup\"]"
                         }
                     ],
                     "rules_for_target_fqdns": [
                         {
                             "name": "SecopsFqdn-rule1",
-                            "source_addresses": "[\"198.18.2.0/24\"]",
+                            "source_addresses": "[\"10.0.2.0/24\"]",
                             "target_fqdns": "[\"*.google.com\", \"*.bing.com\"]",
                             "protocol": [
                                 {

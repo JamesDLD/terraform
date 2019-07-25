@@ -86,19 +86,19 @@ Lbs = [
     id               = "1" #Id of the load balancer use as a suffix of the load balancer name
     suffix_name      = "ssh"
     subnet_iteration = "0" #Id of the Subnet
-    static_ip        = "198.18.2.238"
+    static_ip        = "10.0.2.238"
   },
   {
     id               = "1" #Id of the load balancer use as a suffix of the load balancer name
     suffix_name      = "gfs"
     subnet_iteration = "1" #Id of the Subnet
-    static_ip        = "198.18.2.254"
+    static_ip        = "10.0.2.254"
   },
   {
     id               = "1" #Id of the load balancer use as a suffix of the load balancer name
     suffix_name      = "rds"
     subnet_iteration = "1" #Id of the Subnet
-    static_ip        = "198.18.2.253"
+    static_ip        = "10.0.2.253"
   },
 ]
 
@@ -164,7 +164,7 @@ vms = [
     storage_data_disks       = []                #(Mandatory) For no data disks set []
     subnet_iteration         = "0"               #(Mandatory) Id of the Subnet
     security_group_iteration = "1"               #(Optional) Id of the Network Security Group
-    static_ip                = "198.18.2.228"    #(Optional) Set null to get dynamic IP or delete this line
+    static_ip                = "10.0.2.228"      #(Optional) Set null to get dynamic IP or delete this line
     zones                    = ["1"]             #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to "", WARNING you could not have Availabilitysets and AvailabilityZones
     vm_size                  = "Standard_DS1_v2" #(Mandatory) 
     managed_disk_type        = "Premium_LRS"     #(Mandatory) 
@@ -176,7 +176,7 @@ vms = [
     storage_data_disks       = []                #(Mandatory) For no data disks set []
     subnet_iteration         = "1"               #(Mandatory) Id of the Subnet
     security_group_iteration = "1"               #(Optional) Id of the Network Security Group
-    static_ip                = "198.18.2.244"    #(Optional) Set null to get dynamic IP or delete this line
+    static_ip                = "10.0.2.244"      #(Optional) Set null to get dynamic IP or delete this line
     zones                    = ["2"]             #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to "", WARNING you could not have Availabilitysets and AvailabilityZones
     vm_size                  = "Standard_DS1_v2" #(Mandatory) 
     managed_disk_type        = "Premium_LRS"     #(Mandatory) 
@@ -198,7 +198,7 @@ vms = [
     internal_lb_iteration    = "0"                      #(Optional) Id of the Internal Load Balancer, set to null or delete the line if there is no Load Balancer
     subnet_iteration         = "0"                      #(Mandatory) Id of the Subnet
     security_group_iteration = "1"                      #(Optional) Id of the Network Security Group
-    static_ip                = "198.18.2.229"           #(Optional) Set null to get dynamic IP or delete this line
+    static_ip                = "10.0.2.229"             #(Optional) Set null to get dynamic IP or delete this line
     zones                    = ["1"]                    #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to "", WARNING you could not have Availabilitysets and AvailabilityZones
     BackupPolicyName         = "BackupPolicy-Schedule1" #(Optional) Set null to disable backup (WARNING, this will delete previous backup) otherwise set a backup policy like BackupPolicy-Schedule1
     vm_size                  = "Standard_DS1_v2"        #(Mandatory) 
@@ -212,7 +212,7 @@ vms = [
     internal_lb_iteration    = "0"                      #(Optional) Id of the Internal Load Balancer, set to null or delete the line if there is no Load Balancer
     subnet_iteration         = "1"                      #(Mandatory) Id of the Subnet
     security_group_iteration = "1"                      #(Optional) Id of the Network Security Group
-    static_ip                = "198.18.2.245"           #(Optional) Set null to get dynamic IP or delete this line
+    static_ip                = "10.0.2.245"             #(Optional) Set null to get dynamic IP or delete this line
     zones                    = ["2"]                    #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to "", WARNING you could not have Availabilitysets and AvailabilityZones
     BackupPolicyName         = "BackupPolicy-Schedule1" #(Optional) Set null to disable backup (WARNING, this will delete previous backup) otherwise set a backup policy like BackupPolicy-Schedule1
     vm_size                  = "Standard_DS1_v2"        #(Mandatory) 

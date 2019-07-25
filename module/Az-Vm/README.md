@@ -33,7 +33,7 @@ variable "virtual_networks" {
     {
       id            = "1"
       prefix        = "demovm"
-      address_space = ["10.0.128.0/24", "198.18.2.0/24"]
+      address_space = ["10.0.128.0/24", "10.0.2.0/24"]
       bastion       = false
     },
   ]
