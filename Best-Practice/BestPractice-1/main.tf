@@ -32,7 +32,7 @@ variable "subnets" {
     },
     {
       name           = "bp1-front-snet2"
-      address_prefix = "10.0.2.0/24"
+      address_prefix = "10.0.6.0/24"
     }
   ]
 }
