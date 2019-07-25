@@ -35,13 +35,13 @@ variable "virtual_networks" {
     {
       id            = "1"
       prefix        = "sec"
-      address_space = ["198.18.1.0/24", "198.18.2.0/24"]
+      address_space = ["10.0.1.0/24", "10.0.2.0/24"]
       bastion       = false
     },
     {
       id            = "1"
       prefix        = "apps"
-      address_space = ["198.18.4.0/24"]
+      address_space = ["10.0.4.0/24"]
       bastion       = false
       dns_servers   = ["8.8.8.8"]
     },
@@ -53,19 +53,19 @@ variable "subnets" {
     {
       virtual_network_iteration = "0"                                    #(Mandatory) 
       name                      = "test1"                                #(Mandatory) 
-      address_prefix            = "198.18.1.0/26"                        #(Mandatory) 
+      address_prefix            = "10.0.1.0/26"                        #(Mandatory) 
       route_table_iteration     = "0"                                    #(Optional) delete this line for no NSG
       service_endpoints         = ["Microsoft.Sql", "Microsoft.Storage"] #(Optional) delete this line for no NSG
     },
     {
       virtual_network_iteration = "1"                  #(Mandatory) 
       name                      = "AzureBastionSubnet" #(Mandatory) 
-      address_prefix            = "198.18.4.0/27"      #(Mandatory) 
+      address_prefix            = "10.0.4.0/27"      #(Mandatory) 
     },
     {
       virtual_network_iteration = "1"              #(Mandatory) 
       name                      = "test2"          #(Mandatory) 
-      address_prefix            = "198.18.4.32/27" #(Mandatory) 
+      address_prefix            = "10.0.4.32/27" #(Mandatory) 
       security_group_iteration  = "0"              #(Optional) delete this line for no NSG
       route_table_iteration     = "1"              #(Optional) delete this line for no NSG
     },

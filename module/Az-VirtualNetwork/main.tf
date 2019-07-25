@@ -141,14 +141,16 @@ resource "azurerm_subnet_network_security_group_association" "security_group_ass
 
 locals {
   vnets_with_bastion     = [for x in var.virtual_networks : x if x.bastion == true]
+  subnets_with_bastion   = [for x in var.subnets : x if x.name == "AzureBastionSubnet"]
   vnets_with_out_bastion = [for x in var.virtual_networks : x if x.bastion == false]
 }
 
 #Using a template because the resource is not ready, feature request done here : https://github.com/terraform-providers/terraform-provider-azurerm/issues/3829
+
 resource "azurerm_template_deployment" "bastion" {
-  depends_on          = [azurerm_virtual_network.vnets]
-  count               = length(local.vnets_with_bastion)
-  name                = "${var.net_prefix}-${local.location}-vnet${local.vnets_with_bastion[count.index]["id"]}-bas1-dep"
+  depends_on          = [azurerm_subnet.subnets]
+  count               = length(local.subnets_with_bastion)
+  name                = "${element(azurerm_virtual_network.vnets.*.name, local.subnets_with_bastion[count.index]["virtual_network_iteration"])}-bas1-dep"
   resource_group_name = data.azurerm_resource_group.network.name
   template_body = file(
     "${path.module}/AzureRmBastion_template.json",
@@ -158,11 +160,11 @@ resource "azurerm_template_deployment" "bastion" {
   parameters = {
     location            = local.location
     resourceGroupName   = data.azurerm_resource_group.network.name
-    bastionHostName     = "${var.net_prefix}-${local.location}-vnet${local.vnets_with_bastion[count.index]["id"]}-bas1"
-    subnetName          = "AzureBastionSubnet"
-    publicIpAddressName = "${var.net_prefix}-${local.location}-vnet${local.vnets_with_bastion[count.index]["id"]}-bas1-pip1"
-    existingVNETName    = "${var.net_prefix}-${local.location}-vnet${local.vnets_with_bastion[count.index]["id"]}"
-    subnetAddressPrefix = [for x in local.vnets_with_bastion[count.index]["subnets"] : x.address_prefix if x.name == "AzureBastionSubnet"][0]
-    tags                = jsonencode(local.location)
+    bastionHostName     = "${element(azurerm_virtual_network.vnets.*.name, local.subnets_with_bastion[count.index]["virtual_network_iteration"])}-bas1"
+    subnetName          = local.subnets_with_bastion[count.index]["name"]
+    publicIpAddressName = "${element(azurerm_virtual_network.vnets.*.name, local.subnets_with_bastion[count.index]["virtual_network_iteration"])}-bas1-pip1"
+    existingVNETName    = "${element(azurerm_virtual_network.vnets.*.name, local.subnets_with_bastion[count.index]["virtual_network_iteration"])}"
+    subnetAddressPrefix = local.subnets_with_bastion[count.index]["address_prefix"]
+    tags                = jsonencode(local.tags)
   }
 }
