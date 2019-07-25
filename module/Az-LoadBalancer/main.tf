@@ -1,6 +1,6 @@
 resource "azurerm_lb" "lb" {
   count               = length(var.Lbs)
-  name                = "${var.lb_prefix}${var.Lbs[count.index]["suffix_name"]}${var.lb_suffix}"
+  name                = "${var.lb_prefix}${var.Lbs[count.index]["suffix_name"]}-lb${var.Lbs[count.index]["id"]}"
   location            = var.lb_location
   resource_group_name = var.lb_resource_group_name
   sku                 = var.Lb_sku
@@ -25,7 +25,7 @@ resource "azurerm_lb_backend_address_pool" "lb_backend" {
 resource "azurerm_lb_probe" "lb_probe" {
   count               = length(var.LbRules)
   resource_group_name = var.lb_resource_group_name
-  loadbalancer_id     = element(azurerm_lb.lb.*.id, var.LbRules[count.index]["Id_Lb"])
+  loadbalancer_id     = element(azurerm_lb.lb.*.id, var.LbRules[count.index]["load_balancer_iteration"])
   name                = "${var.lb_prefix}${var.LbRules[count.index]["suffix_name"]}-probe${var.LbRules[count.index]["Id"]}"
   port                = var.LbRules[count.index]["probe_port"]
   protocol            = var.LbRules[count.index]["probe_protocol"]
@@ -35,7 +35,7 @@ resource "azurerm_lb_probe" "lb_probe" {
 resource "azurerm_lb_rule" "lb_rule" {
   count                          = length(var.LbRules)
   resource_group_name            = var.lb_resource_group_name
-  loadbalancer_id                = element(azurerm_lb.lb.*.id, var.LbRules[count.index]["Id_Lb"])
+  loadbalancer_id                = element(azurerm_lb.lb.*.id, var.LbRules[count.index]["load_balancer_iteration"])
   name                           = "${var.lb_prefix}${var.LbRules[count.index]["suffix_name"]}-rule${var.LbRules[count.index]["Id"]}"
   protocol                       = "Tcp"
   frontend_port                  = var.LbRules[count.index]["lb_port"]
@@ -43,7 +43,7 @@ resource "azurerm_lb_rule" "lb_rule" {
   frontend_ip_configuration_name = "${var.lb_prefix}${var.LbRules[count.index]["suffix_name"]}-nic1-LBCFG"
   backend_address_pool_id = element(
     azurerm_lb_backend_address_pool.lb_backend.*.id,
-    var.LbRules[count.index]["Id_Lb"],
+    var.LbRules[count.index]["load_balancer_iteration"],
   )
   probe_id                = element(azurerm_lb_probe.lb_probe.*.id, count.index)
   load_distribution       = var.LbRules[count.index]["load_distribution"]

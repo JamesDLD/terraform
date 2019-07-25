@@ -57,6 +57,7 @@ variable "subnets" {
 variable "Lbs" {
   default = [
     {
+      id               = "1"   #Id of the load balancer use as a suffix of the load balancer name
       suffix_name = "demovm" #It must equals the Vm suffix_name
       subnet_iteration   = "0"      #Id of the Subnet
       static_ip   = "10.0.128.5"
@@ -160,7 +161,6 @@ module "Create-AzureRmLoadBalancer-Demo" {
   source                 = "github.com/JamesDLD/terraform/module/Az-LoadBalancer"
   Lbs                    = var.Lbs
   lb_prefix              = "jdld-sand1-"
-  lb_suffix              = "-lb1"
   lb_location            = "westeurope"
   lb_resource_group_name = "infr-jdld-noprd-rg2"
   Lb_sku                 = "basic"

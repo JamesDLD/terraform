@@ -11,6 +11,7 @@ subnets = [
 
 Lbs = [
   {
+    id               = "1" #Id of the load balancer use as a suffix of the load balancer name
     suffix_name      = "internal"
     subnet_iteration = "0" #Id of the Subnet
     static_ip        = "10.0.3.4"

@@ -83,16 +83,19 @@ Lb_sku = "Standard" #"Basic"
 
 Lbs = [
   {
+    id               = "1" #Id of the load balancer use as a suffix of the load balancer name
     suffix_name      = "ssh"
     subnet_iteration = "0" #Id of the Subnet
     static_ip        = "198.18.2.238"
   },
   {
+    id               = "1" #Id of the load balancer use as a suffix of the load balancer name
     suffix_name      = "gfs"
     subnet_iteration = "1" #Id of the Subnet
     static_ip        = "198.18.2.254"
   },
   {
+    id               = "1" #Id of the load balancer use as a suffix of the load balancer name
     suffix_name      = "rds"
     subnet_iteration = "1" #Id of the Subnet
     static_ip        = "198.18.2.253"
@@ -101,48 +104,48 @@ Lbs = [
 
 LbRules = [
   {
-    Id                = "1"   #Id of a the rule within the Load Balancer 
-    Id_Lb             = "0"   #Id of the Load Balancer
-    suffix_name       = "ssh" #MUST match the Lbs suffix_name
-    lb_port           = "80"
-    backend_port      = "80"
-    probe_port        = "80"
-    probe_protocol    = "Http"
-    request_path      = "/"
-    load_distribution = "Default"
+    Id                      = "1"   #Id of a the rule within the Load Balancer 
+    load_balancer_iteration = "0"   #Id of the Load Balancer
+    suffix_name             = "ssh" #MUST match the Lbs suffix_name
+    lb_port                 = "80"
+    backend_port            = "80"
+    probe_port              = "80"
+    probe_protocol          = "Http"
+    request_path            = "/"
+    load_distribution       = "Default"
   },
   {
-    Id                = "2"   #Id of a the rule within the Load Balancer 
-    Id_Lb             = "0"   #Id of the Load Balancer
-    suffix_name       = "ssh" #MUST match the Lbs suffix_name
-    lb_port           = "22"
-    backend_port      = "22"
-    probe_port        = "22"
-    probe_protocol    = "Tcp"
-    request_path      = ""
-    load_distribution = "Default"
+    Id                      = "2"   #Id of a the rule within the Load Balancer 
+    load_balancer_iteration = "0"   #Id of the Load Balancer
+    suffix_name             = "ssh" #MUST match the Lbs suffix_name
+    lb_port                 = "22"
+    backend_port            = "22"
+    probe_port              = "22"
+    probe_protocol          = "Tcp"
+    request_path            = ""
+    load_distribution       = "Default"
   },
   {
-    Id                = "1"   #Id of a the rule within the Load Balancer 
-    Id_Lb             = "1"   #Id of the Load Balancer
-    suffix_name       = "gfs" #MUST match the Lbs suffix_name
-    lb_port           = "22"
-    backend_port      = "22"
-    probe_port        = "22"
-    probe_protocol    = "Tcp"
-    request_path      = ""
-    load_distribution = "Default"
+    Id                      = "1"   #Id of a the rule within the Load Balancer 
+    load_balancer_iteration = "1"   #Id of the Load Balancer
+    suffix_name             = "gfs" #MUST match the Lbs suffix_name
+    lb_port                 = "22"
+    backend_port            = "22"
+    probe_port              = "22"
+    probe_protocol          = "Tcp"
+    request_path            = ""
+    load_distribution       = "Default"
   },
   {
-    Id                = "1"   #Id of a the rule within the Load Balancer 
-    Id_Lb             = "2"   #Id of the Load Balancer
-    suffix_name       = "rds" #MUST match the Lbs suffix_name
-    lb_port           = "3389"
-    backend_port      = "3389"
-    probe_port        = "3389"
-    probe_protocol    = "Tcp"
-    request_path      = ""
-    load_distribution = "Default"
+    Id                      = "1"   #Id of a the rule within the Load Balancer 
+    load_balancer_iteration = "2"   #Id of the Load Balancer
+    suffix_name             = "rds" #MUST match the Lbs suffix_name
+    lb_port                 = "3389"
+    backend_port            = "3389"
+    probe_port              = "3389"
+    probe_protocol          = "Tcp"
+    request_path            = ""
+    load_distribution       = "Default"
   },
 ]
 

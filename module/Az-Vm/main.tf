@@ -204,7 +204,6 @@ resource "azurerm_virtual_machine" "windows_vms" {
     storage_uri = var.sa_bootdiag_storage_uri
   }
 
-
   os_profile_windows_config {
     provision_vm_agent        = lookup(local.windows_vms[count.index], "provision_vm_agent", true)
     enable_automatic_upgrades = lookup(local.windows_vms[count.index], "enable_automatic_upgrades", true)

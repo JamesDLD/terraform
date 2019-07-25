@@ -1,6 +1,7 @@
 variable "Lbs" {
   description = "List containing your load balancers."
   type = list(object({
+    id               = number
     suffix_name      = string
     subnet_iteration = number
     static_ip        = string
@@ -10,24 +11,20 @@ variable "Lbs" {
 variable "LbRules" {
   description = "List containing your load balancers parameters."
   type = list(object({
-    Id                = number #Id of a the rule within the Load Balancer 
-    Id_Lb             = number #Id of the Load Balancer
-    suffix_name       = string #It must equals the Lbs suffix_name
-    lb_port           = number
-    probe_port        = number
-    backend_port      = number
-    probe_protocol    = string
-    request_path      = string
-    probe_protocol    = string
-    load_distribution = string
+    Id                      = number #Id of a the rule within the Load Balancer 
+    load_balancer_iteration = number #Id of the Load Balancer
+    suffix_name             = string #It must equals the Lbs suffix_name
+    lb_port                 = number
+    probe_port              = number
+    backend_port            = number
+    probe_protocol          = string
+    request_path            = string
+    probe_protocol          = string
+    load_distribution       = string
   }))
 }
 variable "lb_prefix" {
   description = "Prefix applied on the load balancer resources names."
-}
-
-variable "lb_suffix" {
-  description = "Suffix applied on the load balancer resources names."
 }
 
 variable "lb_location" {

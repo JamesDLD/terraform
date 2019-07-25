@@ -86,7 +86,6 @@ module "Az-LoadBalancer-Apps" {
   source                 = "git::https://github.com/JamesDLD/terraform.git//module/Az-LoadBalancer?ref=feature/nomoreusingnull_resource"
   Lbs                    = var.Lbs
   lb_prefix              = "${var.app_name}-${var.env_name}-"
-  lb_suffix              = "-lb1"
   lb_location            = data.azurerm_resource_group.MyApps.location
   lb_resource_group_name = data.azurerm_resource_group.MyApps.name
   Lb_sku                 = var.Lb_sku

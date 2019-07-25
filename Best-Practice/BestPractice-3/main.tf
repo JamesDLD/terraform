@@ -50,7 +50,6 @@ module "Az-LoadBalancer-Demo" {
   source                 = "git::https://github.com/JamesDLD/terraform.git//module/Az-LoadBalancer?ref=feature/nomoreusingnull_resource"
   Lbs                    = var.Lbs
   lb_prefix              = "bp3-"
-  lb_suffix              = "-lb1"
   lb_location            = data.azurerm_resource_group.infr.location
   lb_resource_group_name = data.azurerm_resource_group.infr.name
   Lb_sku                 = "Standard"
