@@ -59,7 +59,6 @@ variable "apps_nsgs" {
           destination_port_range     = "3389"
           protocol                   = "tcp"
           source_port_range          = "*"
-          source_port_ranges         = ""
         },
       ]
     },
