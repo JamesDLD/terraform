@@ -3,6 +3,6 @@
 rg_infr_name = "infr-jdld-noprd-rg1"
 
 vnet_names = [
-  "infra-jdld-infr-sec-net1",
-  "infra-jdld-infr-apps-net1",
+  "infra-jdld-infrsec-francecentral-vnet1",
+  "infra-jdld-infrapps-francecentral-vnet1",
 ]

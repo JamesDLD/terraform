@@ -89,7 +89,7 @@ module "Az-Subnet-Apps" {
   subscription_id            = var.subscription_id
   subnet_resource_group_name = var.rg_infr_name
   snet_list                  = var.apps_snets
-  vnet_names                 = ["infra-jdld-infr-apps-net1"]
+  vnet_names                 = ["infra-jdld-infrapps-francecentral-vnet1"]
   nsgs_ids                   = [data.azurerm_network_security_group.Infr.id]
   route_table_ids            = [data.azurerm_route_table.Infr.id]
   providers = {
