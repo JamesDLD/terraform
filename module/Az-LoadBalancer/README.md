@@ -32,12 +32,12 @@ variable "Lbs" {
   default = [
     {
       suffix_name = "bou" #It must equals the Vm suffix_name
-      Id_Subnet   = "0"   #Id of the Subnet
+      subnet_iteration   = "0"   #Id of the Subnet
       static_ip   = "10.0.1.4"
     },
     {
       suffix_name = "bas" #It must equals the Vm suffix_name
-      Id_Subnet   = "0"   #Id of the Subnet
+      subnet_iteration   = "0"   #Id of the Subnet
       static_ip   = "10.0.1.5"
     },
   ]

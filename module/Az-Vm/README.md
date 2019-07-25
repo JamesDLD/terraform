@@ -58,7 +58,7 @@ variable "Lbs" {
   default = [
     {
       suffix_name = "demovm" #It must equals the Vm suffix_name
-      Id_Subnet   = "0"      #Id of the Subnet
+      subnet_iteration   = "0"      #Id of the Subnet
       static_ip   = "10.0.128.5"
     },
   ]

@@ -47,7 +47,7 @@ resource "azurerm_subnet" "DemoBP3" {
 }
 
 module "Az-LoadBalancer-Demo" {
-  source                 = "git::https://github.com/JamesDLD/terraform.git//module/Az-LoadBalancer?ref=master"
+  source                 = "git::https://github.com/JamesDLD/terraform.git//module/Az-LoadBalancer?ref=feature/nomoreusingnull_resource"
   Lbs                    = var.Lbs
   lb_prefix              = "bp3-"
   lb_suffix              = "-lb1"

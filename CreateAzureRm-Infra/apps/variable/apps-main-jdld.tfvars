@@ -27,20 +27,12 @@ bck_rsv_name = "infra-jdld-infr-rsv1"
 
 apps_snets = [
   {
-    name              = "frontend"
-    cidr_block        = "198.18.2.224/28"
-    nsg_id            = "0" #Id of the Network Security Group, set to 777 if there is no Network Security Groups
-    route_table_id    = "0" #Id of the Route table, set to 777 if there is no Route table
-    vnet_name_id      = "1" #Id of the vnet
-    service_endpoints = ""  #Service Endpoints list sperated by an espace, if you don't need to set it to "" or "777"
+    vnet_name   = "infra-jdld-infrapps-francecentral-vnet1"
+    subnet_name = "frontend"
   },
   {
-    name              = "backend"
-    cidr_block        = "198.18.2.240/28"
-    nsg_id            = "0" #Id of the Network Security Group, set to 777 if there is no Network Security Groups
-    route_table_id    = "0" #Id of the Route table, set to 777 if there is no Route table
-    vnet_name_id      = "1" #Id of the vnet
-    service_endpoints = ""  #Service Endpoints list sperated by an espace, if you don't need to set it to "" or "777"
+    vnet_name   = "infra-jdld-infrapps-francecentral-vnet1"
+    subnet_name = "backend"
   },
 ]
 
@@ -91,19 +83,19 @@ Lb_sku = "Standard" #"Basic"
 
 Lbs = [
   {
-    suffix_name = "ssh"
-    Id_Subnet   = "0" #Id of the Subnet
-    static_ip   = "198.18.2.238"
+    suffix_name      = "ssh"
+    subnet_iteration = "0" #Id of the Subnet
+    static_ip        = "198.18.2.238"
   },
   {
-    suffix_name = "gfs"
-    Id_Subnet   = "1" #Id of the Subnet
-    static_ip   = "198.18.2.254"
+    suffix_name      = "gfs"
+    subnet_iteration = "1" #Id of the Subnet
+    static_ip        = "198.18.2.254"
   },
   {
-    suffix_name = "rds"
-    Id_Subnet   = "1" #Id of the Subnet
-    static_ip   = "198.18.2.253"
+    suffix_name      = "rds"
+    subnet_iteration = "1" #Id of the Subnet
+    static_ip        = "198.18.2.253"
   },
 ]
 

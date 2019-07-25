@@ -11,9 +11,9 @@ subnets = [
 
 Lbs = [
   {
-    suffix_name = "internal"
-    Id_Subnet   = "0" #Id of the Subnet
-    static_ip   = "10.0.3.4"
+    suffix_name      = "internal"
+    subnet_iteration = "0" #Id of the Subnet
+    static_ip        = "10.0.3.4"
   },
 ]
 

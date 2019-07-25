@@ -7,7 +7,7 @@ resource "azurerm_lb" "lb" {
 
   frontend_ip_configuration {
     name                          = "${var.lb_prefix}${var.Lbs[count.index]["suffix_name"]}-nic1-LBCFG"
-    subnet_id                     = element(var.subnets_ids, var.Lbs[count.index]["Id_Subnet"])
+    subnet_id                     = element(var.subnets_ids, var.Lbs[count.index]["subnet_iteration"])
     private_ip_address_allocation = var.Lbs[count.index]["static_ip"] == "777" ? "dynamic" : "static"
     private_ip_address            = var.Lbs[count.index]["static_ip"] == "777" ? "" : var.Lbs[count.index]["static_ip"]
   }
@@ -46,7 +46,7 @@ resource "azurerm_lb_rule" "lb_rule" {
     var.LbRules[count.index]["Id_Lb"],
   )
   probe_id                = element(azurerm_lb_probe.lb_probe.*.id, count.index)
-  load_distribution       = var.LbRules[count.index]["load_distribution"] #"SourceIPProtocol"
+  load_distribution       = var.LbRules[count.index]["load_distribution"]
   idle_timeout_in_minutes = 4
 }
 
