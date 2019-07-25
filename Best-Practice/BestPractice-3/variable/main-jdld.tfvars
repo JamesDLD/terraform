@@ -32,16 +32,15 @@ vms = [
     managed_disk_type     = "Premium_LRS"     #(Mandatory) 
   },
   {
-    suffix_name           = "rdg"             #(Mandatory) suffix of the vm
-    id                    = "2"               #(Mandatory) Id of the VM
-    static_ip             = "10.0.3.6"        #(Optional) Set null to get dynamic IP or delete this line
-    internal_lb_iteration = "0"               #(Optional) Id of the Internal Load Balancer, set to null or delete the line if there is no Load Balancer
-    os_type               = "windows"         #(Mandatory) Support "linux" or "windows"
-    storage_data_disks    = []                #(Mandatory) For no data disks set []
-    subnet_iteration      = "0"               #(Mandatory) Id of the Subnet
-    zones                 = ["2"]             #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to "", WARNING you could not have Availabilitysets and AvailabilityZones
-    vm_size               = "Standard_DS1_v2" #(Mandatory) 
-    managed_disk_type     = "Premium_LRS"     #(Mandatory) 
+    suffix_name        = "rdg"             #(Mandatory) suffix of the vm
+    id                 = "2"               #(Mandatory) Id of the VM
+    static_ip          = "10.0.3.6"        #(Optional) Set null to get dynamic IP or delete this line
+    os_type            = "windows"         #(Mandatory) Support "linux" or "windows"
+    storage_data_disks = []                #(Mandatory) For no data disks set []
+    subnet_iteration   = "0"               #(Mandatory) Id of the Subnet
+    zones              = ["2"]             #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to "", WARNING you could not have Availabilitysets and AvailabilityZones
+    vm_size            = "Standard_DS1_v2" #(Mandatory) 
+    managed_disk_type  = "Premium_LRS"     #(Mandatory) 
   },
 ]
 
