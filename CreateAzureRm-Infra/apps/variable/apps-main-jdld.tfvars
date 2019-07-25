@@ -59,7 +59,6 @@ apps_nsgs = [
         destination_port_range     = "3389"
         protocol                   = "tcp"
         source_port_range          = "*"
-        source_port_ranges         = ""
       },
       {
         direction                  = "Inbound"
@@ -82,7 +81,6 @@ apps_nsgs = [
         destination_port_range     = "53"
         protocol                   = "*"
         source_port_range          = "*"
-        source_port_ranges         = ""
       },
     ]
   },
