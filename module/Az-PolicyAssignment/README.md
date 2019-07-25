@@ -86,7 +86,7 @@ resource "azurerm_virtual_network" "demo" {
   name                = "infra-demo-net1"
   location            = "francecentral"
   resource_group_name = "infr-jdld-noprd-rg1"
-  address_space       = ["198.18.6.0/24", "198.18.7.0/24"]
+  address_space       = ["10.0.6.0/24", "10.0.7.0/24"]
   tags                = var.default_tags
 }
 

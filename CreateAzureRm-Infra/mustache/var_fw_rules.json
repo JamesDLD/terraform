@@ -13,7 +13,7 @@
                             "destination_ports": "[\"3389\"]",
                             "destination_addresses": "[\"40.66.63.194\"]",
                             "protocols": "[\"TCP\"]",
-                            "translated_address": "198.18.2.228",
+                            "translated_address": "10.0.2.228",
                             "translated_port": "3389"
                         }
                     ]
@@ -27,7 +27,7 @@
                     "rules": [
                         {
                             "name": "dns-rule1",
-                            "source_addresses": "[\"198.18.2.0/24\"]",
+                            "source_addresses": "[\"10.0.2.0/24\"]",
                             "destination_ports": "[\"53\"]",
                             "destination_addresses": "[\"*\"]",
                             "protocols": "[\"TCP\", \"UDP\"]"
@@ -41,7 +41,7 @@
                     "rules": [
                         {
                             "name": "sampe-rule1",
-                            "source_addresses": "[\"198.18.2.1/32\"]",
+                            "source_addresses": "[\"10.0.2.1/32\"]",
                             "destination_ports": "[\"53\"]",
                             "destination_addresses": "[\"*\"]",
                             "protocols": "[\"TCP\", \"UDP\"]"
@@ -55,7 +55,7 @@
                     "rules": [
                         {
                             "name": "sampe-rule1",
-                            "source_addresses": "[\"198.18.2.1/32\"]",
+                            "source_addresses": "[\"10.0.2.1/32\"]",
                             "destination_ports": "[\"53\"]",
                             "destination_addresses": "[\"*\"]",
                             "protocols": "[\"TCP\", \"UDP\"]"
@@ -69,7 +69,7 @@
                     "rules": [
                         {
                             "name": "sampe-rule1",
-                            "source_addresses": "[\"198.18.2.1/32\"]",
+                            "source_addresses": "[\"10.0.2.1/32\"]",
                             "destination_ports": "[\"53\"]",
                             "destination_addresses": "[\"*\"]",
                             "protocols": "[\"TCP\", \"UDP\"]"
@@ -83,7 +83,7 @@
                     "rules": [
                         {
                             "name": "sampe-rule1",
-                            "source_addresses": "[\"198.18.2.1/32\"]",
+                            "source_addresses": "[\"10.0.2.1/32\"]",
                             "destination_ports": "[\"53\"]",
                             "destination_addresses": "[\"*\"]",
                             "protocols": "[\"TCP\", \"UDP\"]"
@@ -99,14 +99,14 @@
                     "rules_for_fqdn_tags": [
                         {
                             "name": "AllAzureTags-rule1",
-                            "source_addresses": "[\"198.18.2.0/24\"]",
+                            "source_addresses": "[\"10.0.2.0/24\"]",
                             "fqdn_tags": "[\"MicrosoftActiveProtectionService\", \"WindowsDiagnostics\", \"WindowsUpdate\", \"AppServiceEnvironment\", \"AzureBackup\"]"
                         }
                     ],
                     "rules_for_target_fqdns": [
                         {
                             "name": "OsMgmt-rule1",
-                            "source_addresses": "[\"198.18.2.0/24\"]",
+                            "source_addresses": "[\"10.0.2.0/24\"]",
                             "target_fqdns": "[\"google.com\",\"debian.anexia.at\",\"debian.asis.io\",\"debian.balt.net\",\"debian.bhs.mirrors.ovh.net\",\"debian.blizoo.mk\",\"debian.bononia.it\",\"debian.c3sl.ufpr.br\",\"debian.carnet.hr\",\"debian.cc.lehigh.edu\",\"debian.charite.de\",\"debian.co.il\",\"debian.connesi.it\",\"debian.cs.binghamton.edu\",\"debian.csail.mit.edu\",\"debian.cse.msu.edu\"]",
                             "protocol": [
                                 {
@@ -146,7 +146,7 @@
                     "rules_for_target_fqdns": [
                         {
                             "name": "http-proxy-private-dns-rule1",
-                            "source_addresses": "[\"198.18.2.228\"]",
+                            "source_addresses": "[\"10.0.2.228\"]",
                             "target_fqdns": "[\"test.sec.az\"]",
                             "protocol": [
                                 {

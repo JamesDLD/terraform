@@ -102,7 +102,7 @@ route_tables = [
         name                   = "all_to_firewall"
         address_prefix         = "0.0.0.0/0"
         next_hop_type          = "VirtualAppliance"
-        next_hop_in_ip_address = "198.18.1.4"
+        next_hop_in_ip_address = "10.0.1.4"
       },
     ]
   },
@@ -112,13 +112,13 @@ vnets = [
   {
     id            = "1"
     prefix        = "sec"
-    address_space = ["198.18.1.0/24"]
+    address_space = ["10.0.1.0/24"]
     bastion       = false
   },
   {
     id            = "1"
     prefix        = "apps"
-    address_space = ["198.18.2.0/24"]
+    address_space = ["10.0.2.0/24"]
     bastion       = false
   },
 ]
@@ -127,20 +127,20 @@ snets = [
   {
     virtual_network_iteration = "0" #Id of the vnet
     name                      = "AzureFirewallSubnet"
-    address_prefix            = "198.18.1.0/26"
+    address_prefix            = "10.0.1.0/26"
     service_endpoints         = ["Microsoft.AzureActiveDirectory", "Microsoft.AzureCosmosDB", "Microsoft.EventHub", "Microsoft.KeyVault", "Microsoft.ServiceBus", "Microsoft.Sql", "Microsoft.Storage"]
   },
   {
     virtual_network_iteration = "1" #Id of the vnet
     name                      = "frontend"
-    address_prefix            = "198.18.2.224/28"
+    address_prefix            = "10.0.2.224/28"
     security_group_iteration  = "0" #(Optional) delete this line for no NSG
     route_table_iteration     = "0" #(Optional) delete this line for no Route Table
   },
   {
     virtual_network_iteration = "1" #Id of the vnet
     name                      = "backend"
-    address_prefix            = "198.18.2.240/28"
+    address_prefix            = "10.0.2.240/28"
     security_group_iteration  = "0" #(Optional) delete this line for no NSG
     route_table_iteration     = "0" #(Optional) delete this line for no Route Table
   },
