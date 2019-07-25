@@ -5,10 +5,10 @@ provider "azurerm" {
   client_id       = var.service_principals[1]["Application_Id"]
   client_secret   = var.service_principals[1]["Application_Secret"]
   tenant_id       = var.tenant_id
-  alias           = "service_principal_apps"
+  version         = "1.31.0"
 }
 
-# Module
+# Call Resources and Modules
 
 ####################################################
 ##########           Infra                ##########
@@ -16,20 +16,17 @@ provider "azurerm" {
 
 ## Prerequisistes Inventory
 data "azurerm_resource_group" "Infr" {
-  name     = var.rg_infr_name
-  provider = azurerm.service_principal_apps
+  name = var.rg_infr_name
 }
 
 data "azurerm_storage_account" "Infr" {
   name                = var.sa_infr_name
   resource_group_name = var.rg_infr_name
-  provider            = azurerm.service_principal_apps
 }
 
 data "azurerm_recovery_services_vault" "vault" {
   name                = var.bck_rsv_name
   resource_group_name = data.azurerm_resource_group.Infr.name
-  provider            = azurerm.service_principal_apps
 }
 
 data "azurerm_subnet" "snets" {
@@ -37,7 +34,6 @@ data "azurerm_subnet" "snets" {
   name                 = var.apps_snets[count.index]["subnet_name"]
   virtual_network_name = var.apps_snets[count.index]["vnet_name"]
   resource_group_name  = data.azurerm_resource_group.Infr.name
-  provider             = azurerm.service_principal_apps
 }
 
 ####################################################
@@ -46,20 +42,12 @@ data "azurerm_subnet" "snets" {
 
 ## Prerequisistes Inventory
 data "azurerm_resource_group" "MyApps" {
-  name     = var.rg_apps_name
-  provider = azurerm.service_principal_apps
+  name = var.rg_apps_name
 }
 
 data "azurerm_route_table" "Infr" {
   name                = "infra-jdld-infr-francecentral-rt1"
   resource_group_name = data.azurerm_resource_group.Infr.name
-  provider            = azurerm.service_principal_apps
-}
-
-data "azurerm_network_security_group" "Infr" {
-  name                = element(azurerm_network_security_group.apps_nsgs.*.name, 0)
-  resource_group_name = var.rg_infr_name
-  provider            = azurerm.service_principal_apps
 }
 
 ## Core Network components
@@ -88,8 +76,7 @@ resource "azurerm_network_security_group" "apps_nsgs" {
       source_port_ranges           = lookup(security_rule.value, "source_port_ranges", null)
     }
   }
-  tags     = data.azurerm_resource_group.MyApps.tags
-  provider = azurerm.service_principal_apps
+  tags = data.azurerm_resource_group.MyApps.tags
 }
 
 
@@ -106,9 +93,6 @@ module "Az-LoadBalancer-Apps" {
   subnets_ids            = data.azurerm_subnet.snets.*.id
   lb_tags                = data.azurerm_resource_group.MyApps.tags
   LbRules                = var.LbRules
-  providers = {
-    azurerm = azurerm.service_principal_apps
-  }
 }
 
 module "Az-Vm-Apps" {
@@ -134,9 +118,6 @@ module "Az-Vm-Apps" {
   admin_password                     = var.pass
   ssh_key                            = var.ssh_key
   vm_tags                            = data.azurerm_resource_group.MyApps.tags
-  providers = {
-    azurerm = azurerm.service_principal_apps
-  }
 }
 
 # Infra cross services for Apps

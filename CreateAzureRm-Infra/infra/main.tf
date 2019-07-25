@@ -4,15 +4,7 @@ provider "azurerm" {
   client_id       = var.service_principals[0]["Application_Id"]
   client_secret   = var.service_principals[0]["Application_Secret"]
   tenant_id       = var.tenant_id
-  alias           = "service_principal_infra"
-}
-
-provider "azurerm" {
-  subscription_id = var.subscription_id
-  client_id       = var.service_principals[1]["Application_Id"]
-  client_secret   = var.service_principals[1]["Application_Secret"]
-  tenant_id       = var.tenant_id
-  alias           = "service_principal_apps"
+  version         = "1.31.0"
 }
 
 ####################################################
@@ -21,13 +13,11 @@ provider "azurerm" {
 
 ## Prerequisistes Inventory
 data "azurerm_resource_group" "Infr" {
-  name     = var.rg_infr_name
-  provider = azurerm.service_principal_infra
+  name = var.rg_infr_name
 }
 
 data "azurerm_resource_group" "Apps" {
-  name     = var.rg_apps_name
-  provider = azurerm.service_principal_infra
+  name = var.rg_apps_name
 }
 
 ## Core Infra components
@@ -37,10 +27,6 @@ module "Create-AzureRmRecoveryServicesVault-Infr" {
   rsv_resource_group_name = data.azurerm_resource_group.Infr.name
   rsv_tags                = data.azurerm_resource_group.Infr.tags
   rsv_backup_policies     = var.backup_policies
-
-  providers = {
-    azurerm = azurerm.service_principal_infra
-  }
 }
 
 module "Az-KeyVault-Infr" {
@@ -53,16 +39,11 @@ module "Az-KeyVault-Infr" {
   kv_resource_group_name = data.azurerm_resource_group.Infr.name
   kv_sku                 = var.kv_sku
   kv_tags                = data.azurerm_resource_group.Infr.tags
-
-  providers = {
-    azurerm = azurerm.service_principal_infra
-  }
 }
 
 data "azurerm_storage_account" "Infr" {
   name                = var.sa_infr_name
   resource_group_name = data.azurerm_resource_group.Infr.name
-  provider            = azurerm.service_principal_infra
 }
 
 ## Core Network components
@@ -76,10 +57,6 @@ module "Az-VirtualNetwork-Infra" {
   route_tables                = var.route_tables
   network_security_groups     = var.infra_nsgs
   net_tags                    = data.azurerm_resource_group.Infr.tags
-
-  providers = {
-    azurerm = azurerm.service_principal_infra
-  }
 }
 
 ## Secops policies & RBAC roles
@@ -88,10 +65,6 @@ module "Az-PolicyDefinition" {
   policies   = var.policies
   pol_prefix = "${var.app_name}-${var.env_name}-"
   pol_suffix = "-pol1"
-
-  providers = {
-    azurerm = azurerm.service_principal_infra
-  }
 }
 
 module "Az-RoleDefinition-Apps" {
@@ -99,10 +72,6 @@ module "Az-RoleDefinition-Apps" {
   roles       = var.roles
   role_prefix = "${var.app_name}-${var.env_name}-"
   role_suffix = "-role1"
-
-  providers = {
-    azurerm = azurerm.service_principal_infra
-  }
 }
 
 module "Az-RoleAssignment-Apps" {
@@ -119,10 +88,6 @@ module "Az-RoleAssignment-Apps" {
   ]
   ass_role_definition_ids = module.Az-RoleDefinition-Apps.role_ids
   ass_principal_id        = var.service_principals[1]["Application_object_id"]
-
-  providers = {
-    azurerm = azurerm.service_principal_infra
-  }
 }
 
 /*
@@ -138,10 +103,6 @@ module "Az-Firewall-Infr" {
   fw_prefix              = "${var.app_name}-${var.env_name}-fw1"
   fw_subnet_id           = element(module.Az-VirtualNetwork-Infra.subnet_ids, 0)
   fw_tags                = data.azurerm_resource_group.Infr.tags
-
-  providers = {
-    azurerm = azurerm.service_principal_infra
-  }
 }
 
 resource "azurerm_log_analytics_workspace" "infra" {
@@ -150,7 +111,6 @@ resource "azurerm_log_analytics_workspace" "infra" {
   location            = data.azurerm_resource_group.Infr.location
   resource_group_name = data.azurerm_resource_group.Infr.name
   tags                = data.azurerm_resource_group.Infr.tags
-  provider            = azurerm.service_principal_infra
 }
 
 resource "azurerm_monitor_diagnostic_setting" "fw" {
@@ -181,7 +141,6 @@ resource "azurerm_monitor_diagnostic_setting" "fw" {
       enabled = true
     }
   }
-  provider = azurerm.service_principal_infra
 }
 */
 /*
@@ -193,10 +152,6 @@ module "Az-PolicyAssignment-Infra-nsg-on-apps-subnet" {
   p_ass_policy_definition_id = module.Az-PolicyDefinition.policy_ids[0]
   p_ass_key_parameter1       = "nsgId"
   p_ass_value_parameter1     = module.Az-VirtualNetwork-Infra.network_security_group_ids[0]
-
-  providers = {
-    azurerm = azurerm.service_principal_infra
-  }
 }
 module "Az-PolicyAssignment-Infra-udr-on-subnet" {
   source                     = "git::https://github.com/JamesDLD/terraform.git//module/Az-PolicyAssignment?ref=master"
@@ -205,9 +160,5 @@ module "Az-PolicyAssignment-Infra-udr-on-subnet" {
   p_ass_policy_definition_id = module.Az-PolicyDefinition.policy_ids[1]
   p_ass_key_parameter1       = "udrId"
   p_ass_value_parameter1     = module.Az-VirtualNetwork-Infra.route_table_ids[0]
-
-  providers = {
-    azurerm = azurerm.service_principal_infra
-  }
 }
 */
