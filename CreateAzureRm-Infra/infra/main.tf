@@ -48,7 +48,7 @@ data "azurerm_storage_account" "Infr" {
 
 ## Core Network components
 module "Az-VirtualNetwork-Infra" {
-  source                      = "git::https://github.com/JamesDLD/terraform.git//module/Az-VirtualNetwork?ref=feature/nomoreusingnull_resource"
+  source                      = "git::https://github.com/JamesDLD/terraform.git//module/Az-VirtualNetwork?ref=master"
   net_prefix                  = "infra-${var.app_name}-${var.env_name}"
   network_resource_group_name = data.azurerm_resource_group.Infr.name
   net_location                = data.azurerm_resource_group.Infr.location
@@ -90,12 +90,6 @@ module "Az-RoleAssignment-Apps" {
   ass_principal_id        = var.service_principals[1]["Application_object_id"]
 }
 
-/*
-Currently having this error after 2 hours :
-Error: Error waiting for creation/update of Azure Firewall "jdld-infr-fw1" (Resource Group "infr-jdld-noprd-rg1"): Code="GwmOperationTimeOut" Message="Operation timed out. Please retry after some time or contact support." Details=[]
-*/
-
-/*
 module "Az-Firewall-Infr" {
   source                 = "git::https://github.com/JamesDLD/terraform.git//module/Az-Firewall?ref=master"
   fw_resource_group_name = data.azurerm_resource_group.Infr.name
@@ -142,7 +136,7 @@ resource "azurerm_monitor_diagnostic_setting" "fw" {
     }
   }
 }
-*/
+
 /*
 Currently not using those policies because the terraform resources with the suffix "association" generate an error when using terraform destroy cmdlet
 module "Az-PolicyAssignment-Infra-nsg-on-apps-subnet" {

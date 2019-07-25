@@ -83,7 +83,7 @@ resource "azurerm_network_security_group" "apps_nsgs" {
 ## Virtual Machines components
 
 module "Az-LoadBalancer-Apps" {
-  source                 = "git::https://github.com/JamesDLD/terraform.git//module/Az-LoadBalancer?ref=feature/nomoreusingnull_resource"
+  source                 = "git::https://github.com/JamesDLD/terraform.git//module/Az-LoadBalancer?ref=master"
   Lbs                    = var.Lbs
   lb_prefix              = "${var.app_name}-${var.env_name}-"
   lb_location            = data.azurerm_resource_group.MyApps.location
@@ -95,7 +95,7 @@ module "Az-LoadBalancer-Apps" {
 }
 
 module "Az-Vm-Apps" {
-  source                             = "git::https://github.com/JamesDLD/terraform.git//module/Az-Vm?ref=feature/nomoreusingnull_resource"
+  source                             = "git::https://github.com/JamesDLD/terraform.git//module/Az-Vm?ref=master"
   sa_bootdiag_storage_uri            = data.azurerm_storage_account.Infr.primary_blob_endpoint
   nsgs_ids                           = azurerm_network_security_group.apps_nsgs.*.id
   public_ip_ids                      = ["null"]

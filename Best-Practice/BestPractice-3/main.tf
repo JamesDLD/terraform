@@ -47,7 +47,7 @@ resource "azurerm_subnet" "DemoBP3" {
 }
 
 module "Az-LoadBalancer-Demo" {
-  source                 = "git::https://github.com/JamesDLD/terraform.git//module/Az-LoadBalancer?ref=feature/nomoreusingnull_resource"
+  source                 = "git::https://github.com/JamesDLD/terraform.git//module/Az-LoadBalancer?ref=master"
   Lbs                    = var.Lbs
   lb_prefix              = "bp3-"
   lb_location            = data.azurerm_resource_group.infr.location
@@ -59,7 +59,7 @@ module "Az-LoadBalancer-Demo" {
 }
 
 module "Az-Vm-Demo" {
-  source                             = "git::https://github.com/JamesDLD/terraform.git//module/Az-Vm?ref=feature/nomoreusingnull_resource"
+  source                             = "git::https://github.com/JamesDLD/terraform.git//module/Az-Vm?ref=master"
   sa_bootdiag_storage_uri            = data.azurerm_storage_account.infr.primary_blob_endpoint
   nsgs_ids                           = [""]
   public_ip_ids                      = ["null"]
