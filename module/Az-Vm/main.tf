@@ -2,16 +2,17 @@
 # - Locals variables
 # -
 locals {
-  linux_vms                                  = [for x in var.vms : x if x.os_type == "linux"]
-  linux_nics_with_internal_bp                = [for x in local.linux_vms : x if lookup(x, "internal_lb_iteration", null) != null]
-  linux_nics_with_public_bp                  = [for x in local.linux_vms : x if lookup(x, "public_lb_iteration", null) != null]
-  linux_vms_with_enable_enable_ip_forwarding = [for x in local.linux_vms : x if lookup(x, "enable_ip_forwarding", null) == true]
-  linux_vms_to_backup                        = [for x in local.linux_vms : x if lookup(x, "BackupPolicyName", null) != null]
-  windows_vms                                = [for x in var.vms : x if x.os_type == "windows"]
-  windows_nics_with_internal_bp              = [for x in local.windows_vms : x if lookup(x, "internal_lb_iteration", null) != null]
-  windows_nics_with_public_bp                = [for x in local.windows_vms : x if lookup(x, "public_lb_iteration", null) != null]
-  windows_vms_to_backup                      = [for x in local.windows_vms : x if lookup(x, "BackupPolicyName", null) != null]
-  custom_data_content                        = file("${path.module}/files/InitializeVM.ps1")
+  linux_vms                                    = [for x in var.vms : x if x.os_type == "linux"]
+  linux_nics_with_internal_bp                  = [for x in local.linux_vms : x if lookup(x, "internal_lb_iteration", null) != null]
+  linux_nics_with_public_bp                    = [for x in local.linux_vms : x if lookup(x, "public_lb_iteration", null) != null]
+  linux_vms_with_enable_enable_ip_forwarding   = [for x in local.linux_vms : x if lookup(x, "enable_ip_forwarding", null) == true]
+  linux_vms_to_backup                          = [for x in local.linux_vms : x if lookup(x, "BackupPolicyName", null) != null]
+  windows_vms                                  = [for x in var.vms : x if x.os_type == "windows"]
+  windows_nics_with_internal_bp                = [for x in local.windows_vms : x if lookup(x, "internal_lb_iteration", null) != null]
+  windows_nics_with_public_bp                  = [for x in local.windows_vms : x if lookup(x, "public_lb_iteration", null) != null]
+  windows_vms_with_enable_enable_ip_forwarding = [for x in local.windows_vms : x if lookup(x, "enable_ip_forwarding", null) == true]
+  windows_vms_to_backup                        = [for x in local.windows_vms : x if lookup(x, "BackupPolicyName", null) != null]
+  custom_data_content                          = file("${path.module}/files/InitializeVM.ps1")
 }
 
 # -
@@ -65,6 +66,71 @@ resource "azurerm_network_interface_backend_address_pool_association" "linux_nic
 # - Linux Virtual Machines
 # -
 
+resource "azurerm_virtual_machine" "linux_vms" {
+  count                            = length(local.linux_vms)
+  name                             = "${var.vm_prefix}${local.linux_vms[count.index]["suffix_name"]}${local.linux_vms[count.index]["id"]}"
+  location                         = azurerm_network_interface.linux_nics[count.index].location
+  resource_group_name              = azurerm_network_interface.linux_nics[count.index].resource_group_name
+  network_interface_ids            = [element(azurerm_network_interface.linux_nics.*.id, count.index)]
+  zones                            = lookup(local.linux_vms[count.index], "zones", null)
+  vm_size                          = local.linux_vms[count.index]["vm_size"]
+  delete_os_disk_on_termination    = lookup(local.linux_vms[count.index], "delete_os_disk_on_termination", true)
+  delete_data_disks_on_termination = lookup(local.linux_vms[count.index], "delete_data_disks_on_termination", true)
+  boot_diagnostics {
+    enabled     = var.sa_bootdiag_storage_uri == null ? "false" : "true"
+    storage_uri = var.sa_bootdiag_storage_uri
+  }
+
+
+  os_profile_linux_config {
+    disable_password_authentication = lookup(local.linux_vms[count.index], "disable_password_authentication", false)
+
+    ssh_keys {
+      path     = "/home/${var.admin_username}/.ssh/authorized_keys"
+      key_data = var.ssh_key
+    }
+  }
+
+  storage_os_disk {
+    name              = "${var.vm_prefix}${local.linux_vms[count.index]["suffix_name"]}${local.linux_vms[count.index]["id"]}-osdk"
+    caching           = lookup(local.linux_vms[count.index], "storage_os_disk_caching", "ReadWrite")
+    create_option     = lookup(local.linux_vms[count.index], "storage_os_disk_create_option", "FromImage")
+    managed_disk_type = local.linux_vms[count.index]["managed_disk_type"]
+  }
+
+
+  storage_image_reference {
+    id        = lookup(local.linux_vms[count.index], "storage_image_reference_id", lookup(var.linux_storage_image_reference, "id", null))
+    offer     = lookup(local.linux_vms[count.index], "storage_image_reference_offer", lookup(var.linux_storage_image_reference, "offer", null))
+    publisher = lookup(local.linux_vms[count.index], "storage_image_reference_publisher", lookup(var.linux_storage_image_reference, "publisher", null))
+    sku       = lookup(local.linux_vms[count.index], "storage_image_reference_sku", lookup(var.linux_storage_image_reference, "sku", null))
+    version   = lookup(local.linux_vms[count.index], "storage_image_reference_version", lookup(var.linux_storage_image_reference, "version", null))
+  }
+
+  dynamic "storage_data_disk" {
+    for_each = lookup(local.linux_vms[count.index], "storage_data_disks", null)
+
+    content {
+      name                      = "${var.vm_prefix}${local.linux_vms[count.index]["suffix_name"]}${local.linux_vms[count.index]["id"]}-dd${lookup(storage_data_disk.value, "id", "null")}"
+      caching                   = lookup(storage_data_disk.value, "caching", null)
+      create_option             = lookup(storage_data_disk.value, "create_option", null)
+      disk_size_gb              = lookup(storage_data_disk.value, "disk_size_gb", null)
+      lun                       = lookup(storage_data_disk.value, "lun", lookup(var.linux_storage_image_reference, "lun", lookup(storage_data_disk.value, "id", "null")))
+      write_accelerator_enabled = lookup(storage_data_disk.value, "write_accelerator_enabled", null)
+      managed_disk_type         = lookup(storage_data_disk.value, "managed_disk_type", null)
+      managed_disk_id           = lookup(storage_data_disk.value, "managed_disk_id", null)
+    }
+  }
+
+  os_profile {
+    computer_name  = "${var.vm_prefix}${local.linux_vms[count.index]["suffix_name"]}${local.linux_vms[count.index]["id"]}"
+    admin_username = var.admin_username
+    admin_password = var.admin_password
+  }
+
+  tags = var.vm_tags
+}
+
 resource "azurerm_virtual_machine_extension" "linux_vms_with_enable_enable_ip_forwarding" {
   count                = length(local.linux_vms_with_enable_enable_ip_forwarding)
   name                 = "enable_accelerated_networking-for-${var.vm_prefix}${local.linux_vms_with_enable_enable_ip_forwarding[count.index]["suffix_name"]}${local.linux_vms_with_enable_enable_ip_forwarding[count.index]["id"]}"
@@ -80,71 +146,6 @@ resource "azurerm_virtual_machine_extension" "linux_vms_with_enable_enable_ip_fo
         "commandToExecute": "sed -i 's/#net.ipv4.ip_forward/net.ipv4.ip_forward/g' /etc/sysctl.conf && sysctl -p"
     }
 SETTINGS
-
-  tags = var.vm_tags
-}
-
-resource "azurerm_virtual_machine" "linux_vms" {
-  count = length(local.linux_vms)
-  name = "${var.vm_prefix}${local.linux_vms[count.index]["suffix_name"]}${local.linux_vms[count.index]["id"]}"
-  location = azurerm_network_interface.linux_nics[count.index].location
-  resource_group_name = azurerm_network_interface.linux_nics[count.index].resource_group_name
-  network_interface_ids = [element(azurerm_network_interface.linux_nics.*.id, count.index)]
-  zones = lookup(local.linux_vms[count.index], "zones", null)
-  vm_size = local.linux_vms[count.index]["vm_size"]
-  delete_os_disk_on_termination = lookup(local.linux_vms[count.index], "delete_os_disk_on_termination", true)
-  delete_data_disks_on_termination = lookup(local.linux_vms[count.index], "delete_data_disks_on_termination", true)
-  boot_diagnostics {
-    enabled = var.sa_bootdiag_storage_uri == null ? "false" : "true"
-    storage_uri = var.sa_bootdiag_storage_uri
-  }
-
-
-  os_profile_linux_config {
-    disable_password_authentication = lookup(local.linux_vms[count.index], "disable_password_authentication", false)
-
-    ssh_keys {
-      path = "/home/${var.admin_username}/.ssh/authorized_keys"
-      key_data = var.ssh_key
-    }
-  }
-
-  storage_os_disk {
-    name = "${var.vm_prefix}${local.linux_vms[count.index]["suffix_name"]}${local.linux_vms[count.index]["id"]}-osdk"
-    caching = lookup(local.linux_vms[count.index], "storage_os_disk_caching", "ReadWrite")
-    create_option = lookup(local.linux_vms[count.index], "storage_os_disk_create_option", "FromImage")
-    managed_disk_type = local.linux_vms[count.index]["managed_disk_type"]
-  }
-
-
-  storage_image_reference {
-    id = lookup(local.linux_vms[count.index], "storage_image_reference_id", lookup(var.linux_storage_image_reference, "id", null))
-    offer = lookup(local.linux_vms[count.index], "storage_image_reference_offer", lookup(var.linux_storage_image_reference, "offer", null))
-    publisher = lookup(local.linux_vms[count.index], "storage_image_reference_publisher", lookup(var.linux_storage_image_reference, "publisher", null))
-    sku = lookup(local.linux_vms[count.index], "storage_image_reference_sku", lookup(var.linux_storage_image_reference, "sku", null))
-    version = lookup(local.linux_vms[count.index], "storage_image_reference_version", lookup(var.linux_storage_image_reference, "version", null))
-  }
-
-  dynamic "storage_data_disk" {
-    for_each = lookup(local.linux_vms[count.index], "storage_data_disks", null)
-
-    content {
-      name = "${var.vm_prefix}${local.linux_vms[count.index]["suffix_name"]}${local.linux_vms[count.index]["id"]}-dd${lookup(storage_data_disk.value, "id", "null")}"
-      caching = lookup(storage_data_disk.value, "caching", null)
-      create_option = lookup(storage_data_disk.value, "create_option", null)
-      disk_size_gb = lookup(storage_data_disk.value, "disk_size_gb", null)
-      lun = lookup(storage_data_disk.value, "lun", lookup(var.linux_storage_image_reference, "lun", lookup(storage_data_disk.value, "id", "null")))
-      write_accelerator_enabled = lookup(storage_data_disk.value, "write_accelerator_enabled", null)
-      managed_disk_type = lookup(storage_data_disk.value, "managed_disk_type", null)
-      managed_disk_id = lookup(storage_data_disk.value, "managed_disk_id", null)
-    }
-  }
-
-  os_profile {
-    computer_name = "${var.vm_prefix}${local.linux_vms[count.index]["suffix_name"]}${local.linux_vms[count.index]["id"]}"
-    admin_username = var.admin_username
-    admin_password = var.admin_password
-  }
 
   tags = var.vm_tags
 }
@@ -270,13 +271,41 @@ resource "azurerm_virtual_machine" "windows_vms" {
   tags = var.vm_tags
 }
 
+variable "enable_ip_forwarding_on_windows" {
+  description = "Enable ip forwarding and reboot the VM."
+  default = <<EOF
+Set-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters -Name IpEnableRouter -Value 1
+Get-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters -Name IpEnableRouter
+#Restart-Computer -Force #Not recommended see : https://docs.microsoft.com/en-us/azure/virtual-machines/extensions/custom-script-windows
+EOF
+}
+
+locals {
+  enable_ip_forwarding_on_windows = {
+    script = "${compact(split("\n", var.enable_ip_forwarding_on_windows))}"
+  }
+}
+
+resource "azurerm_virtual_machine_extension" "windows_vms_with_enable_enable_ip_forwarding" {
+  count                = length(local.windows_vms_with_enable_enable_ip_forwarding)
+  name                 = "enable_accelerated_networking-for-${var.vm_prefix}${local.windows_vms_with_enable_enable_ip_forwarding[count.index]["suffix_name"]}${local.windows_vms_with_enable_enable_ip_forwarding[count.index]["id"]}"
+  location             = azurerm_virtual_machine.windows_vms[count.index].location
+  resource_group_name  = azurerm_network_interface.windows_nics[count.index].resource_group_name
+  virtual_machine_name = "${var.vm_prefix}${local.windows_vms_with_enable_enable_ip_forwarding[count.index]["suffix_name"]}${local.windows_vms_with_enable_enable_ip_forwarding[count.index]["id"]}"
+  publisher            = "Microsoft.CPlat.Core"
+  type                 = "RunCommandWindows"
+  type_handler_version = "1.1"
+  settings             = "${jsonencode(local.enable_ip_forwarding_on_windows)}"
+  tags                 = var.vm_tags
+}
+
 # -
 # - Windows Virtual Machines Backup
 # -
 resource "azurerm_recovery_services_protected_vm" "windows_vm_resources_to_backup" {
-  count = var.rsv_id != "" ? length(local.windows_vms_to_backup) : "0"
+  count               = var.rsv_id != "" ? length(local.windows_vms_to_backup) : "0"
   resource_group_name = element(split("/", var.rsv_id), 4)
   recovery_vault_name = element(split("/", var.rsv_id), 8)
-  source_vm_id = [for x in azurerm_virtual_machine.windows_vms : x.id if x.name == "${var.vm_prefix}${local.windows_vms_to_backup[count.index]["suffix_name"]}${local.windows_vms_to_backup[count.index]["id"]}"][0]
-  backup_policy_id = "${var.rsv_id}/backupPolicies/${local.windows_vms_to_backup[count.index]["BackupPolicyName"]}"
+  source_vm_id        = [for x in azurerm_virtual_machine.windows_vms : x.id if x.name == "${var.vm_prefix}${local.windows_vms_to_backup[count.index]["suffix_name"]}${local.windows_vms_to_backup[count.index]["id"]}"][0]
+  backup_policy_id    = "${var.rsv_id}/backupPolicies/${local.windows_vms_to_backup[count.index]["BackupPolicyName"]}"
 }

@@ -31,6 +31,7 @@ variable "windows_storage_image_reference" {
     version   = "Latest"
   }
 }
+
 variable "vm_location" {
   description = "VM's location."
 }
@@ -63,6 +64,7 @@ variable "ssh_key" {
 
 variable "key_vault_id" {
   description = "Key vault id to store VM certificates."
+  default     = ""
 }
 
 variable "rsv_id" {
@@ -75,9 +77,11 @@ variable "disable_log_analytics_dependencies" {
 }
 
 variable "workspace_resource_group_name" {
+  default = ""
 }
 
 variable "workspace_name" {
+  default = ""
 }
 
 variable "OmsAgentForLinux" {

@@ -73,7 +73,7 @@ variable "vms" {
       os_type              = "linux"           #(Mandatory) Support "linux" or "windows"
       storage_data_disks   = []                #(Mandatory) For no data disks set []
       subnet_iteration     = "1"               #(Mandatory) Id of the Subnet
-      zones                = ["1"]             #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to "", WARNING you could not have Availabilitysets and AvailabilityZones
+      zones                = ["1"]             #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to null or delete the line
       vm_size              = "Standard_DS1_v2" #(Mandatory) 
       managed_disk_type    = "Premium_LRS"     #(Mandatory) 
       enable_ip_forwarding = true              #(Optiona)
