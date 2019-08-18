@@ -103,11 +103,12 @@ steps:
 # -
 
 - script: |
+
     if [ "${{ parameters.main_file_path }}" != "" ] ; 
     then
-      terraform plan -var-file="${{ parameters.main_file_path }}" -var-file="$(Agent.TempDirectory)/${{ parameters.main_secret_file_id }}" -out="./out_plan_file" -input=false -detailed-exitcode > /dev/null
+      OUTPUT=$(terraform plan -var-file="${{ parameters.main_file_path }}" -var-file="$(Agent.TempDirectory)/${{ parameters.main_secret_file_id }}" -out="./out_plan_file" -input=false -detailed-exitcode)
     else
-      terraform plan -var-file="$(Agent.TempDirectory)/${{ parameters.main_secret_file_id }}" -out="./out_plan_file" -input=false -detailed-exitcode > /dev/null
+      OUTPUT=$(terraform plan -var-file="$(Agent.TempDirectory)/${{ parameters.main_secret_file_id }}" -out="./out_plan_file" -input=false -detailed-exitcode)
     fi
 
     OUT=$?
@@ -125,6 +126,16 @@ steps:
     else
         echo "Terraform planned has failed!"
         exit 1
+    fi
+
+    if [[ $OUTPUT =~ "[DEPRECATED]" ]]; then
+        echo "##vso[task.logissue type=warning;]A Terraform property has been deprecated."
+        if [ "${{ parameters.main_file_path }}" != "" ] ; 
+        then
+          terraform plan -var-file="${{ parameters.main_file_path }}" -var-file="$(Agent.TempDirectory)/${{ parameters.main_secret_file_id }}" -input=false
+        else
+          terraform plan -var-file="$(Agent.TempDirectory)/${{ parameters.main_secret_file_id }}" -input=false
+        fi
     fi
   displayName: '${{ parameters.package_name }} - Terraform Plan'
   workingDirectory: ${{ parameters.path }}
