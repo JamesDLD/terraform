@@ -130,6 +130,7 @@ steps:
 
     if [[ $OUTPUT =~ "[DEPRECATED]" ]]; then
         echo "##vso[task.logissue type=warning;]A Terraform property has been deprecated."
+        echo "##vso[task.complete result=Warning;]"
         if [ "${{ parameters.main_file_path }}" != "" ] ; 
         then
           terraform plan -var-file="${{ parameters.main_file_path }}" -var-file="$(Agent.TempDirectory)/${{ parameters.main_secret_file_id }}" -input=false
