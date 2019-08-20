@@ -1,6 +1,14 @@
 #Multi-stage YAML pipeline demo.
 name: $(BuildDefinitionName).$(DayOfYear)$(Rev:.r)
 
+schedules:
+- cron: "45 6 * * 4"
+  branches:
+    include:
+    - master
+  displayName: Weekly Thursday 6h45 am UTC build
+  always: true
+
 variables:
 - group: terraform_binary  # variable group containing Terraform information like the Terraform version (like terraform_version)
 - name: vmImageName
@@ -9,8 +17,6 @@ variables:
   value: 'backend-main-jdld-1.json'
 - name: artifact_name
   value: 'AzureDevops-Introduction'
-- name: PackageName1
-  value: 'aks-k8s'
 
 resources:
   repositories:
@@ -49,8 +55,8 @@ stages:
     - template: pipeline/terraform.yml@Yaml_Templates
       parameters:
         version: $(terraform_version)
-        path: './AzureDevops-Introduction/$(PackageName1)/'
-        package_name: $(PackageName1)
+        path: './AzureDevops-Introduction/aks-k8s/'
+        package_name: 'aks-k8s'
         terraform_init: true
         terraform_plan: true
         backend_secret_file_id: $(backend_main_secret_file_id1)
@@ -80,7 +86,7 @@ stages:
             parameters:
               version: $(terraform_version)
               artifact_path: $(Pipeline.Workspace)/$(artifact_name)
-              package_name: $(PackageName1)
+              package_name: 'aks-k8s'
               terraform_apply: true
               main_file_path: 'variable/main-jdld.tfvars'
 
@@ -110,7 +116,7 @@ stages:
             parameters:
               version: $(terraform_version)
               artifact_path: $(Pipeline.Workspace)/$(artifact_name)
-              package_name: $(PackageName1)
+              package_name: 'aks-k8s'
               terraform_destroy: true
               main_secret_file_id: $(backend_main_secret_file_id1)
               main_file_path: 'variable/main-jdld.tfvars'
