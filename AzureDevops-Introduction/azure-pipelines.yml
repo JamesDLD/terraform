@@ -50,11 +50,13 @@ stages:
       parameters:
         version: $(terraform_version)
         path: './AzureDevops-Introduction/$(PackageName1)/'
-        package_name: '$(PackageName1)'
+        package_name: $(PackageName1)
         terraform_init: true
         terraform_plan: true
         backend_secret_file_id: $(backend_main_secret_file_id1)
+        backend_file_path: 'variable/backend-jdld.tfvars'
         main_secret_file_id: $(backend_main_secret_file_id1)
+        main_file_path: 'variable/main-jdld.tfvars'
 
     - publish: './ArtifactPublishLocation' # Local path to include in the Artifact
       artifact: '$(artifact_name)'
@@ -77,9 +79,10 @@ stages:
           - template: pipeline/terraform.yml@Yaml_Templates
             parameters:
               version: $(terraform_version)
-              package_name: '$(PackageName1)'
-              terraform_apply: true
               artifact_path: $(Pipeline.Workspace)/$(artifact_name)
+              package_name: $(PackageName1)
+              terraform_apply: true
+              main_file_path: 'variable/main-jdld.tfvars'
 
 - stage: Deliver
   dependsOn: Deploy
@@ -106,7 +109,8 @@ stages:
           - template: pipeline/terraform.yml@Yaml_Templates
             parameters:
               version: $(terraform_version)
-              package_name: '$(PackageName1)'
+              artifact_path: $(Pipeline.Workspace)/$(artifact_name)
+              package_name: $(PackageName1)
               terraform_destroy: true
               main_secret_file_id: $(backend_main_secret_file_id1)
-              artifact_path: $(Pipeline.Workspace)/$(artifact_name)
+              main_file_path: 'variable/main-jdld.tfvars'
