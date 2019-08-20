@@ -49,7 +49,7 @@ stages:
     - template: pipeline/terraform.yml@Yaml_Templates
       parameters:
         version: $(terraform_version)
-        path: './$(PackageName1)/'
+        path: './AzureDevops-Introduction/$(PackageName1)/'
         package_name: '$(PackageName1)'
         terraform_init: true
         terraform_plan: true
