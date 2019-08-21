@@ -12,6 +12,8 @@ parameters:
   terraform_apply: false #Decide to perform a Terraform apply
   terraform_destroy: false #Decide to perform a Terraform destroy
   artifact_path: '' #Fill in the Artifact path location when Terraform applied is asked (usually it's $(Pipeline.Workspace)/$(artifact_name))
+  build_service_account_name: 'jamesdld23' #Azure DevOps organization name where your terraform modules are located
+  terraform_repo_domain_url: 'dev.azure.com' #Azure DevOps url suffix name where your terraform modules are located
 
 steps:
 # -
@@ -52,9 +54,7 @@ steps:
 
 - script: |
     #Variable
-    build_service_account_name="lec-gal"
     build_service_account_tocken=$(System.AccessToken)
-    terraform_repo_domain_url="dev.azure.com"
 
     #Action
     touch $HOME/.gitconfig
@@ -63,9 +63,9 @@ steps:
         echo $line
         git config --global --remove-section $line
     done
-    git config --global url."https://$build_service_account_name:$build_service_account_tocken@$terraform_repo_domain_url".insteadOf https://$terraform_repo_domain_url
+    git config --global url."https://${{ parameters.build_service_account_name }}:$build_service_account_tocken@${{ parameters.terraform_repo_domain_url }}".insteadOf https://${{ parameters.terraform_repo_domain_url }}
     git init
-  displayName: '${{ parameters.package_name }} - Redirect foo git URLs to use the Access Token So Modules Can Be Pulled In'
+  displayName: '${{ parameters.package_name }} - Redirect git URLs to use the Access Token So Modules Can Be Pulled In'
   condition: ${{ parameters.terraform_init }} # this task will only run if terraform_init equals true
 
 # -
@@ -88,12 +88,10 @@ steps:
 
 - script: |
     #Variable
-    build_service_account_name="lec-gal"
-    build_service_account_tocken=$(System.AccessToken)
-    terraform_repo_domain_url="dev.azure.com"
+    build_service_account_tocken=$(System.AccessToken)  
 
     #Action
-    git config --global --remove-section url.https://$build_service_account_name:$build_service_account_tocken@$terraform_repo_domain_url
+    git config --global --remove-section url.https://${{ parameters.build_service_account_name }}:$build_service_account_tocken@$${{ parameters.terraform_repo_domain_url }}
   displayName: '${{ parameters.package_name }} - Remove git URL Redirect'
   condition: ${{ parameters.terraform_init }} # this task will only run if terraform_init equals true
   continueOnError: true
