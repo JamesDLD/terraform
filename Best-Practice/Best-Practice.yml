@@ -24,7 +24,6 @@ resources:
       type: github
       endpoint: JamesDLD  # name of the service connection to use (for non-Azure Repos types)
       name: JamesDLD/terraform
-      ref: refs/heads/feature/terraformregistry
       #ref: refs/tags/0.0.1  # ref name to use, defaults to 'refs/heads/master'
 
 trigger:
@@ -53,6 +52,11 @@ stages:
       inputs:
         secureFile: $(backend_main_secret_file_id1)
 
+    - task: DownloadSecureFile@1
+      displayName: 'Download secure file $(main_secret_file_id1)'
+      inputs:
+        secureFile: $(main_secret_file_id1)
+        
     - template: pipeline/terraform.yml@Yaml_Templates
       parameters:
         version: $(terraform_version)
@@ -72,6 +76,17 @@ stages:
         terraform_plan: true
         backend_secret_file_id: $(backend_main_secret_file_id1)
         main_secret_file_id: $(backend_main_secret_file_id1)
+        main_file_path: 'variable/main-jdld.tfvars'
+
+    - template: pipeline/terraform.yml@Yaml_Templates
+      parameters:
+        version: $(terraform_version)
+        path: './Best-Practice/BestPractice-3/'
+        package_name: 'BestPractice-3'
+        terraform_init: true
+        terraform_plan: true
+        backend_secret_file_id: $(backend_main_secret_file_id1)
+        main_secret_file_id: $(main_secret_file_id1)
         main_file_path: 'variable/main-jdld.tfvars'
 
     - publish: './ArtifactPublishLocation' # Local path to include in the Artifact
@@ -106,6 +121,13 @@ stages:
               package_name: 'BestPractice-2'
               terraform_apply: true
 
+          - template: pipeline/terraform.yml@Yaml_Templates
+            parameters:
+              version: $(terraform_version)
+              artifact_path: $(Pipeline.Workspace)/$(artifact_name)
+              package_name: 'BestPractice-3'
+              terraform_apply: true
+
 - stage: Deliver
   dependsOn: Deploy
   jobs:
@@ -128,6 +150,11 @@ stages:
             inputs:
               secureFile: $(backend_main_secret_file_id1)
 
+          - task: DownloadSecureFile@1
+            displayName: 'Download secure file $(main_secret_file_id1)'
+            inputs:
+              secureFile: $(main_secret_file_id1)
+
           - template: pipeline/terraform.yml@Yaml_Templates
             parameters:
               version: $(terraform_version)
@@ -143,4 +170,13 @@ stages:
               package_name: 'BestPractice-2'
               terraform_destroy: true
               main_secret_file_id: $(backend_main_secret_file_id1)
+              main_file_path: 'variable/main-jdld.tfvars'
+
+          - template: pipeline/terraform.yml@Yaml_Templates
+            parameters:
+              version: $(terraform_version)
+              artifact_path: $(Pipeline.Workspace)/$(artifact_name)
+              package_name: 'BestPractice-3'
+              terraform_destroy: true
+              main_secret_file_id: $(main_secret_file_id1)
               main_file_path: 'variable/main-jdld.tfvars'

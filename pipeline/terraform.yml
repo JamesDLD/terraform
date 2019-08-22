@@ -61,9 +61,6 @@ steps:
     done
     git config --global url.https://${{ parameters.build_service_account_name }}:$(System.AccessToken)@${{ parameters.terraform_repo_domain_url }}.insteadOf https://${{ parameters.terraform_repo_domain_url }}
     git init
-    echo "debug"
-    git config --global --list 
-    echo "debug"
   displayName: '${{ parameters.package_name }} - Redirect git URLs to use the Access Token So Modules Can Be Pulled In'
   condition: ${{ parameters.terraform_init }} # this task will only run if terraform_init equals true
 

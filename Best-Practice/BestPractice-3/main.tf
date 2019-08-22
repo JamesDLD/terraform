@@ -12,7 +12,7 @@ terraform {
 
 #Set the Provider
 provider "azurerm" {
-  version         = "1.31.0"
+  version         = ">= 1.31.0"
   subscription_id = var.subscription_id
   client_id       = var.client_id
   client_secret   = var.client_secret
@@ -21,62 +21,65 @@ provider "azurerm" {
 
 #Call module/resource
 #Get components
-module "Get-AzureRmVirtualNetwork" {
-  source                   = "git::https://github.com/JamesDLD/terraform.git//module/Get-AzureRmVirtualNetwork?ref=master"
-  vnets                    = ["bp1-vnet1"]
-  vnet_resource_group_name = "infr-jdld-noprd-rg1"
-}
 
-data "azurerm_resource_group" "infr" {
+data "azurerm_resource_group" "bp3" {
   name = "infr-jdld-noprd-rg1"
 }
 
-data "azurerm_storage_account" "infr" {
+data "azurerm_storage_account" "bp3" {
   name                = "infrsand1vpcjdld1"
-  resource_group_name = data.azurerm_resource_group.infr.name
+  resource_group_name = data.azurerm_resource_group.bp3.name
 }
 
 #Action
-resource "azurerm_subnet" "DemoBP3" {
-  count                = length(var.subnets)
-  name                 = var.subnets[count.index]["name"]
-  resource_group_name  = data.azurerm_resource_group.infr.name
-  virtual_network_name = element(module.Get-AzureRmVirtualNetwork.vnet_names, var.subnets[count.index]["vnet_name_id"])
-  address_prefix       = var.subnets[count.index]["cidr_block"]
-  service_endpoints    = lookup(var.subnets[count.index], "service_endpoints", null)
+module "Az-VirtualNetwork-Demo" {
+  source                      = "JamesDLD/Az-VirtualNetwork/azurerm"
+  version                     = "0.1.1"
+  net_prefix                  = "demo"
+  network_resource_group_name = data.azurerm_resource_group.bp3.name
+  virtual_networks = {
+    vnet1 = {
+      id            = "1"
+      prefix        = "bp3"
+      address_space = ["10.0.3.0/24"]
+    }
+  }
+  subnets                 = var.subnets
+  route_tables            = {}
+  network_security_groups = {}
 }
 
-module "Az-LoadBalancer-Demo" {
-  source                 = "git::https://github.com/JamesDLD/terraform.git//module/Az-LoadBalancer?ref=master"
+module "Create-AzureRmLoadBalancer-Demo" {
+  source                 = "JamesDLD/Az-LoadBalancer/azurerm"
+  version                = "0.1.1"
   Lbs                    = var.Lbs
-  lb_prefix              = "bp3-"
-  lb_location            = data.azurerm_resource_group.infr.location
-  lb_resource_group_name = data.azurerm_resource_group.infr.name
-  Lb_sku                 = "Standard"
-  subnets_ids            = azurerm_subnet.DemoBP3.*.id
-  lb_tags                = data.azurerm_resource_group.infr.tags
-  LbRules                = []
+  LbRules                = {}
+  lb_prefix              = "demo-bp3"
+  lb_location            = element(module.Az-VirtualNetwork-Demo.vnet_locations, 0)
+  lb_resource_group_name = data.azurerm_resource_group.bp3.name
+  Lb_sku                 = "basic"
+  subnets_ids            = module.Az-VirtualNetwork-Demo.subnet_ids
+  lb_additional_tags     = { bp = "3" }
 }
 
 module "Az-Vm-Demo" {
-  source                             = "git::https://github.com/JamesDLD/terraform.git//module/Az-Vm?ref=master"
-  sa_bootdiag_storage_uri            = data.azurerm_storage_account.infr.primary_blob_endpoint
-  nsgs_ids                           = [""]
-  public_ip_ids                      = ["null"]
-  internal_lb_backend_ids            = module.Az-LoadBalancer-Demo.lb_backend_ids
-  public_lb_backend_ids              = ["null"]
-  key_vault_id                       = ""
-  disable_log_analytics_dependencies = "true"
-  workspace_resource_group_name      = ""
-  workspace_name                     = ""
-  subnets_ids                        = azurerm_subnet.DemoBP3.*.id
-  vms                                = var.vms
-  windows_storage_image_reference    = var.windows_storage_image_reference #If no need just fill "windows_storage_image_reference = []" in the tfvars file
-  vm_location                        = data.azurerm_resource_group.infr.location
-  vm_resource_group_name             = data.azurerm_resource_group.infr.name
-  vm_prefix                          = "bp3-"
-  vm_tags                            = data.azurerm_resource_group.infr.tags
-  admin_username                     = var.app_admin
-  admin_password                     = var.pass
-}
+  source                  = "JamesDLD/Az-Vm/azurerm"
+  version                 = "0.1.1"
+  sa_bootdiag_storage_uri = data.azurerm_storage_account.bp3.primary_blob_endpoint #(Mandatory)
+  subnets_ids             = module.Az-VirtualNetwork-Demo.subnet_ids               #(Mandatory)
+  linux_vms               = {}                                                     #(Mandatory)
+  windows_vms             = var.vms                                                #(Mandatory)
 
+  #This an implicit dependency
+  internal_lb_backend_ids = module.Create-AzureRmLoadBalancer-Demo.lb_backend_ids
+
+  #This an explicit dependency                 
+  #internal_lb_backend_ids = ["/subscriptions/${var.subscription_id}/resourceGroups/infr-jdld-noprd-rg1/providers/Microsoft.Network/loadBalancers/demo-bp3-internal-lb1/backendAddressPools/demo-bp3-internal-bckpool1"]
+
+  vm_resource_group_name          = data.azurerm_resource_group.bp3.name
+  vm_prefix                       = "bp3"                               #(Optional)
+  windows_storage_image_reference = var.windows_storage_image_reference #(Optional)
+  admin_username                  = var.app_admin
+  admin_password                  = var.pass
+  vm_additional_tags              = { bp = "3" } #(Optional)
+}
