@@ -82,7 +82,7 @@ steps:
   workingDirectory: ${{ parameters.path }}
   condition: ${{ parameters.terraform_init }} # this task will only run if terraform_init equals true
 
-- script: git config --global --remove-section url.https://${{ parameters.build_service_account_name }}:$(System.AccessToken)@$${{ parameters.terraform_repo_domain_url }}
+- script: git config --global --remove-section url.https://${{ parameters.build_service_account_name }}:$(System.AccessToken)@${{ parameters.terraform_repo_domain_url }}
   displayName: '${{ parameters.package_name }} - Remove git URL Redirect'
   condition: ${{ parameters.terraform_init }} # this task will only run if terraform_init equals true
   continueOnError: true
@@ -92,7 +92,6 @@ steps:
 # -
 
 - script: |
-
     if [ "${{ parameters.main_file_path }}" != "" ] ; 
     then
       OUTPUT=$(terraform plan -var-file="${{ parameters.main_file_path }}" -var-file="$(Agent.TempDirectory)/${{ parameters.main_secret_file_id }}" -out="./out_plan_file" -input=false -detailed-exitcode)
