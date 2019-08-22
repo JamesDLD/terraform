@@ -21,17 +21,9 @@ variable "lbs_public" {
   type = list(object({
     suffix_name            = string
     sku                    = string
-    allocatedOutboundPorts = number        #Number of SNAT ports, Load Balancer allocates SNAT ports in multiples of 8.
-    idleTimeoutInMinutes   = number        #Outbound flow idle timeout. The parameter accepts a value from 4 to 66.
-    enableTcpReset         = bool    #Enable TCP Reset on idle timeout.
-    protocol               = string      #Transport protocol of the outbound rule.
+    allocatedOutboundPorts = number #Number of SNAT ports, Load Balancer allocates SNAT ports in multiples of 8.
+    idleTimeoutInMinutes   = number #Outbound flow idle timeout. The parameter accepts a value from 4 to 66.
+    enableTcpReset         = bool   #Enable TCP Reset on idle timeout.
+    protocol               = string #Transport protocol of the outbound rule.
   }))
-}
-
-variable "app_admin" {
-  description = "Specifies the name of the administrator account on the VM."
-}
-
-variable "pass" {
-  description = "Specifies the password of the administrator account on the VM."
 }

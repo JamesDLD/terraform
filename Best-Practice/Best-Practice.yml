@@ -99,7 +99,7 @@ stages:
         terraform_init: true
         terraform_plan: true
         backend_secret_file_id: $(backend_main_secret_file_id1)
-        main_secret_file_id: $(main_secret_file_id1)
+        main_secret_file_id: $(backend_main_secret_file_id1)
         main_file_path: 'variable/main-jdld.tfvars'
 
     - publish: './ArtifactPublishLocation' # Local path to include in the Artifact
@@ -207,7 +207,7 @@ stages:
               artifact_path: $(Pipeline.Workspace)/$(artifact_name)
               package_name: 'BestPractice-4'
               terraform_destroy: true
-              main_secret_file_id: $(main_secret_file_id1)
+              main_secret_file_id: $(backend_main_secret_file_id1)
               main_file_path: 'variable/main-jdld.tfvars'
 
           - bash: |
@@ -233,4 +233,4 @@ stages:
               
               echo "Deleting the Azure public ip $ip_public_name located in the resource group $rg_name"
               az network public-ip delete -g $rg_name -n $ip_public_name
-            displayName: BP4-Delete Public LB and IP
+            displayName: BestPractice-4 - AZ CLI Delete Public LB and IP
