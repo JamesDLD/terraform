@@ -62,6 +62,17 @@ stages:
         backend_secret_file_id: $(backend_main_secret_file_id1)
         main_secret_file_id: $(backend_main_secret_file_id1)
 
+    - template: pipeline/terraform.yml@Yaml_Templates
+      parameters:
+        version: $(terraform_version)
+        path: './Best-Practice/BestPractice-2/'
+        package_name: 'BestPractice-2'
+        terraform_init: true
+        terraform_plan: true
+        backend_secret_file_id: $(backend_main_secret_file_id1)
+        main_secret_file_id: $(backend_main_secret_file_id1)
+        main_file_path: 'variable/main-jdld.tfvars'
+
     - publish: './ArtifactPublishLocation' # Local path to include in the Artifact
       artifact: '$(artifact_name)'
 
@@ -85,6 +96,13 @@ stages:
               version: $(terraform_version)
               artifact_path: $(Pipeline.Workspace)/$(artifact_name)
               package_name: 'BestPractice-1'
+              terraform_apply: true
+
+          - template: pipeline/terraform.yml@Yaml_Templates
+            parameters:
+              version: $(terraform_version)
+              artifact_path: $(Pipeline.Workspace)/$(artifact_name)
+              package_name: 'BestPractice-2'
               terraform_apply: true
 
 - stage: Deliver
@@ -116,3 +134,12 @@ stages:
               package_name: 'BestPractice-1'
               terraform_destroy: true
               main_secret_file_id: $(backend_main_secret_file_id1)
+
+          - template: pipeline/terraform.yml@Yaml_Templates
+            parameters:
+              version: $(terraform_version)
+              artifact_path: $(Pipeline.Workspace)/$(artifact_name)
+              package_name: 'BestPractice-2'
+              terraform_destroy: true
+              main_secret_file_id: $(backend_main_secret_file_id1)
+              main_file_path: 'variable/main-jdld.tfvars'

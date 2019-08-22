@@ -5,8 +5,8 @@ Best Practice 2
 In this article we will see how to set Terraform, provider and modules version (see [this article](https://www.terraform.io/docs/configuration/terraform.html) from terraform.io website to learn more about managing Terraform version).
 
 In this article we will perform the following action  : 
-1. Get a Virtual Network
-2. Create a Subnet in this Virtual Network
+1. Get a Resource Group
+2. Create a Virtual Network and a Subnet in this Virtual Network
 
 
 ### Prerequisite
@@ -29,10 +29,10 @@ We will create the upper mentioned element using remote backend (see the previou
 The Terraform executable file, the AzureRm provider and our modules version will be set as described in the following bracket (also available in our [main-jdld.tf](main-jdld.tf) Terraform file).
 
 
-Declare Terraform required version 
+Declare the Terraform required version 
 ```hcl
 terraform {
-  required_version = "0.12.5"
+  required_version = ">= 0.12.6"
 
   backend "azurerm" {
     storage_account_name = "infrsand1vpcjdld1"
@@ -46,7 +46,7 @@ terraform {
 Specify the AzureRm version 
 ```hcl
 provider "azurerm" {
-  version         = "1.31.0"
+  version         = ">= 1.31.0"
   subscription_id = "${var.subscription_id}"
   client_id       = "${var.client_id}"
   client_secret   = "${var.client_secret}"
@@ -56,11 +56,15 @@ provider "azurerm" {
 
 Specify the module version
 ```hcl
-module "Get-AzureRmVirtualNetwork" {
-  version                  = "~> 0.1"
-  source                   = "github.com/JamesDLD/terraform/module/Get-AzureRmVirtualNetwork"
-  vnets                    = "virtualNetwork1"
-  vnet_resource_group_name = "infr-jdld-noprd-rg1"
+module "Az-VirtualNetwork" {
+  source                      = "JamesDLD/Az-VirtualNetwork/azurerm"
+  version                     = "0.1.1"
+  net_prefix                  = "demo"
+  network_resource_group_name = data.azurerm_resource_group.bp2.name
+  virtual_networks = var.virtual_networks
+  subnets = var.subnets
+  route_tables            = {}
+  network_security_groups = {}
 }
 ```
 

@@ -1,10 +1,10 @@
 #Variables initialization
 
-subnets = [
-  {
-    name              = "bp2-front-snet1"
-    cidr_block        = "10.0.2.0/24"
-    vnet_name_id      = "0" #Id of the vnet
-    service_endpoints = ["Microsoft.Storage", "Microsoft.Sql", "Microsoft.AzureActiveDirectory", "Microsoft.AzureCosmosDB", "Microsoft.ServiceBus"]
-  },
-]
+subnets = {
+  snet1 = {
+    vnet_key          = "vnet1"                                #(Mandatory) 
+    name              = "bp2"                                  #(Mandatory) 
+    address_prefix    = "198.18.1.0/26"                        #(Mandatory) 
+    service_endpoints = ["Microsoft.Sql", "Microsoft.Storage"] #(Optional) delete this line for no Service Endpoints
+  }
+}
