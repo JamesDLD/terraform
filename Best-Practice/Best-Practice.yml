@@ -91,6 +91,17 @@ stages:
         main_secret_file_id: $(main_secret_file_id1)
         main_file_path: 'variable/main-jdld.tfvars'
 
+    - template: pipeline/terraform.yml@Yaml_Templates
+      parameters:
+        version: $(terraform_version)
+        path: './Best-Practice/BestPractice-4/'
+        package_name: 'BestPractice-4'
+        terraform_init: true
+        terraform_plan: true
+        backend_secret_file_id: $(backend_main_secret_file_id1)
+        main_secret_file_id: $(main_secret_file_id1)
+        main_file_path: 'variable/main-jdld.tfvars'
+
     - publish: './ArtifactPublishLocation' # Local path to include in the Artifact
       artifact: '$(artifact_name)'
 
@@ -128,6 +139,13 @@ stages:
               version: $(terraform_version)
               artifact_path: $(Pipeline.Workspace)/$(artifact_name)
               package_name: 'BestPractice-3'
+              terraform_apply: true
+
+          - template: pipeline/terraform.yml@Yaml_Templates
+            parameters:
+              version: $(terraform_version)
+              artifact_path: $(Pipeline.Workspace)/$(artifact_name)
+              package_name: 'BestPractice-4'
               terraform_apply: true
 
 - stage: Deliver
@@ -182,3 +200,37 @@ stages:
               terraform_destroy: true
               main_secret_file_id: $(main_secret_file_id1)
               main_file_path: 'variable/main-jdld.tfvars'
+
+          - template: pipeline/terraform.yml@Yaml_Templates
+            parameters:
+              version: $(terraform_version)
+              artifact_path: $(Pipeline.Workspace)/$(artifact_name)
+              package_name: 'BestPractice-4'
+              terraform_destroy: true
+              main_secret_file_id: $(main_secret_file_id1)
+              main_file_path: 'variable/main-jdld.tfvars'
+
+          - bash: |
+              #Variable
+              backend_secret_file_id_path="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)"
+              rg_name="infr-jdld-noprd-rg1"
+              lb_public_name="bp4-outbound-publiclb1"
+              ip_public_name="bp4-outbound-publiclb1_pip1"
+              client_id=$(cat $backend_secret_file_id_path | jq -r  '.client_id')
+              client_secret=$(cat $backend_secret_file_id_path | jq -r  '.client_secret')
+              tenant_id=$(cat $backend_secret_file_id_path | jq -r  '.tenant_id')
+              subscription_id=$(cat $backend_secret_file_id_path | jq -r  '.subscription_id')
+              
+              #Action
+              echo "Connecting to the Azure tenant id"
+              login=$(az login --service-principal -u $client_id -p $client_secret --tenant $tenant_id)
+              
+              echo "Selecting the Azure subscription"
+              az account set --subscription $subscription_id
+              
+              echo "Deleting the Azure load balancer $lb_public_name located in the resource group $rg_name"
+              az network lb delete -g $rg_name -n $lb_public_name
+              
+              echo "Deleting the Azure public ip $ip_public_name located in the resource group $rg_name"
+              az network public-ip delete -g $rg_name -n $ip_public_name
+            displayName: BP4-Delete Public LB and IP
