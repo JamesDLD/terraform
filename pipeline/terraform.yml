@@ -53,17 +53,13 @@ steps:
     destinationFolder: './${{ parameters.package_name }}'
 
 - script: |
-    #Variable
-    build_service_account_tocken=$(System.AccessToken)
-
-    #Action
     touch $HOME/.gitconfig
     git config --global --list | grep url. | awk -F '.instead' '{print $1}' | while read line
     do
         echo $line
         git config --global --remove-section $line
     done
-    git config --global url."https://${{ parameters.build_service_account_name }}:$build_service_account_tocken@${{ parameters.terraform_repo_domain_url }}".insteadOf https://${{ parameters.terraform_repo_domain_url }}
+    git config --global url.https://${{ parameters.build_service_account_name }}:$(System.AccessToken)@${{ parameters.terraform_repo_domain_url }}.insteadOf https://${{ parameters.terraform_repo_domain_url }}
     git init
   displayName: '${{ parameters.package_name }} - Redirect git URLs to use the Access Token So Modules Can Be Pulled In'
   condition: ${{ parameters.terraform_init }} # this task will only run if terraform_init equals true
@@ -86,12 +82,7 @@ steps:
   workingDirectory: ${{ parameters.path }}
   condition: ${{ parameters.terraform_init }} # this task will only run if terraform_init equals true
 
-- script: |
-    #Variable
-    build_service_account_tocken=$(System.AccessToken)  
-
-    #Action
-    git config --global --remove-section url.https://${{ parameters.build_service_account_name }}:$build_service_account_tocken@$${{ parameters.terraform_repo_domain_url }}
+- script: git config --global --remove-section url.https://${{ parameters.build_service_account_name }}:$(System.AccessToken)@$${{ parameters.terraform_repo_domain_url }}
   displayName: '${{ parameters.package_name }} - Remove git URL Redirect'
   condition: ${{ parameters.terraform_init }} # this task will only run if terraform_init equals true
   continueOnError: true
