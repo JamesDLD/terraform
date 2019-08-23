@@ -104,14 +104,14 @@ stages:
           - template: pipeline/terraform.yml@Yaml_Templates
             parameters:
               version: $(terraform_version)
-              path: './CreateAzureRm-Infra/Infra/'
+              artifact_path: $(Pipeline.Workspace)/$(artifact_name)
               package_name: 'Infra'
               terraform_apply: true
 
           # - template: pipeline/terraform.yml@Yaml_Templates
           #   parameters:
           #     version: $(terraform_version)
-          #     path: './CreateAzureRm-Infra/apps/'
+          #     artifact_path: $(Pipeline.Workspace)/$(artifact_name)
           #     package_name: 'Apps'
           #     terraform_apply: true
 
