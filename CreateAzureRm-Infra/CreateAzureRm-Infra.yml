@@ -104,7 +104,7 @@ stages:
           - template: pipeline/terraform.yml@Yaml_Templates
             parameters:
               version: $(terraform_version)
-              path: './CreateAzureRm-Infra/infra/'
+              path: './CreateAzureRm-Infra/Infra/'
               package_name: 'Infra'
               terraform_apply: true
 
