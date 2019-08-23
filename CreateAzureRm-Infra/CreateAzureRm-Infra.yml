@@ -73,18 +73,6 @@ stages:
         main_secret_file_id: $(main_secret_file_id2)
         main_file_path: 'variable/infra-main-jdld.tfvars'
 
-    # - template: pipeline/terraform.yml@Yaml_Templates
-    #   parameters:
-    #     version: $(terraform_version)
-    #     path: './CreateAzureRm-Infra/apps/'
-    #     package_name: 'Apps'
-    #     terraform_init: true
-    #     terraform_plan: true
-    #     backend_file_path: 'variable/apps-backend-jdld.tfvars'
-    #     backend_secret_file_id: $(backend_main_secret_file_id1)
-    #     main_secret_file_id: $(main_secret_file_id2)
-    #     main_file_path: 'variable/apps-main-jdld.tfvars'
-
     - publish: './ArtifactPublishLocation' # Local path to include in the Artifact
       artifact: '$(artifact_name1)'
 
@@ -109,13 +97,6 @@ stages:
               artifact_path: $(Pipeline.Workspace)/$(artifact_name1)
               package_name: 'Infra'
               terraform_apply: true
-
-          # - template: pipeline/terraform.yml@Yaml_Templates
-          #   parameters:
-          #     version: $(terraform_version)
-          #     artifact_path: $(Pipeline.Workspace)/$(artifact_name2)
-          #     package_name: 'Apps'
-          #     terraform_apply: true
 
 - stage: Build_Apps
   dependsOn: Deploy_Infra
@@ -152,9 +133,30 @@ stages:
     - publish: './ArtifactPublishLocation' # Local path to include in the Artifact
       artifact: '$(artifact_name2)'
 
+- stage: Deploy_Apps
+  dependsOn: Build_Apps
+  jobs:
+    # track deployments on the environment
+  - deployment: Terraform_Apply_Apps
+    displayName: Terraform Apply - Apps - Resources creation
+    pool:
+      vmImage: $(vmImageName)
+    environment: 'Terraform_Apply'
+    strategy:
+      # default deployment strategy
+      runOnce:
+        deploy:
+          steps:
+
+          - template: pipeline/terraform.yml@Yaml_Templates
+            parameters:
+              version: $(terraform_version)
+              artifact_path: $(Pipeline.Workspace)/$(artifact_name2)
+              package_name: 'Apps'
+              terraform_apply: true
 
 - stage: Deliver
-  dependsOn: Build_Apps
+  dependsOn: Deploy_Apps
   jobs:
     # track deployments on the environment
   - deployment: Terraform_Destroy
@@ -182,11 +184,11 @@ stages:
               main_secret_file_id: $(main_secret_file_id2)
               main_file_path: 'variable/infra-main-jdld.tfvars'
 
-          # - template: pipeline/terraform.yml@Yaml_Templates
-          #   parameters:
-          #     version: $(terraform_version)
-          #     artifact_path: $(Pipeline.Workspace)/$(artifact_name2)
-          #     package_name: 'Apps'
-          #     terraform_destroy: true
-          #     main_secret_file_id: $(main_secret_file_id2)
-          #     main_file_path: 'variable/apps-main-jdld.tfvars'
+          - template: pipeline/terraform.yml@Yaml_Templates
+            parameters:
+              version: $(terraform_version)
+              artifact_path: $(Pipeline.Workspace)/$(artifact_name2)
+              package_name: 'Apps'
+              terraform_destroy: true
+              main_secret_file_id: $(main_secret_file_id2)
+              main_file_path: 'variable/apps-main-jdld.tfvars'
