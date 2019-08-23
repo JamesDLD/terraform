@@ -157,8 +157,6 @@ stages:
     pool:
       vmImage: $(vmImageName)
     environment: 'Terraform_Destroy'
-    # variables:
-    #   terraform_destroy: "false" #Re write the variable contained in the variable group terraform_binary
     strategy:
       # default deployment strategy
       runOnce:
