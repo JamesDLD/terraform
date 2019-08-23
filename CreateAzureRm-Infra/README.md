@@ -12,7 +12,7 @@ HashiCorp Terraform enables you to safely and predictably create, change, and im
 Objective
 ------------
 Share Terraform custom modules with the community with the following guidelines :
--	a module is dedicated to one action : create network interfaces, create an Azure recovery vault, ...
+-	a module is used when we need to call a given number of resources several times and the same way, for exemple : when creating a VM we need nic, disks, backup, log monitoring, etc ..
 -	a module doesn't contain any static values
 -	a module is called using variables
 
@@ -26,13 +26,12 @@ Usage
 | Step  | Description |
 | ------------- | ------------- |
 | [1 - Infra](infra) | Deliver the Infra |
-| [1 Bis - Infra vnet peering](infra_peering) | Virtual Network peering |
 | [2 - Apps](apps)  | Deliver an Apps environment |
 
 General Requirements
 ------------
 
--	[Terraform](https://www.Terraform.io/downloads.html) 0.12.5
+-	[Terraform](https://www.Terraform.io/downloads.html) 0.12.6
 -	[AzureRM Terraform Provider](https://github.com/Terraform-providers/Terraform-provider-azurerm/blob/master/README.md)
 -	[AzureRM Terraform Provider - Authentication](https://www.Terraform.io/docs/providers/azurerm/)
 -   The called "Infra" Azure Service Principal has the following privileges :
@@ -51,12 +50,14 @@ Improvment & Feature request & Limitation
 -	Even with the use of implicit dependency, the script doesn't wait enough between the privileges setting for Apps SPN and the when Apps SPN creates it's objects, for this reason the script will raise a privilege error at the first time, you will have to relaunch it to have a full success of all operations. After this, the Apps SPN doesn't need anymore to have the Reader privilege at the subscription level. [This might me solved by with feature "timeout" explained here](https://github.com/terraform-providers/terraform-provider-azurerm/issues/2807).
 -	Terraform authentication to AzureRM via Service Principal & certificate
 -   Feature Request: resource azurerm_automation_variable, [ticket raised here](https://github.com/terraform-providers/terraform-provider-azurerm/issues/1312)
--	Couldn't find any option to set the BackupStorageRedundancy paremeter (LRS or GRS) in the RecoveryServices/vaults template, [Microsoft.RecoveryServices/vaults template reference](https://docs.microsoft.com/en-us/azure/templates/microsoft.recoveryservices/vaults)
 
 Solved issues
 ------------
 -   Use multiple Azure service principal through the provider AzureRm, [ticket raised here](https://github.com/terraform-providers/terraform-provider-azurerm/issues/1308)
     - Solution : usage of provider.azurerm v1.6.0
 -   Use condition to decide wether or not a NIC should be linked to a Load Balancer, [ticket raised here](https://github.com/terraform-providers/terraform-provider-azurerm/issues/1318)
-    - Solution : usage of function "compact" & bracket to send empty list
--	Terraform resource for AzureRm recovery services is now available, I still use the Terraform resource azurerm_template_deployment but you can use the native resource since provider.azurerm v1.4.0. [change log is available here for info](https://github.com/terraform-providers/terraform-provider-azurerm/blob/master/CHANGELOG.md)
+    - Solution : usage of map and the foreach feature
+-	Terraform resource for AzureRm recovery services is now available, we can use the native resource since provider.azurerm v1.4.0. [change log is available here for info](https://github.com/terraform-providers/terraform-provider-azurerm/blob/master/CHANGELOG.md)
+-	Set the BackupStorageRedundancy paremeter (LRS or GRS) in the RecoveryServices/vaults template, [Microsoft.RecoveryServices/vaults template reference](https://docs.microsoft.com/en-us/azure/templates/microsoft.recoveryservices/vaults)
+    - Solution : use sku Standard, RS0, [Terraform resource azurerm_recovery_services_vault](https://www.terraform.io/docs/providers/azurerm/r/recovery_services_vault.html)
+    - [Work still needed on Microsoft API to use RS0 (LRS) at the RSV creation](https://github.com/Azure/azure-rest-api-specs/issues/4901)

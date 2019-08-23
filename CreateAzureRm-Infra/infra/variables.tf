@@ -7,9 +7,6 @@ terraform {
   required_version = ">= 0.12.6"
 }
 
-provider "random" {
-  version = "2.1.2"
-}
 
 variable "subscription_id" {
   description = "Azure subscription Id."
@@ -96,18 +93,13 @@ variable "roles" {
 }
 
 #Backup
-variable "backup_policies" {
-  description = "Recovery services vault backup policies."
-  type = list(object({
-    Name                          = string
-    scheduleRunFrequency          = string
-    scheduleRunDays               = string
-    scheduleRunTimes              = string
-    timeZone                      = string
-    dailyRetentionDurationCount   = number
-    weeklyRetentionDurationCount  = number
-    monthlyRetentionDurationCount = number
-  }))
+variable "recovery_services_vault" {
+  description = "Recovery Services Vault, map with properties described here : https://www.terraform.io/docs/providers/azurerm/r/recovery_services_vault.html"
+  type        = any
+}
+variable "recovery_services_protection_policy_vm" {
+  description = "Recovery Services VM Protection Policy, map with properties described here : https://www.terraform.io/docs/providers/azurerm/r/recovery_services_protection_policy_vm.html"
+  type        = any
 }
 
 #Vnet & Subnet & Network Security group

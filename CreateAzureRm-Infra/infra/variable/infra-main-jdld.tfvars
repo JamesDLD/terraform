@@ -75,19 +75,55 @@ roles = [
 sa_infr_name = "infrsand1vpcjdld1"
 
 #Backup 
-backup_policies = [
-  {
-    Name                 = "BackupPolicy-Schedule1"
-    scheduleRunFrequency = "Daily"
-    scheduleRunDays      = "null"
-    scheduleRunTimes     = "2017-01-26T20:00:00Z"
-    timeZone             = "Romance Standard Time"
 
-    dailyRetentionDurationCount   = "14"
-    weeklyRetentionDurationCount  = "2"
-    monthlyRetentionDurationCount = "2"
-  },
-]
+recovery_services_vault = {
+  rsv1 = {
+    id     = "2"
+    prefix = "infra"
+    sku    = "Standard"
+  }
+}
+
+recovery_services_protection_policy_vm = {
+  pol1 = {
+    rsv_key = "rsv1"
+    name    = "BackupPolicy-Schedule1"
+    backup = [
+      {
+        frequency = "Daily"
+        time      = "23:00"
+      },
+    ]
+    retention_daily = [
+      {
+        count = 10
+      },
+    ]
+    retention_weekly = [
+      {
+        count    = 42
+        weekdays = ["Sunday", "Wednesday", "Friday", "Saturday"]
+      },
+    ]
+    retention_monthly = [
+      {
+        count    = 7
+        weekdays = ["Sunday", "Wednesday"]
+        weeks    = ["First", "Last"]
+      },
+    ]
+
+    retention_yearly = [
+      {
+        count    = 77
+        weekdays = ["Sunday"]
+        weeks    = ["Last"]
+        months   = ["January"]
+      },
+    ]
+  }
+}
+
 
 #Key vault
 kv_sku = "standard"

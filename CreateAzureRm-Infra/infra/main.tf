@@ -21,12 +21,72 @@ data "azurerm_resource_group" "Apps" {
 }
 
 ## Core Infra components
-module "Create-AzureRmRecoveryServicesVault-Infr" {
-  source                  = "git::https://github.com/JamesDLD/terraform.git//module/Create-AzureRmRecoveryServicesVault?ref=master"
-  rsv_name                = "infra-${var.app_name}-${var.env_name}-rsv1"
-  rsv_resource_group_name = data.azurerm_resource_group.Infr.name
-  rsv_tags                = data.azurerm_resource_group.Infr.tags
-  rsv_backup_policies     = var.backup_policies
+
+resource "azurerm_recovery_services_vault" "Infr" {
+  for_each            = var.recovery_services_vault
+  name                = "${each.value["prefix"]}-${var.app_name}-${var.env_name}-rsv${each.value["id"]}"
+  location            = data.azurerm_resource_group.Infr.location
+  resource_group_name = data.azurerm_resource_group.Infr.name
+  sku                 = lookup(each.value, "sku", "RS0")
+  tags                = data.azurerm_resource_group.Infr.tags
+}
+
+resource "azurerm_recovery_services_protection_policy_vm" "Infr" {
+  for_each            = var.recovery_services_protection_policy_vm
+  name                = each.value["name"]
+  resource_group_name = data.azurerm_resource_group.Infr.name
+  timezone            = lookup(each.value, "timezone", "UTC")
+
+  dynamic "backup" {
+    for_each = lookup(each.value, "backup", null)
+    content {
+      frequency = lookup(backup.value, "frequency", null)
+      time      = lookup(backup.value, "time", null)
+    }
+  }
+
+  dynamic "retention_daily" {
+    for_each = lookup(each.value, "retention_daily", null)
+    content {
+      count = lookup(retention_daily.value, "count", null)
+    }
+  }
+
+  dynamic "retention_weekly" {
+    for_each = lookup(each.value, "retention_weekly", null)
+    content {
+      count    = lookup(retention_weekly.value, "count", null)
+      weekdays = lookup(retention_weekly.value, "weekdays", null)
+    }
+  }
+
+  dynamic "retention_monthly" {
+    for_each = lookup(each.value, "retention_monthly", null)
+    content {
+      count    = lookup(retention_monthly.value, "count", null)
+      weekdays = lookup(retention_monthly.value, "weekdays", null)
+      weeks    = lookup(retention_monthly.value, "weeks", null)
+    }
+  }
+
+  dynamic "retention_yearly" {
+    for_each = lookup(each.value, "retention_yearly", null)
+    content {
+      count    = lookup(retention_yearly.value, "count", null)
+      weekdays = lookup(retention_yearly.value, "weekdays", null)
+      weeks    = lookup(retention_yearly.value, "weeks", null)
+      months   = lookup(retention_yearly.value, "months", null)
+    }
+  }
+
+  /*
+  This forces a destroy when adding a new vnet --> 
+  virtual_network_name      = lookup(azurerm_recovery_services_vault.Infr, each.value["rsv_key"], null)["name"]
+
+  Workaround is to perform an explicit depedency-->
+  */
+  depends_on          = [azurerm_recovery_services_vault.Infr]
+  recovery_vault_name = "${lookup(var.recovery_services_vault, each.value["rsv_key"], "wrong_rsv_key_in_rsvpol")["prefix"]}-${var.app_name}-${var.env_name}-rsv${lookup(var.recovery_services_vault, each.value["rsv_key"], "wrong_rsv_key_in_rsvpol")["id"]}"
 }
 
 module "Az-KeyVault-Infr" {
@@ -83,12 +143,13 @@ module "Az-RoleAssignment-Apps" {
     module.Az-VirtualNetwork-Infra.route_table_ids[0],
     module.Az-VirtualNetwork-Infra.network_security_group_ids[0],
     data.azurerm_resource_group.Infr.id,
-    module.Create-AzureRmRecoveryServicesVault-Infr.backup_vault_id,
+    azurerm_recovery_services_vault.Infr["rsv1"].id,
     data.azurerm_storage_account.Infr.id,
   ]
   ass_role_definition_ids = module.Az-RoleDefinition-Apps.role_ids
   ass_principal_id        = var.service_principals[1]["Application_object_id"]
 }
+
 /*
 module "Az-Firewall-Infr" {
   source                 = "git::https://github.com/JamesDLD/terraform.git//module/Az-Firewall?ref=master"
