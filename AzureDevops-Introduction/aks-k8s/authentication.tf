@@ -11,7 +11,7 @@ provider "azurerm" {
   client_id       = "${var.client_id}"
   client_secret   = "${var.client_secret}"
   tenant_id       = "${var.tenant_id}"
-  #version         = "1.31.0" 
+  #version         = ">= 1.31.0" 
   #Use the last version of the azurerm provider, reguraly tested by the following Azure DevOps pipeline : https://dev.azure.com/jamesdld23/vpc_lab/_build?definitionId=9&_a=summary
 }
 

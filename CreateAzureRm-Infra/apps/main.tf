@@ -5,7 +5,7 @@ provider "azurerm" {
   client_id       = var.service_principals[1]["Application_Id"]
   client_secret   = var.service_principals[1]["Application_Secret"]
   tenant_id       = var.tenant_id
-  version         = "1.31.0"
+  version         = ">= 1.31.0" #Use the last version tested through an Azure DevOps pipeline here : https://dev.azure.com/jamesdld23/vpc_lab/_build
 }
 
 # Call Resources and Modules

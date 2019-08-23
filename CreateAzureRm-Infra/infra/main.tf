@@ -4,7 +4,7 @@ provider "azurerm" {
   client_id       = var.service_principals[0]["Application_Id"]
   client_secret   = var.service_principals[0]["Application_Secret"]
   tenant_id       = var.tenant_id
-  version         = "1.31.0"
+  version         = ">= 1.31.0" #Use the last version tested through an Azure DevOps pipeline here : https://dev.azure.com/jamesdld23/vpc_lab/_build
 }
 
 ####################################################
@@ -89,7 +89,7 @@ module "Az-RoleAssignment-Apps" {
   ass_role_definition_ids = module.Az-RoleDefinition-Apps.role_ids
   ass_principal_id        = var.service_principals[1]["Application_object_id"]
 }
-
+/*
 module "Az-Firewall-Infr" {
   source                 = "git::https://github.com/JamesDLD/terraform.git//module/Az-Firewall?ref=master"
   fw_resource_group_name = data.azurerm_resource_group.Infr.name
@@ -136,7 +136,7 @@ resource "azurerm_monitor_diagnostic_setting" "fw" {
     }
   }
 }
-
+*/
 /*
 Currently not using those policies because the terraform resources with the suffix "association" generate an error when using terraform destroy cmdlet
 module "Az-PolicyAssignment-Infra-nsg-on-apps-subnet" {

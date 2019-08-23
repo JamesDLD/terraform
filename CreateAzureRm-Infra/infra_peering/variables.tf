@@ -4,11 +4,11 @@
 terraform {
   backend "azurerm" {
   }
-  required_version = "0.12.5"
+  required_version = ">= 0.12.6"
 }
 
 provider "azurerm" {
-  version = "1.31.0"
+  version = ">= 1.31.0" #Use the last version tested through an Azure DevOps pipeline here : https://dev.azure.com/jamesdld23/vpc_lab/_build
 }
 
 provider "random" {
