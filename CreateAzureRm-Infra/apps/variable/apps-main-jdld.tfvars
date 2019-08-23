@@ -194,29 +194,29 @@ vms = [
         caching           = "ReadWrite"
         create_option     = "Empty"
       },
-    ]                                                   #(Mandatory) For no data disks set []
-    internal_lb_iteration    = "0"                      #(Optional) Id of the Internal Load Balancer, set to null or delete the line if there is no Load Balancer
-    subnet_iteration         = "0"                      #(Mandatory) Id of the Subnet
-    security_group_iteration = "1"                      #(Optional) Id of the Network Security Group
-    static_ip                = "10.0.2.229"             #(Optional) Set null to get dynamic IP or delete this line
-    zones                    = ["1"]                    #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to "", WARNING you could not have Availabilitysets and AvailabilityZones
-    BackupPolicyName         = "BackupPolicy-Schedule1" #(Optional) Set null to disable backup (WARNING, this will delete previous backup) otherwise set a backup policy like BackupPolicy-Schedule1
-    vm_size                  = "Standard_DS1_v2"        #(Mandatory) 
-    managed_disk_type        = "Premium_LRS"            #(Mandatory) 
+    ]                                       #(Mandatory) For no data disks set []
+    internal_lb_iteration    = "0"          #(Optional) Id of the Internal Load Balancer, set to null or delete the line if there is no Load Balancer
+    subnet_iteration         = "0"          #(Mandatory) Id of the Subnet
+    security_group_iteration = "1"          #(Optional) Id of the Network Security Group
+    static_ip                = "10.0.2.229" #(Optional) Set null to get dynamic IP or delete this line
+    zones                    = ["1"]        #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to "", WARNING you could not have Availabilitysets and AvailabilityZones
+    #BackupPolicyName         = "BackupPolicy-Schedule1" #(Optional) Set null to disable backup (WARNING, this will delete previous backup) otherwise set a backup policy like BackupPolicy-Schedule1
+    vm_size           = "Standard_DS1_v2" #(Mandatory) 
+    managed_disk_type = "Premium_LRS"     #(Mandatory) 
   },
   {
-    suffix_name              = "ssh"                    #(Mandatory) suffix of the vm
-    id                       = "2"                      #(Mandatory) Id of the VM
-    os_type                  = "linux"                  #(Mandatory) Support "linux" or "windows"
-    storage_data_disks       = []                       #(Mandatory) For no data disks set []
-    internal_lb_iteration    = "0"                      #(Optional) Id of the Internal Load Balancer, set to null or delete the line if there is no Load Balancer
-    subnet_iteration         = "1"                      #(Mandatory) Id of the Subnet
-    security_group_iteration = "1"                      #(Optional) Id of the Network Security Group
-    static_ip                = "10.0.2.245"             #(Optional) Set null to get dynamic IP or delete this line
-    zones                    = ["2"]                    #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to "", WARNING you could not have Availabilitysets and AvailabilityZones
-    BackupPolicyName         = "BackupPolicy-Schedule1" #(Optional) Set null to disable backup (WARNING, this will delete previous backup) otherwise set a backup policy like BackupPolicy-Schedule1
-    vm_size                  = "Standard_DS1_v2"        #(Mandatory) 
-    managed_disk_type        = "Premium_LRS"            #(Mandatory) 
+    suffix_name              = "ssh"        #(Mandatory) suffix of the vm
+    id                       = "2"          #(Mandatory) Id of the VM
+    os_type                  = "linux"      #(Mandatory) Support "linux" or "windows"
+    storage_data_disks       = []           #(Mandatory) For no data disks set []
+    internal_lb_iteration    = "0"          #(Optional) Id of the Internal Load Balancer, set to null or delete the line if there is no Load Balancer
+    subnet_iteration         = "1"          #(Mandatory) Id of the Subnet
+    security_group_iteration = "1"          #(Optional) Id of the Network Security Group
+    static_ip                = "10.0.2.245" #(Optional) Set null to get dynamic IP or delete this line
+    zones                    = ["2"]        #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to "", WARNING you could not have Availabilitysets and AvailabilityZones
+    #BackupPolicyName         = "BackupPolicy-Schedule1" #(Optional) Set null to disable backup (WARNING, this will delete previous backup) otherwise set a backup policy like BackupPolicy-Schedule1
+    vm_size           = "Standard_DS1_v2" #(Mandatory) 
+    managed_disk_type = "Premium_LRS"     #(Mandatory) 
   },
 ]
 
