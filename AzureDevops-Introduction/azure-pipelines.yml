@@ -41,7 +41,7 @@ stages:
 - stage: Build
   jobs:
   - job: Terraform_Plan
-    displayName: Terraform Plan - Publish an package if Infrastructure changes are identified
+    displayName: Terraform Plan - Publish a package if Infrastructure changes are identified
     continueOnError: false
     pool:
       vmImage: $(vmImageName)
