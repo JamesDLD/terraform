@@ -5,7 +5,7 @@ provider "azurerm" {
   client_id       = var.service_principals[1]["Application_Id"]
   client_secret   = var.service_principals[1]["Application_Secret"]
   tenant_id       = var.tenant_id
-  version         = ">= 1.31.0" #Use the last version tested through an Azure DevOps pipeline here : https://dev.azure.com/jamesdld23/vpc_lab/_build
+  version         = ">= 1.31.0" #Use the last version tested through an Azure DevOps pipeline here : https://dev.azure.com/jamesdld23/vpc_lab/_build?definitionId=6&_a=summary
 }
 
 # Call Resources and Modules
@@ -93,7 +93,7 @@ module "Az-LoadBalancer-Apps" {
   lb_tags                = data.azurerm_resource_group.MyApps.tags
   LbRules                = var.LbRules
 }
-
+/*
 module "Az-Vm-Apps" {
   source                             = "git::https://github.com/JamesDLD/terraform.git//module/Az-Vm?ref=master"
   sa_bootdiag_storage_uri            = data.azurerm_storage_account.Infr.primary_blob_endpoint
@@ -118,7 +118,7 @@ module "Az-Vm-Apps" {
   ssh_key                            = var.ssh_key
   vm_tags                            = data.azurerm_resource_group.MyApps.tags
 }
-
+*/
 # Infra cross services for Apps
 #N/A
 

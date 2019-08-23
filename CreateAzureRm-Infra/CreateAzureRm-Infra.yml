@@ -99,7 +99,9 @@ stages:
               terraform_apply: true
 
 - stage: Build_Apps
-  dependsOn: Deploy_Infra
+  dependsOn: 
+  - Build_Infra
+  - Deploy_Infra
   jobs:
   - job: Terraform_Plan_Apps
     displayName: Terraform Plan - Apps - Publish a package if Infrastructure changes are identified
@@ -156,7 +158,9 @@ stages:
               terraform_apply: true
 
 - stage: Deliver
-  dependsOn: Deploy_Apps
+  dependsOn: 
+  - Deploy_Apps
+  - Deploy_Infra
   jobs:
     # track deployments on the environment
   - deployment: Terraform_Destroy
