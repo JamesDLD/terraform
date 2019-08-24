@@ -45,20 +45,25 @@ data "azurerm_resource_group" "MyApps" {
   name = var.rg_apps_name
 }
 
-data "azurerm_route_table" "Infr" {
-  name                = "infra-jdld-infr-francecentral-rt1"
-  resource_group_name = data.azurerm_resource_group.Infr.name
+##Log monitor
+resource "azurerm_log_analytics_workspace" "Apps" {
+  name                = var.log_monitor_name
+  location            = data.azurerm_resource_group.MyApps.location
+  resource_group_name = data.azurerm_resource_group.MyApps.name
+  sku                 = "PerGB2018"
+  retention_in_days   = 30
 }
 
 ## Core Network components
+
 resource "azurerm_network_security_group" "apps_nsgs" {
-  count               = length(var.apps_nsgs)
-  name                = "${var.app_name}-${var.env_name}-nsg${var.apps_nsgs[count.index]["id"]}"
+  for_each            = var.apps_nsgs
+  name                = "${var.app_name}-${var.env_name}-nsg${each.value["id"]}"
   location            = data.azurerm_resource_group.MyApps.location
   resource_group_name = data.azurerm_resource_group.MyApps.name
 
   dynamic "security_rule" {
-    for_each = var.apps_nsgs[count.index]["security_rules"]
+    for_each = each.value["security_rules"]
     content {
       description                  = lookup(security_rule.value, "description", null)
       direction                    = lookup(security_rule.value, "direction", null)
@@ -82,45 +87,53 @@ resource "azurerm_network_security_group" "apps_nsgs" {
 
 ## Virtual Machines components
 
-module "Az-LoadBalancer-Apps" {
-  source                 = "git::https://github.com/JamesDLD/terraform.git//module/Az-LoadBalancer?ref=master"
+module "Create-AzureRmLoadBalancer-Apps" {
+  source                 = "JamesDLD/Az-LoadBalancer/azurerm"
+  version                = "0.1.1"
   Lbs                    = var.Lbs
-  lb_prefix              = "${var.app_name}-${var.env_name}-"
+  LbRules                = var.LbRules
+  lb_prefix              = "${var.app_name}-${var.env_name}"
   lb_location            = data.azurerm_resource_group.MyApps.location
   lb_resource_group_name = data.azurerm_resource_group.MyApps.name
   Lb_sku                 = var.Lb_sku
   subnets_ids            = data.azurerm_subnet.snets.*.id
-  lb_tags                = data.azurerm_resource_group.MyApps.tags
-  LbRules                = var.LbRules
+  lb_additional_tags     = { iac = "Terraform" }
 }
-/*
-module "Az-Vm-Apps" {
-  source                             = "git::https://github.com/JamesDLD/terraform.git//module/Az-Vm?ref=master"
-  sa_bootdiag_storage_uri            = data.azurerm_storage_account.Infr.primary_blob_endpoint
-  nsgs_ids                           = azurerm_network_security_group.apps_nsgs.*.id
-  public_ip_ids                      = ["null"]
-  internal_lb_backend_ids            = module.Az-LoadBalancer-Apps.lb_backend_ids
-  public_lb_backend_ids              = ["null"]
-  key_vault_id                       = ""
-  rsv_id                             = data.azurerm_recovery_services_vault.vault.id
-  disable_log_analytics_dependencies = "true"
-  workspace_resource_group_name      = ""
-  workspace_name                     = ""
-  subnets_ids                        = data.azurerm_subnet.snets.*.id
-  vms                                = var.vms
-  linux_storage_image_reference      = var.linux_storage_image_reference
-  windows_storage_image_reference    = var.windows_storage_image_reference #If no need just fill "windows_storage_image_reference = []" in the tfvars file
-  vm_location                        = data.azurerm_resource_group.MyApps.location
-  vm_resource_group_name             = data.azurerm_resource_group.MyApps.name
-  vm_prefix                          = "${var.app_name}-${var.env_name}-"
-  admin_username                     = var.app_admin
-  admin_password                     = var.pass
-  ssh_key                            = var.ssh_key
-  vm_tags                            = data.azurerm_resource_group.MyApps.tags
-}
+
+module "Az-Vm" {
+  source                            = "JamesDLD/Az-Vm/azurerm"
+  version                           = "0.1.1"
+  sa_bootdiag_storage_uri           = data.azurerm_storage_account.Infr.primary_blob_endpoint #(Mandatory)
+  subnets_ids                       = data.azurerm_subnet.snets.*.id                          #(Mandatory)
+  linux_vms                         = var.linux_vms                                           #(Mandatory)
+  windows_vms                       = var.windows_vms                                         #(Mandatory)
+  vm_resource_group_name            = data.azurerm_resource_group.MyApps.name
+  vm_prefix                         = "" #(Optional)
+  admin_username                    = var.app_admin
+  admin_password                    = var.pass
+  ssh_key                           = var.ssh_key
+  workspace_name                    = azurerm_log_analytics_workspace.Apps.name                  #(Optional)
+  enable_log_analytics_dependencies = true                                                       #(Optional) Default is false
+  recovery_services_vault_name      = data.azurerm_recovery_services_vault.vault.name            #(Optional)
+  recovery_services_vault_rgname    = data.azurerm_resource_group.Infr.name                      #(Optional) Use the RG's location if not set
+  nsgs_ids                          = [for x in azurerm_network_security_group.apps_nsgs : x.id] #(Optional)
+  internal_lb_backend_ids           = module.Create-AzureRmLoadBalancer-Apps.lb_backend_ids      #(Optional)
+  vm_additional_tags                = { iac = "Terraform" }
+
+  #All other optional values
+  /*
+  key_vault_name                    = var.key_vault_name                                         #(Optional)
+  key_vault_rgname                  = data.azurerm_resource_group.Infr.name                      #(Optional) Use the RG's location if not set
+  vm_location                       = element(module.Az-VirtualNetwork-Demo.vnet_locations, 0) #(Optional) Use the RG's location if not set
+  workspace_resource_rgname = ""                              #(Optional) Use the RG's location if not set
+  public_ip_ids                     = module.Az-VirtualNetwork-Demo.public_ip_ids              #(Optional)
+  public_lb_backend_ids             = ["public_backend_id1", "public_backend_id1"]             #(Optional)
 */
+
+}
 # Infra cross services for Apps
 #N/A
 
 ## Infra common services
 #N/A
+

@@ -7,10 +7,6 @@ terraform {
   required_version = ">= 0.12.6"
 }
 
-provider "random" {
-  version = "2.1.2"
-}
-
 variable "subscription_id" {
   description = "Azure subscription Id."
   type        = string
@@ -62,6 +58,10 @@ variable "bck_rsv_name" {
   type        = string
 }
 
+variable "log_monitor_name" {
+  description = "Log monitor name"
+}
+
 #Subnet & Network Security group
 
 variable "apps_snets" {
@@ -78,8 +78,13 @@ variable "apps_nsgs" {
 }
 
 #Load Balancers & Availability Set & Virtual Machines
-variable "vms" {
-  description = "VMs list."
+variable "linux_vms" {
+  description = "Linux VMs list."
+  type        = any
+}
+
+variable "windows_vms" {
+  description = "Windows VMs list."
   type        = any
 }
 variable "Lb_sku" {
@@ -88,12 +93,12 @@ variable "Lb_sku" {
 }
 
 variable "Lbs" {
-  type        = list
+  type        = any
   description = "Load Balancer list containing the following keys : suffix_name, subnet_iteration, static_ip."
 }
 
 variable "LbRules" {
-  type        = list
+  type        = any
   description = "Load Balancer rules list."
 }
 
