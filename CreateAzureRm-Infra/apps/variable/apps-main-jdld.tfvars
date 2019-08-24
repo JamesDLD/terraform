@@ -204,8 +204,8 @@ linux_vms = {
         caching           = "ReadWrite"
         create_option     = "Empty"
       },
-    ]                                                   #(Mandatory) For no data disks set []
-    internal_lb_iteration    = "0"                      #(Optional) Id of the Internal Load Balancer, set to null or delete the line if there is no Load Balancer
+    ] #(Mandatory) For no data disks set []
+    #internal_lb_iteration    = "0"                      #(Optional) Id of the Internal Load Balancer, set to null or delete the line if there is no Load Balancer
     subnet_iteration         = "0"                      #(Mandatory) Id of the Subnet
     security_group_iteration = "1"                      #(Optional) Id of the Network Security Group
     static_ip                = "10.0.2.229"             #(Optional) Set null to get dynamic IP or delete this line
@@ -216,10 +216,10 @@ linux_vms = {
   }
 
   vm2 = {
-    suffix_name              = "ssh"                    #(Mandatory) suffix of the vm
-    id                       = "2"                      #(Mandatory) Id of the VM
-    storage_data_disks       = []                       #(Mandatory) For no data disks set []
-    internal_lb_iteration    = "0"                      #(Optional) Id of the Internal Load Balancer, set to null or delete the line if there is no Load Balancer
+    suffix_name        = "ssh" #(Mandatory) suffix of the vm
+    id                 = "2"   #(Mandatory) Id of the VM
+    storage_data_disks = []    #(Mandatory) For no data disks set []
+    #internal_lb_iteration    = "0"                      #(Optional) Id of the Internal Load Balancer, set to null or delete the line if there is no Load Balancer
     subnet_iteration         = "1"                      #(Mandatory) Id of the Subnet
     security_group_iteration = "1"                      #(Optional) Id of the Network Security Group
     static_ip                = "10.0.2.245"             #(Optional) Set null to get dynamic IP or delete this line
