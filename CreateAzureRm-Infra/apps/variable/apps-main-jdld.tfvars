@@ -21,17 +21,17 @@ rg_infr_name = "infr-jdld-noprd-rg1"
 sa_infr_name = "infrsand1vpcjdld1"
 
 #Backup
-bck_rsv_name = "infra-jdld-infr-rsv2"
+bck_rsv_name = "jdld-infr-rsv1"
 
 #Network
 
 apps_snets = [
   {
-    vnet_name   = "infra-jdld-infrapps-francecentral-vnet1"
+    vnet_name   = "jdld-infr-apps-vnet1"
     subnet_name = "frontend"
   },
   {
-    vnet_name   = "infra-jdld-infrapps-francecentral-vnet1"
+    vnet_name   = "jdld-infr-apps-vnet1"
     subnet_name = "backend"
   },
 ]
@@ -228,5 +228,4 @@ windows_storage_image_reference = {
 }
 
 ## Infra common services
-#Automation account
-auto_sku = "Basic"
+#N/A

@@ -93,13 +93,18 @@ variable "roles" {
 }
 
 #Backup
-variable "recovery_services_vault" {
-  description = "Recovery Services Vault, map with properties described here : https://www.terraform.io/docs/providers/azurerm/r/recovery_services_vault.html"
-  type        = any
-}
-variable "recovery_services_protection_policy_vm" {
-  description = "Recovery Services VM Protection Policy, map with properties described here : https://www.terraform.io/docs/providers/azurerm/r/recovery_services_protection_policy_vm.html"
-  type        = any
+variable "backup_policies" {
+  description = "Recovery services vault backup policies."
+  type = list(object({
+    Name                          = string
+    scheduleRunFrequency          = string
+    scheduleRunDays               = string
+    scheduleRunTimes              = string
+    timeZone                      = string
+    dailyRetentionDurationCount   = number
+    weeklyRetentionDurationCount  = number
+    monthlyRetentionDurationCount = number
+  }))
 }
 
 #Vnet & Subnet & Network Security group
@@ -110,6 +115,11 @@ variable "vnets" {
 
 variable "snets" {
   description = "Subnet list."
+  type        = any
+}
+
+variable "vnets_to_peer" {
+  description = "Vnets to peer."
   type        = any
 }
 

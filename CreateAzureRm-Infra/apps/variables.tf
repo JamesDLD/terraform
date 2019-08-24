@@ -122,11 +122,6 @@ variable "ssh_key" {
   type        = string
 }
 
-variable "auto_sku" {
-  description = "Specifies the automation account SKU."
-  type        = string
-}
-
 variable "key_vaults" {
   description = "List containing your key vaults."
   type = list(object({
