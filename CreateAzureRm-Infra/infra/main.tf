@@ -103,7 +103,7 @@ module "Az-Firewall-Infr" {
 }
 
 resource "azurerm_log_analytics_workspace" "infra" {
-  name                = "${var.app_name}-${var.env_name}-lm1" #The log analytics workspace name must be unique
+  name                = "${var.app_name}-${var.env_name}-logm1" #The log analytics workspace name must be unique
   sku                 = "PerGB2018"                           #Refer https://azure.microsoft.com/pricing/details/monitor/ for log analytics pricing 
   location            = data.azurerm_resource_group.Infr.location
   resource_group_name = data.azurerm_resource_group.Infr.name
