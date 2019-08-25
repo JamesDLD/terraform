@@ -211,7 +211,7 @@ linux_vms = {
     static_ip                = "10.0.2.229"             #(Optional) Set null to get dynamic IP or delete this line
     zones                    = ["1"]                    #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to "", WARNING you could not have Availabilitysets and AvailabilityZones
     BackupPolicyName         = "BackupPolicy-Schedule1" #(Optional) Set null to disable backup (WARNING, this will delete previous backup) otherwise set a backup policy like BackupPolicy-Schedule1
-    vm_size                  = "Standard_B2s"           #(Mandatory) 
+    vm_size                  = "Standard_B2ms"          #(Mandatory) 
     managed_disk_type        = "Premium_LRS"            #(Mandatory) 
   }
 
@@ -225,7 +225,7 @@ linux_vms = {
     static_ip                = "10.0.2.245"             #(Optional) Set null to get dynamic IP or delete this line
     zones                    = ["1"]                    #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to "", WARNING you could not have Availabilitysets and AvailabilityZones
     BackupPolicyName         = "BackupPolicy-Schedule1" #(Optional) Set null to disable backup (WARNING, this will delete previous backup) otherwise set a backup policy like BackupPolicy-Schedule1
-    vm_size                  = "Standard_B2s"           #(Mandatory) 
+    vm_size                  = "Standard_B2ms"          #(Mandatory) 
     managed_disk_type        = "Premium_LRS"            #(Mandatory) 
   }
 }
