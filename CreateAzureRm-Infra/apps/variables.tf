@@ -102,16 +102,6 @@ variable "LbRules" {
   description = "Load Balancer rules list."
 }
 
-variable "linux_storage_image_reference" {
-  type        = map(string)
-  description = "Could containt an 'id' of a custom image or the following parameters for an Azure public 'image publisher','offer','sku', 'version'"
-}
-
-variable "windows_storage_image_reference" {
-  type        = map(string)
-  description = "Could containt an 'id' of a custom image or the following parameters for an Azure public 'image publisher','offer','sku', 'version'"
-}
-
 variable "app_admin" {
   description = "Specifies the name of the administrator account on the VM."
   type        = string

@@ -24,7 +24,7 @@ sa_infr_name = "infrsand1vpcjdld1"
 bck_rsv_name = "jdld-infr-rsv1"
 
 #Log monitor
-log_monitor_name = "jdld-apps-log1"
+log_monitor_name = "jdld-apps-logm1"
 
 #Network
 
@@ -82,7 +82,7 @@ apps_nsgs = {
 }
 
 # Virtual Machines components : Load Balancer & Availability Zone & Nic & VM
-Lb_sku = "Basic" #"Standard"
+Lb_sku = "Standard" #"Basic"
 
 Lbs = {
   lb1 = {
@@ -160,38 +160,34 @@ LbRules = {
 
 windows_vms = {
   vm1 = {
-    suffix_name              = "rdg"          #(Mandatory) suffix of the vm
-    id                       = "1"            #(Mandatory) Id of the VM
-    storage_data_disks       = []             #(Mandatory) For no data disks set []
-    subnet_iteration         = "0"            #(Mandatory) Id of the Subnet
-    security_group_iteration = "1"            #(Optional) Id of the Network Security Group
-    static_ip                = "10.0.2.228"   #(Optional) Set null to get dynamic IP or delete this line
-    zones                    = ["1"]          #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to "", WARNING you could not have Availabilitysets and AvailabilityZones
-    vm_size                  = "Standard_B2s" #(Mandatory) 
-    managed_disk_type        = "Premium_LRS"  #(Mandatory) 
+    suffix_name              = "rdg"           #(Mandatory) suffix of the vm
+    id                       = "1"             #(Mandatory) Id of the VM
+    storage_data_disks       = []              #(Mandatory) For no data disks set []
+    subnet_iteration         = "0"             #(Mandatory) Id of the Subnet
+    security_group_iteration = "1"             #(Optional) Id of the Network Security Group
+    static_ip                = "10.0.2.228"    #(Optional) Set null to get dynamic IP or delete this line
+    zones                    = ["1"]           #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to "", WARNING you could not have Availabilitysets and AvailabilityZones
+    vm_size                  = "Standard_B2ms" #(Mandatory) 
+    managed_disk_type        = "Premium_LRS"   #(Mandatory) 
   }
 
   vm2 = {
-    suffix_name              = "rdg"          #(Mandatory) suffix of the vm
-    id                       = "2"            #(Mandatory) Id of the VM
-    storage_data_disks       = []             #(Mandatory) For no data disks set []
-    subnet_iteration         = "1"            #(Mandatory) Id of the Subnet
-    security_group_iteration = "1"            #(Optional) Id of the Network Security Group
-    static_ip                = "10.0.2.244"   #(Optional) Set null to get dynamic IP or delete this line
-    zones                    = ["2"]          #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to "", WARNING you could not have Availabilitysets and AvailabilityZones
-    vm_size                  = "Standard_B2s" #(Mandatory) 
-    managed_disk_type        = "Premium_LRS"  #(Mandatory) 
+    suffix_name              = "rdg"                    #(Mandatory) suffix of the vm
+    id                       = "2"                      #(Mandatory) Id of the VM
+    storage_data_disks       = []                       #(Mandatory) For no data disks set []
+    subnet_iteration         = "1"                      #(Mandatory) Id of the Subnet
+    security_group_iteration = "1"                      #(Optional) Id of the Network Security Group
+    static_ip                = "10.0.2.244"             #(Optional) Set null to get dynamic IP or delete this line
+    zones                    = ["2"]                    #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to "", WARNING you could not have Availabilitysets and AvailabilityZones
+    vm_size                  = "Standard_B2ms"          #(Mandatory) 
+    managed_disk_type        = "Premium_LRS"            #(Mandatory) 
+    backup_policy_name       = "BackupPolicy-Schedule1" #(Optional) Set null to disable backup (WARNING, this will delete previous backup) otherwise set a backup policy like BackupPolicy-Schedule1
   }
 
 }
-windows_storage_image_reference = {
-  publisher = "MicrosoftWindowsServer"
-  offer     = "WindowsServer"
-  sku       = "2019-Datacenter"
-  version   = "Latest"
-}
 
 linux_vms = {
+
   vm1 = {
     suffix_name = "ssh" #(Mandatory) suffix of the vm
     id          = "1"   #(Mandatory) Id of the VM
@@ -204,36 +200,31 @@ linux_vms = {
         caching           = "ReadWrite"
         create_option     = "Empty"
       },
-    ] #(Mandatory) For no data disks set []
-    #internal_lb_iteration    = "0"                      #(Optional) Id of the Internal Load Balancer, set to null or delete the line if there is no Load Balancer
+    ]                                                   #(Mandatory) For no data disks set []
+    internal_lb_iteration    = "0"                      #(Optional) Id of the Internal Load Balancer, set to null or delete the line if there is no Load Balancer
     subnet_iteration         = "0"                      #(Mandatory) Id of the Subnet
     security_group_iteration = "1"                      #(Optional) Id of the Network Security Group
     static_ip                = "10.0.2.229"             #(Optional) Set null to get dynamic IP or delete this line
     zones                    = ["1"]                    #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to "", WARNING you could not have Availabilitysets and AvailabilityZones
-    BackupPolicyName         = "BackupPolicy-Schedule1" #(Optional) Set null to disable backup (WARNING, this will delete previous backup) otherwise set a backup policy like BackupPolicy-Schedule1
+    backup_policy_name       = "BackupPolicy-Schedule1" #(Optional) Set null to disable backup (WARNING, this will delete previous backup) otherwise set a backup policy like BackupPolicy-Schedule1
     vm_size                  = "Standard_B2ms"          #(Mandatory) 
     managed_disk_type        = "Premium_LRS"            #(Mandatory) 
   }
 
   vm2 = {
-    suffix_name        = "ssh" #(Mandatory) suffix of the vm
-    id                 = "2"   #(Mandatory) Id of the VM
-    storage_data_disks = []    #(Mandatory) For no data disks set []
-    #internal_lb_iteration    = "0"                      #(Optional) Id of the Internal Load Balancer, set to null or delete the line if there is no Load Balancer
+    suffix_name              = "ssh"                    #(Mandatory) suffix of the vm
+    id                       = "2"                      #(Mandatory) Id of the VM
+    storage_data_disks       = []                       #(Mandatory) For no data disks set []
+    internal_lb_iteration    = "0"                      #(Optional) Id of the Internal Load Balancer, set to null or delete the line if there is no Load Balancer
     subnet_iteration         = "1"                      #(Mandatory) Id of the Subnet
     security_group_iteration = "1"                      #(Optional) Id of the Network Security Group
     static_ip                = "10.0.2.245"             #(Optional) Set null to get dynamic IP or delete this line
-    zones                    = ["1"]                    #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to "", WARNING you could not have Availabilitysets and AvailabilityZones
-    BackupPolicyName         = "BackupPolicy-Schedule1" #(Optional) Set null to disable backup (WARNING, this will delete previous backup) otherwise set a backup policy like BackupPolicy-Schedule1
+    zones                    = ["2"]                    #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to "", WARNING you could not have Availabilitysets and AvailabilityZones
+    backup_policy_name       = "BackupPolicy-Schedule1" #(Optional) Set null to disable backup (WARNING, this will delete previous backup) otherwise set a backup policy like BackupPolicy-Schedule1
     vm_size                  = "Standard_B2ms"          #(Mandatory) 
     managed_disk_type        = "Premium_LRS"            #(Mandatory) 
   }
-}
-linux_storage_image_reference = {
-  publisher = "Canonical"
-  offer     = "UbuntuServer"
-  sku       = "18.04-LTS"
-  version   = "Latest"
+
 }
 
 ## Infra common services

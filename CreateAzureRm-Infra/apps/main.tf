@@ -44,16 +44,16 @@ data "azurerm_subnet" "snets" {
 data "azurerm_resource_group" "MyApps" {
   name = var.rg_apps_name
 }
-
+/*
 ##Log monitor
 resource "azurerm_log_analytics_workspace" "Apps" {
   name                = var.log_monitor_name
-  location            = data.azurerm_resource_group.MyApps.location
+  location            = "westeurope"
   resource_group_name = data.azurerm_resource_group.MyApps.name
   sku                 = "PerGB2018"
   retention_in_days   = 30
 }
-
+*/
 ## Core Network components
 
 resource "azurerm_network_security_group" "apps_nsgs" {
@@ -101,19 +101,19 @@ module "Create-AzureRmLoadBalancer-Apps" {
 }
 
 module "Az-Vm" {
-  source                            = "JamesDLD/Az-Vm/azurerm"
-  version                           = "0.1.1"
-  sa_bootdiag_storage_uri           = data.azurerm_storage_account.Infr.primary_blob_endpoint #(Mandatory)
-  subnets_ids                       = data.azurerm_subnet.snets.*.id                          #(Mandatory)
-  linux_vms                         = var.linux_vms                                           #(Mandatory)
-  windows_vms                       = var.windows_vms                                         #(Mandatory)
-  vm_resource_group_name            = data.azurerm_resource_group.MyApps.name
-  vm_prefix                         = "" #(Optional)
-  admin_username                    = var.app_admin
-  admin_password                    = var.pass
-  ssh_key                           = var.ssh_key
-  workspace_name                    = azurerm_log_analytics_workspace.Apps.name                  #(Optional)
-  enable_log_analytics_dependencies = true                                                       #(Optional) Default is false
+  source                  = "JamesDLD/Az-Vm/azurerm"
+  version                 = "0.1.1"
+  sa_bootdiag_storage_uri = data.azurerm_storage_account.Infr.primary_blob_endpoint #(Mandatory)
+  subnets_ids             = data.azurerm_subnet.snets.*.id                          #(Mandatory)
+  linux_vms               = var.linux_vms                                           #(Mandatory)
+  windows_vms             = var.windows_vms                                         #(Mandatory)
+  vm_resource_group_name  = data.azurerm_resource_group.MyApps.name
+  vm_prefix               = "" #(Optional)
+  admin_username          = var.app_admin
+  admin_password          = var.pass
+  ssh_key                 = var.ssh_key
+  #workspace_name                    = azurerm_log_analytics_workspace.Apps.name                  #(Optional)
+  enable_log_analytics_dependencies = false                                                      #(Optional) Default is false
   recovery_services_vault_name      = data.azurerm_recovery_services_vault.vault.name            #(Optional)
   recovery_services_vault_rgname    = data.azurerm_resource_group.Infr.name                      #(Optional) Use the RG's location if not set
   nsgs_ids                          = [for x in azurerm_network_security_group.apps_nsgs : x.id] #(Optional)
