@@ -48,7 +48,7 @@ data "azurerm_resource_group" "MyApps" {
 ##Log monitor
 resource "azurerm_log_analytics_workspace" "Apps" {
   name                = var.log_monitor_name
-  location            = "westeurope"
+  location            = data.azurerm_resource_group.MyApps.location
   resource_group_name = data.azurerm_resource_group.MyApps.name
   sku                 = "PerGB2018"
   retention_in_days   = 30
