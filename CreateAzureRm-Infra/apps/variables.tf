@@ -58,10 +58,6 @@ variable "bck_rsv_name" {
   type        = string
 }
 
-variable "log_monitor_name" {
-  description = "Log monitor name"
-}
-
 #Subnet & Network Security group
 
 variable "apps_snets" {

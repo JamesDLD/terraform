@@ -23,9 +23,6 @@ sa_infr_name = "infrsand1vpcjdld1"
 #Backup
 bck_rsv_name = "jdld-infr-rsv1"
 
-#Log monitor
-log_monitor_name = "jdld-apps-logm1"
-
 #Network
 
 apps_snets = [
