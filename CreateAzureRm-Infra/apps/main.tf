@@ -45,15 +45,6 @@ data "azurerm_resource_group" "MyApps" {
   name = var.rg_apps_name
 }
 
-##Log monitor
-resource "azurerm_log_analytics_workspace" "Apps" {
-  name                = var.log_monitor_name
-  location            = data.azurerm_resource_group.MyApps.location
-  resource_group_name = data.azurerm_resource_group.MyApps.name
-  sku                 = "PerGB2018"
-  retention_in_days   = 30
-}
-
 ## Core Network components
 
 resource "azurerm_network_security_group" "apps_nsgs" {
@@ -112,7 +103,6 @@ module "Az-Vm" {
   admin_username                    = var.app_admin
   admin_password                    = var.pass
   ssh_key                           = var.ssh_key
-  workspace_name                    = azurerm_log_analytics_workspace.Apps.name                  #(Optional)
   enable_log_analytics_dependencies = false                                                      #(Optional) Default is false
   recovery_services_vault_name      = data.azurerm_recovery_services_vault.vault.name            #(Optional)
   recovery_services_vault_rgname    = data.azurerm_resource_group.Infr.name                      #(Optional) Use the RG's location if not set
@@ -125,6 +115,7 @@ module "Az-Vm" {
   key_vault_name                    = var.key_vault_name                                         #(Optional)
   key_vault_rgname                  = data.azurerm_resource_group.Infr.name                      #(Optional) Use the RG's location if not set
   vm_location                       = element(module.Az-VirtualNetwork-Demo.vnet_locations, 0) #(Optional) Use the RG's location if not set
+  workspace_name                    = azurerm_log_analytics_workspace.Apps.name                  #(Optional)
   workspace_resource_rgname = ""                              #(Optional) Use the RG's location if not set
   public_ip_ids                     = module.Az-VirtualNetwork-Demo.public_ip_ids              #(Optional)
   public_lb_backend_ids             = ["public_backend_id1", "public_backend_id1"]             #(Optional)
