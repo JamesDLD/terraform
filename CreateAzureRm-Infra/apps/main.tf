@@ -120,6 +120,8 @@ module "Az-Vm" {
   internal_lb_backend_ids           = module.Create-AzureRmLoadBalancer-Apps.lb_backend_ids      #(Optional)
   vm_additional_tags                = { iac = "Terraform" }
 
+  DependencyAgentLinux = { "auto_upgrade_minor_version" : "true", "publisher" : "Microsoft.Azure.Monitoring.DependencyAgent", "type" : "DependencyAgentLinux", "type_handler_version" : "9.9" }
+  # DependencyAgentLinux version : https://docs.microsoft.com/bs-latn-ba/azure/azure-monitor/insights/vminsights-enable-overview#supported-operating-systems
   #All other optional values
   /*
   key_vault_name                    = var.key_vault_name                                         #(Optional)
