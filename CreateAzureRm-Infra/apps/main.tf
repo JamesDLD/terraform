@@ -113,15 +113,13 @@ module "Az-Vm" {
   admin_password                    = var.pass
   ssh_key                           = var.ssh_key
   workspace_name                    = azurerm_log_analytics_workspace.Apps.name                  #(Optional)
-  enable_log_analytics_dependencies = true                                                       #(Optional) Default is false
+  enable_log_analytics_dependencies = false                                                      #(Optional) Default is false
   recovery_services_vault_name      = data.azurerm_recovery_services_vault.vault.name            #(Optional)
   recovery_services_vault_rgname    = data.azurerm_resource_group.Infr.name                      #(Optional) Use the RG's location if not set
   nsgs_ids                          = [for x in azurerm_network_security_group.apps_nsgs : x.id] #(Optional)
   internal_lb_backend_ids           = module.Create-AzureRmLoadBalancer-Apps.lb_backend_ids      #(Optional)
   vm_additional_tags                = { iac = "Terraform" }
 
-  DependencyAgentLinux = { "auto_upgrade_minor_version" : "true", "publisher" : "Microsoft.Azure.Monitoring.DependencyAgent", "type" : "DependencyAgentLinux", "type_handler_version" : "9.9" }
-  # DependencyAgentLinux version : https://docs.microsoft.com/bs-latn-ba/azure/azure-monitor/insights/vminsights-enable-overview#supported-operating-systems
   #All other optional values
   /*
   key_vault_name                    = var.key_vault_name                                         #(Optional)
