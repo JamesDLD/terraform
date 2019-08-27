@@ -1,25 +1,27 @@
 #Set the terraform backend
 terraform {
-  required_version = ">= 0.12"
+  required_version = ">= 0.12.6"
 
   backend "azurerm" {} #Backend variables are initialized through the secret and variable folders
 }
 
 #Set the Provider
 provider "azurerm" {
-  version         = "1.31.0"
   subscription_id = "${var.subscription_id}"
   client_id       = "${var.client_id}"
   client_secret   = "${var.client_secret}"
   tenant_id       = "${var.tenant_id}"
+  #version         = ">= 1.31.0" 
+  #Use the last version of the azurerm provider, reguraly tested by the following Azure DevOps pipeline : https://dev.azure.com/jamesdld23/vpc_lab/_build?definitionId=9&_a=summary
 }
 
 provider "azuread" {
-  version         = "0.4.0"
   subscription_id = "${var.subscription_id}"
   client_id       = "${var.client_id}"
   client_secret   = "${var.client_secret}"
   tenant_id       = "${var.tenant_id}"
+  #version         = "0.4.0"
+  #Use the last version of the azurerm provider, reguraly tested by the following Azure DevOps pipeline : https://dev.azure.com/jamesdld23/vpc_lab/_build?definitionId=9&_a=summary
 }
 
 #Get the Resource Group and the SPN Id

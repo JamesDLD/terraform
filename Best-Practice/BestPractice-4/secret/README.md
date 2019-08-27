@@ -23,8 +23,6 @@ Secret files
             "tenant_id": "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
             "subscription_id": "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
             "client_id": "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-            "client_secret": "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-            "app_admin": "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-            "pass": "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+            "client_secret": "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
         }
     ```

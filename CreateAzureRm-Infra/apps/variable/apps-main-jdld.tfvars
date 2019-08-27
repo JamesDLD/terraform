@@ -21,23 +21,24 @@ rg_infr_name = "infr-jdld-noprd-rg1"
 sa_infr_name = "infrsand1vpcjdld1"
 
 #Backup
-bck_rsv_name = "infra-jdld-infr-rsv1"
+bck_rsv_name = "jdld-infr-rsv1"
 
 #Network
 
 apps_snets = [
   {
-    vnet_name   = "infra-jdld-infrapps-francecentral-vnet1"
+    vnet_name   = "jdld-infr-apps-vnet1"
     subnet_name = "frontend"
   },
   {
-    vnet_name   = "infra-jdld-infrapps-francecentral-vnet1"
+    vnet_name   = "jdld-infr-apps-vnet1"
     subnet_name = "backend"
   },
 ]
 
-apps_nsgs = [
-  {
+apps_nsgs = {
+
+  default_nsg1 = {
     id = "1"
     security_rules = [
       {
@@ -75,116 +76,122 @@ apps_nsgs = [
         source_port_range          = "*"
       },
     ]
-  },
-]
+  }
+}
 
-# Virtual Machines components : Load Balancer & Availability Set & Nic & VM
-Lb_sku = "Standard" #"Basic" 
+# Virtual Machines components : Load Balancer & Availability Zone & Nic & VM
+Lb_sku = "Standard" #"Basic"
 
-Lbs = [
-  {
+Lbs = {
+
+  lb1 = {
     id               = "1" #Id of the load balancer use as a suffix of the load balancer name
     suffix_name      = "ssh"
     subnet_iteration = "0" #Id of the Subnet
     static_ip        = "10.0.2.238"
-  },
-  {
+  }
+
+  lb2 = {
     id               = "1" #Id of the load balancer use as a suffix of the load balancer name
     suffix_name      = "gfs"
     subnet_iteration = "1" #Id of the Subnet
     static_ip        = "10.0.2.254"
-  },
-  {
+  }
+
+  lb3 = {
     id               = "1" #Id of the load balancer use as a suffix of the load balancer name
     suffix_name      = "rds"
     subnet_iteration = "1" #Id of the Subnet
     static_ip        = "10.0.2.253"
-  },
-]
-
-LbRules = [
-  {
-    Id                      = "1"   #Id of a the rule within the Load Balancer 
-    load_balancer_iteration = "0"   #Id of the Load Balancer
-    suffix_name             = "ssh" #MUST match the Lbs suffix_name
-    lb_port                 = "80"
-    backend_port            = "80"
-    probe_port              = "80"
-    probe_protocol          = "Http"
-    request_path            = "/"
-    load_distribution       = "Default"
-  },
-  {
-    Id                      = "2"   #Id of a the rule within the Load Balancer 
-    load_balancer_iteration = "0"   #Id of the Load Balancer
-    suffix_name             = "ssh" #MUST match the Lbs suffix_name
-    lb_port                 = "22"
-    backend_port            = "22"
-    probe_port              = "22"
-    probe_protocol          = "Tcp"
-    request_path            = ""
-    load_distribution       = "Default"
-  },
-  {
-    Id                      = "1"   #Id of a the rule within the Load Balancer 
-    load_balancer_iteration = "1"   #Id of the Load Balancer
-    suffix_name             = "gfs" #MUST match the Lbs suffix_name
-    lb_port                 = "22"
-    backend_port            = "22"
-    probe_port              = "22"
-    probe_protocol          = "Tcp"
-    request_path            = ""
-    load_distribution       = "Default"
-  },
-  {
-    Id                      = "1"   #Id of a the rule within the Load Balancer 
-    load_balancer_iteration = "2"   #Id of the Load Balancer
-    suffix_name             = "rds" #MUST match the Lbs suffix_name
-    lb_port                 = "3389"
-    backend_port            = "3389"
-    probe_port              = "3389"
-    probe_protocol          = "Tcp"
-    request_path            = ""
-    load_distribution       = "Default"
-  },
-]
-
-linux_storage_image_reference = {
-  publisher = "Canonical"
-  offer     = "UbuntuServer"
-  sku       = "18.04-LTS"
-  version   = "Latest"
+  }
 }
 
-vms = [
-  {
-    suffix_name              = "rdg"             #(Mandatory) suffix of the vm
-    id                       = "1"               #(Mandatory) Id of the VM
-    os_type                  = "windows"         #(Mandatory) Support "linux" or "windows"
-    storage_data_disks       = []                #(Mandatory) For no data disks set []
-    subnet_iteration         = "0"               #(Mandatory) Id of the Subnet
-    security_group_iteration = "1"               #(Optional) Id of the Network Security Group
-    static_ip                = "10.0.2.228"      #(Optional) Set null to get dynamic IP or delete this line
-    zones                    = ["1"]             #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to "", WARNING you could not have Availabilitysets and AvailabilityZones
-    vm_size                  = "Standard_DS1_v2" #(Mandatory) 
-    managed_disk_type        = "Premium_LRS"     #(Mandatory) 
-  },
-  {
-    suffix_name              = "rdg"             #(Mandatory) suffix of the vm
-    id                       = "2"               #(Mandatory) Id of the VM
-    os_type                  = "windows"         #(Mandatory) Support "linux" or "windows"
-    storage_data_disks       = []                #(Mandatory) For no data disks set []
-    subnet_iteration         = "1"               #(Mandatory) Id of the Subnet
-    security_group_iteration = "1"               #(Optional) Id of the Network Security Group
-    static_ip                = "10.0.2.244"      #(Optional) Set null to get dynamic IP or delete this line
-    zones                    = ["2"]             #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to "", WARNING you could not have Availabilitysets and AvailabilityZones
-    vm_size                  = "Standard_DS1_v2" #(Mandatory) 
-    managed_disk_type        = "Premium_LRS"     #(Mandatory) 
-  },
-  {
-    suffix_name = "ssh"   #(Mandatory) suffix of the vm
-    id          = "1"     #(Mandatory) Id of the VM
-    os_type     = "linux" #(Mandatory) Support "linux" or "windows"
+LbRules = {
+
+  lbrules1 = {
+    Id                = "1"   #Id of a the rule within the Load Balancer 
+    lb_key            = "lb1" #Id of the Load Balancer
+    suffix_name       = "ssh" #MUST match the Lbs suffix_name
+    lb_port           = "80"
+    backend_port      = "80"
+    probe_port        = "80"
+    probe_protocol    = "Http"
+    request_path      = "/"
+    load_distribution = "Default"
+  }
+
+  lbrules2 = {
+    Id                = "2"   #Id of a the rule within the Load Balancer 
+    lb_key            = "lb1" #Id of the Load Balancer
+    suffix_name       = "ssh" #MUST match the Lbs suffix_name
+    lb_port           = "22"
+    backend_port      = "22"
+    probe_port        = "22"
+    probe_protocol    = "Tcp"
+    request_path      = ""
+    load_distribution = "Default"
+  }
+
+  lbrules3 = {
+    Id                = "1"   #Id of a the rule within the Load Balancer 
+    lb_key            = "lb2" #Id of the Load Balancer
+    suffix_name       = "gfs" #MUST match the Lbs suffix_name
+    lb_port           = "22"
+    backend_port      = "22"
+    probe_port        = "22"
+    probe_protocol    = "Tcp"
+    request_path      = ""
+    load_distribution = "Default"
+  }
+
+  lbrules4 = {
+    Id                = "1"   #Id of a the rule within the Load Balancer 
+    lb_key            = "lb3" #Id of the Load Balancer
+    suffix_name       = "rds" #MUST match the Lbs suffix_name
+    lb_port           = "3389"
+    backend_port      = "3389"
+    probe_port        = "3389"
+    probe_protocol    = "Tcp"
+    request_path      = ""
+    load_distribution = "Default"
+  }
+
+}
+
+windows_vms = {
+
+  vm1 = {
+    suffix_name              = "rdg"           #(Mandatory) suffix of the vm
+    id                       = "1"             #(Mandatory) Id of the VM
+    storage_data_disks       = []              #(Mandatory) For no data disks set []
+    subnet_iteration         = "0"             #(Mandatory) Id of the Subnet
+    security_group_iteration = "1"             #(Optional) Id of the Network Security Group
+    static_ip                = "10.0.2.228"    #(Optional) Set null to get dynamic IP or delete this line
+    zones                    = ["1"]           #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to "", WARNING you could not have Availabilitysets and AvailabilityZones
+    vm_size                  = "Standard_B2ms" #(Mandatory) 
+    managed_disk_type        = "Premium_LRS"   #(Mandatory) 
+  }
+
+  vm2 = {
+    suffix_name              = "rdg"                    #(Mandatory) suffix of the vm
+    id                       = "2"                      #(Mandatory) Id of the VM
+    storage_data_disks       = []                       #(Mandatory) For no data disks set []
+    subnet_iteration         = "1"                      #(Mandatory) Id of the Subnet
+    security_group_iteration = "1"                      #(Optional) Id of the Network Security Group
+    static_ip                = "10.0.2.244"             #(Optional) Set null to get dynamic IP or delete this line
+    zones                    = ["2"]                    #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to "", WARNING you could not have Availabilitysets and AvailabilityZones
+    vm_size                  = "Standard_B2ms"          #(Mandatory) 
+    managed_disk_type        = "Premium_LRS"            #(Mandatory) 
+    backup_policy_name       = "BackupPolicy-Schedule1" #(Optional) Set null to disable backup (WARNING, this will delete previous backup) otherwise set a backup policy like BackupPolicy-Schedule1
+  }
+
+}
+
+linux_vms = {
+
+  vm1 = {
+    suffix_name = "ssh" #(Mandatory) suffix of the vm
+    id          = "1"   #(Mandatory) Id of the VM
     storage_data_disks = [
       {
         id                = "1" #Disk id
@@ -200,33 +207,25 @@ vms = [
     security_group_iteration = "1"                      #(Optional) Id of the Network Security Group
     static_ip                = "10.0.2.229"             #(Optional) Set null to get dynamic IP or delete this line
     zones                    = ["1"]                    #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to "", WARNING you could not have Availabilitysets and AvailabilityZones
-    BackupPolicyName         = "BackupPolicy-Schedule1" #(Optional) Set null to disable backup (WARNING, this will delete previous backup) otherwise set a backup policy like BackupPolicy-Schedule1
-    vm_size                  = "Standard_DS1_v2"        #(Mandatory) 
+    backup_policy_name       = "BackupPolicy-Schedule1" #(Optional) Set null to disable backup (WARNING, this will delete previous backup) otherwise set a backup policy like BackupPolicy-Schedule1
+    vm_size                  = "Standard_B2ms"          #(Mandatory) 
     managed_disk_type        = "Premium_LRS"            #(Mandatory) 
-  },
-  {
-    suffix_name              = "ssh"                    #(Mandatory) suffix of the vm
-    id                       = "2"                      #(Mandatory) Id of the VM
-    os_type                  = "linux"                  #(Mandatory) Support "linux" or "windows"
-    storage_data_disks       = []                       #(Mandatory) For no data disks set []
-    internal_lb_iteration    = "0"                      #(Optional) Id of the Internal Load Balancer, set to null or delete the line if there is no Load Balancer
-    subnet_iteration         = "1"                      #(Mandatory) Id of the Subnet
-    security_group_iteration = "1"                      #(Optional) Id of the Network Security Group
-    static_ip                = "10.0.2.245"             #(Optional) Set null to get dynamic IP or delete this line
-    zones                    = ["2"]                    #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to "", WARNING you could not have Availabilitysets and AvailabilityZones
-    BackupPolicyName         = "BackupPolicy-Schedule1" #(Optional) Set null to disable backup (WARNING, this will delete previous backup) otherwise set a backup policy like BackupPolicy-Schedule1
-    vm_size                  = "Standard_DS1_v2"        #(Mandatory) 
-    managed_disk_type        = "Premium_LRS"            #(Mandatory) 
-  },
-]
+  }
 
-windows_storage_image_reference = {
-  publisher = "MicrosoftWindowsServer"
-  offer     = "WindowsServer"
-  sku       = "2019-Datacenter"
-  version   = "Latest"
+  vm2 = {
+    suffix_name              = "ssh"           #(Mandatory) suffix of the vm
+    id                       = "2"             #(Mandatory) Id of the VM
+    storage_data_disks       = []              #(Mandatory) For no data disks set []
+    internal_lb_iteration    = "0"             #(Optional) Id of the Internal Load Balancer, set to null or delete the line if there is no Load Balancer
+    subnet_iteration         = "1"             #(Mandatory) Id of the Subnet
+    security_group_iteration = "1"             #(Optional) Id of the Network Security Group
+    static_ip                = "10.0.2.245"    #(Optional) Set null to get dynamic IP or delete this line
+    zones                    = ["2"]           #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to "", WARNING you could not have Availabilitysets and AvailabilityZones
+    vm_size                  = "Standard_B2ms" #(Mandatory) 
+    managed_disk_type        = "Premium_LRS"   #(Mandatory) 
+  }
+
 }
 
 ## Infra common services
-#Automation account
-auto_sku = "Basic"
+#N/A
