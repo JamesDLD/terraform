@@ -219,3 +219,110 @@ route_tables = {
     ]
   }
 }
+
+# -
+# - Azure Firewall
+# -
+az_firewall_rules = {
+  application_rule_collections = {
+    infra_common_services-appcol1 = {
+      priority = 200
+      action   = "Allow"
+      rules = [
+        {
+          name = "testrule"
+
+          source_addresses = [
+            "10.0.0.0/16",
+          ]
+
+          target_fqdns = [
+            "*.google.com",
+          ]
+
+          protocols = [
+            {
+              port = "443"
+              type = "Https"
+            },
+            {
+              port = "80"
+              type = "Http"
+            },
+          ]
+        },
+      ]
+    }
+
+    # sec_common_services-appcol1  = {}
+    # apps_common_services-appcol1 = {}
+    # apps_services-appcol1        = {}
+  }
+
+  network_rule_collections = {
+    sec_common_services-netcol1 = {
+      priority = 100
+      action   = "Allow"
+      rules = [
+        {
+          name = "testrule"
+
+          source_addresses = [
+            "10.0.0.0/16",
+          ]
+
+          destination_ports = [
+            "53",
+          ]
+
+          destination_addresses = [
+            "8.8.8.8",
+            "8.8.4.4",
+          ]
+
+          protocols = [
+            "TCP",
+            "UDP",
+          ]
+        },
+      ]
+    }
+    # infra_common_services-netcol1 = {}
+    # sec_common_services-netcol1   = {}
+    # apps_common_services-netcol1  = {}
+    # apps_services-netcol1         = {}
+  }
+
+  nat_rule_collections = {
+    sec_common_services-natcol1 = {
+      priority = 100
+      action   = "Dnat"
+      rules = [
+        {
+          name = "testrule"
+
+          source_addresses = [
+            "10.0.0.0/16",
+          ]
+
+          destination_ports = [
+            "53",
+          ]
+
+          destination_addresses = [
+            "8.8.8.8",
+            "8.8.4.4",
+          ]
+
+          protocols = [
+            "TCP",
+            "UDP",
+          ]
+          translated_address = "10.0.2.228"
+          translated_port    = "3389"
+        },
+      ]
+    }
+  }
+
+}

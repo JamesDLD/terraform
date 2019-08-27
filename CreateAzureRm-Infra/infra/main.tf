@@ -91,28 +91,118 @@ module "Az-RoleAssignment-Apps" {
   ass_role_definition_ids = module.Az-RoleDefinition-Apps.role_ids
   ass_principal_id        = var.service_principals[1]["Application_object_id"]
 }
+# -
+# - Azure Firewall
+# -
 
-/*
-module "Az-Firewall-Infr" {
-  source                 = "git::https://github.com/JamesDLD/terraform.git//module/Az-Firewall?ref=master"
-  fw_resource_group_name = data.azurerm_resource_group.Infr.name
-  fw_location            = data.azurerm_resource_group.Infr.location
-  fw_prefix              = "${var.app_name}-${var.env_name}-fw1"
-  fw_subnet_id           = element(module.Az-VirtualNetwork-Infra.subnet_ids, 0)
-  fw_tags                = data.azurerm_resource_group.Infr.tags
+resource "azurerm_public_ip" "fw_pip" {
+  name                = "${var.app_name}-${var.env_name}-fw1-pip1"
+  location            = data.azurerm_resource_group.Infr.location
+  resource_group_name = data.azurerm_resource_group.Infr.name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+  tags                = data.azurerm_resource_group.Infr.tags
+}
+
+resource "azurerm_firewall" "fw" {
+  name                = "${var.app_name}-${var.env_name}-fw1"
+  location            = azurerm_public_ip.fw_pip.location
+  resource_group_name = azurerm_public_ip.fw_pip.resource_group_name
+  tags                = data.azurerm_resource_group.Infr.tags
+
+  ip_configuration {
+    name                 = "${var.app_name}-${var.env_name}-fw1-CFG"
+    subnet_id            = element(module.Az-VirtualNetwork-Infra.subnet_ids, 0)
+    public_ip_address_id = azurerm_public_ip.fw_pip.id
+  }
+}
+
+resource "azurerm_firewall_application_rule_collection" "rules" {
+  for_each            = var.az_firewall_rules["application_rule_collections"]
+  name                = each.key
+  azure_firewall_name = azurerm_firewall.fw.name
+  resource_group_name = data.azurerm_resource_group.Infr.name
+  priority            = lookup(each.value, "priority", null)
+  action              = lookup(each.value, "action", null)
+
+  dynamic "rule" {
+    for_each = lookup(each.value, "rules", null)
+
+    content {
+      name             = lookup(rule.value, "name", null)
+      description      = lookup(rule.value, "description", null)
+      source_addresses = lookup(rule.value, "source_addresses", null)
+      fqdn_tags        = lookup(rule.value, "fqdn_tags", null)
+      target_fqdns     = lookup(rule.value, "target_fqdns", null)
+      dynamic "protocol" {
+        for_each = lookup(rule.value, "protocols", null)
+
+        content {
+          port = lookup(protocol.value, "port", null)
+          type = lookup(protocol.value, "type", null)
+        }
+      }
+    }
+  }
+}
+
+resource "azurerm_firewall_network_rule_collection" "rules" {
+  for_each            = var.az_firewall_rules["network_rule_collections"]
+  name                = each.key
+  azure_firewall_name = azurerm_firewall.fw.name
+  resource_group_name = data.azurerm_resource_group.Infr.name
+  priority            = lookup(each.value, "priority", null)
+  action              = lookup(each.value, "action", null)
+
+  dynamic "rule" {
+    for_each = lookup(each.value, "rules", null)
+
+    content {
+      name                  = lookup(rule.value, "name", null)
+      description           = lookup(rule.value, "description", null)
+      source_addresses      = lookup(rule.value, "source_addresses", null)
+      destination_ports     = lookup(rule.value, "destination_ports", null)
+      destination_addresses = lookup(rule.value, "destination_addresses", null)
+      protocols             = lookup(rule.value, "protocols", null)
+    }
+  }
+}
+
+resource "azurerm_firewall_nat_rule_collection" "rules" {
+  for_each            = var.az_firewall_rules["nat_rule_collections"]
+  name                = each.key
+  azure_firewall_name = azurerm_firewall.fw.name
+  resource_group_name = data.azurerm_resource_group.Infr.name
+  priority            = lookup(each.value, "priority", null)
+  action              = lookup(each.value, "action", null)
+
+  dynamic "rule" {
+    for_each = lookup(each.value, "rules", null)
+
+    content {
+      name                  = lookup(rule.value, "name", null)
+      description           = lookup(rule.value, "description", null)
+      destination_addresses = lookup(rule.value, "destination_addresses", null)
+      destination_ports     = lookup(rule.value, "destination_ports", null)
+      protocols             = lookup(rule.value, "protocols", null)
+      source_addresses      = lookup(rule.value, "source_addresses", null)
+      translated_address    = lookup(rule.value, "translated_address", null)
+      translated_port       = lookup(rule.value, "translated_port", null)
+    }
+  }
 }
 
 resource "azurerm_log_analytics_workspace" "infra" {
   name                = "${var.app_name}-${var.env_name}-logm1" #The log analytics workspace name must be unique
-  sku                 = "PerGB2018"                           #Refer https://azure.microsoft.com/pricing/details/monitor/ for log analytics pricing 
+  sku                 = "PerGB2018"                             #Refer https://azure.microsoft.com/pricing/details/monitor/ for log analytics pricing 
   location            = data.azurerm_resource_group.Infr.location
   resource_group_name = data.azurerm_resource_group.Infr.name
   tags                = data.azurerm_resource_group.Infr.tags
 }
 
 resource "azurerm_monitor_diagnostic_setting" "fw" {
-  name                       = module.Az-Firewall-Infr.fw_name
-  target_resource_id         = module.Az-Firewall-Infr.fw_id
+  name                       = azurerm_firewall.fw.name
+  target_resource_id         = azurerm_firewall.fw.id
   log_analytics_workspace_id = azurerm_log_analytics_workspace.infra.id
 
   log {
@@ -139,7 +229,11 @@ resource "azurerm_monitor_diagnostic_setting" "fw" {
     }
   }
 }
-*/
+
+# -
+# - Policy
+# -
+
 /*
 Currently not using those policies because the terraform resources with the suffix "association" generate an error when using terraform destroy cmdlet
 module "Az-PolicyAssignment-Infra-nsg-on-apps-subnet" {

@@ -107,6 +107,12 @@ variable "backup_policies" {
   }))
 }
 
+#Azure Firewall
+variable "az_firewall_rules" {
+  description = "Azure firewall rules."
+}
+
+
 #Vnet & Subnet & Network Security group
 variable "vnets" {
   description = "Virtual Networks list."
