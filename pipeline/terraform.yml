@@ -1,35 +1,102 @@
 # Terraform
 parameters:
-  version: ''
-  path: ''
-  ArtifactName: ''
-  backend_secret_file_id: ''
-  backend_file_path: ''
-  main_secret_file_id: ''
-  main_file_path: ''
-  terraform_apply: false
+  version: '' #Terraform version to use
+  path: '' #Terraform scripts location path within the current repository
+  package_name: '' #Name of the Terraform package 
+  backend_secret_file_id: 'no_secret_file_id_provided' #Azure DevOps Library backend file name (used for the Terraform init cmdlet)
+  backend_file_path: '' #Local backend file location (used for the Terraform init cmdlet)
+  main_secret_file_id: 'no_secret_file_id_provided' #Azure DevOps Library main file name (used for the Terraform plan, apply and destroy cmdlet)
+  main_file_path: '' #Local main file location (used for the Terraform plan, apply and destroy cmdlet)
+  terraform_init: false #Decide to perform a Terraform init
+  terraform_plan: false #Decide to perform a Terraform plan
+  terraform_apply: false #Decide to perform a Terraform apply
+  terraform_destroy: false #Decide to perform a Terraform destroy
+  artifact_path: '' #Fill in the Artifact path location when Terraform applied is asked (usually it's $(Pipeline.Workspace)/$(artifact_name))
+  build_service_account_name: 'jamesdld23' #Azure DevOps organization name where your terraform modules are located
+  terraform_repo_domain_url: 'dev.azure.com' #Azure DevOps url suffix name where your terraform modules are located
 
 steps:
+# -
+# - Prerequisites
+# -
+- script: |
+    if [ -z "${{ parameters.version }}" ]; then
+      echo "##vso[task.logissue type=error;]Missing template parameter \"version\""
+      echo "##vso[task.complete result=Failed;]"
+    fi
+    if [ -z "${{ parameters.package_name }}" ]; then
+      echo "##vso[task.logissue type=error;]Missing template parameter \"package_name\""
+      echo "##vso[task.complete result=Failed;]"
+    fi
+    mkdir -p ./ArtifactPublishLocation
+  displayName: ${{ parameters.package_name }} - Check for required parameters
+
 - task: TerraformInstaller@0
-  displayName: '${{ parameters.ArtifactName }} - Use Terraform ${{ parameters.version }}'
+  displayName: '${{ parameters.package_name }} - Use Terraform ${{ parameters.version }}'
   inputs:
     terraformVersion: ${{ parameters.version }}
 
+- bash: |
+    if [ -f "${{ parameters.artifact_path }}/${{ parameters.package_name }}.tar.gz" ]; then
+        echo '##vso[task.setvariable variable=package_available]yes'
+    else
+        echo '##vso[task.setvariable variable=package_available]no'
+    fi
+  condition: or(${{ parameters.terraform_apply }}, ${{ parameters.terraform_destroy }})
+  displayName: ${{ parameters.package_name }} - Checking if the package ${{ parameters.package_name }} is available 
+
+- task: ExtractFiles@1
+  condition: and(eq(variables['package_available'], 'yes'), or(${{ parameters.terraform_apply }}, ${{ parameters.terraform_destroy }})) # this task will only run if the package is available
+  displayName: '${{ parameters.package_name }} - Extract files for package ${{ parameters.package_name }}'
+  inputs:
+    archiveFilePatterns: '${{ parameters.artifact_path }}/${{ parameters.package_name }}.tar.gz'
+    destinationFolder: './${{ parameters.package_name }}'
+
 - script: |
-    #Terraform Init
-    if [ "${{ parameters.backend_file_path }}" != "" ] ; 
+    touch $HOME/.gitconfig
+    git config --global --list | grep url. | awk -F '.instead' '{print $1}' | while read line
+    do
+        echo $line
+        git config --global --remove-section $line
+    done
+    git config --global url.https://${{ parameters.build_service_account_name }}:$(System.AccessToken)@${{ parameters.terraform_repo_domain_url }}.insteadOf https://${{ parameters.terraform_repo_domain_url }}
+    git init
+  displayName: '${{ parameters.package_name }} - Redirect git URLs to use the Access Token So Modules Can Be Pulled In'
+  condition: ${{ parameters.terraform_init }} # this task will only run if terraform_init equals true
+
+# -
+# - Terraform Init
+# -
+
+- script: |
+    if [ "${{ parameters.backend_file_path }}" != "" ] && [ "${{ parameters.backend_secret_file_id }}" != "" ] ; 
     then
       terraform init -backend-config="${{ parameters.backend_file_path }}" -backend-config="$(Agent.TempDirectory)/${{ parameters.backend_secret_file_id }}" -input=false -reconfigure
-    else
+    elif [ "${{ parameters.backend_file_path }}" == "" ] && [ "${{ parameters.backend_secret_file_id }}" != "" ] ; 
+    then
       terraform init -backend-config="$(Agent.TempDirectory)/${{ parameters.backend_secret_file_id }}" -input=false -reconfigure
+    else
+      terraform init -input=false -reconfigure
     fi
+  displayName: '${{ parameters.package_name }} - Terraform Init'
+  workingDirectory: ${{ parameters.path }}
+  condition: ${{ parameters.terraform_init }} # this task will only run if terraform_init equals true
 
-    #Terraform Plan
+- script: git config --global --remove-section url.https://${{ parameters.build_service_account_name }}:$(System.AccessToken)@${{ parameters.terraform_repo_domain_url }}
+  displayName: '${{ parameters.package_name }} - Remove git URL Redirect'
+  condition: ${{ parameters.terraform_init }} # this task will only run if terraform_init equals true
+  continueOnError: true
+
+# -
+# - Terraform Plan
+# -
+
+- script: |
     if [ "${{ parameters.main_file_path }}" != "" ] ; 
     then
-      terraform plan -var-file="${{ parameters.main_file_path }}" -var-file="$(Agent.TempDirectory)/${{ parameters.main_secret_file_id }}" -out="./out_plan_file" -input=false -detailed-exitcode > /dev/null
+      OUTPUT=$(terraform plan -var-file="${{ parameters.main_file_path }}" -var-file="$(Agent.TempDirectory)/${{ parameters.main_secret_file_id }}" -out="./out_plan_file" -input=false -detailed-exitcode)
     else
-      terraform plan -var-file="$(Agent.TempDirectory)/${{ parameters.main_secret_file_id }}" -out="./out_plan_file" -input=false -detailed-exitcode > /dev/null
+      OUTPUT=$(terraform plan -var-file="$(Agent.TempDirectory)/${{ parameters.main_secret_file_id }}" -out="./out_plan_file" -input=false -detailed-exitcode)
     fi
 
     OUT=$?
@@ -48,18 +115,50 @@ steps:
         echo "Terraform planned has failed!"
         exit 1
     fi
-  displayName: '${{ parameters.ArtifactName }} - Terraform Plan'
-  workingDirectory: ${{ parameters.path }}
 
-- script: terraform apply "./out_plan_file"
-  displayName: '${{ parameters.ArtifactName }} - Terraform Apply'
+    if [[ $OUTPUT =~ "[DEPRECATED]" ]]; then
+        echo "##vso[task.logissue type=warning;]A Terraform property has been deprecated."
+        echo "##vso[task.complete result=SucceededWithIssues;]"
+        if [ "${{ parameters.main_file_path }}" != "" ] ; 
+        then
+          terraform plan -var-file="${{ parameters.main_file_path }}" -var-file="$(Agent.TempDirectory)/${{ parameters.main_secret_file_id }}" -input=false
+        else
+          terraform plan -var-file="$(Agent.TempDirectory)/${{ parameters.main_secret_file_id }}" -input=false
+        fi
+    fi
+  displayName: '${{ parameters.package_name }} - Terraform Plan'
   workingDirectory: ${{ parameters.path }}
-  condition: and(succeeded(), ${{ parameters.terraform_apply }}, eq(variables['terraform_plan_exitcode'], '2')) # this task will only run if terrafrom has prompted for changes and a terraform apply has been asked
-  
+  condition: ${{ parameters.terraform_plan }} # this task will only run if terraform_plan equals true
+
 - script: |
     echo "Compressing ${{ parameters.path }} directory ..."
-    tar -czf ${{ parameters.ArtifactName }}.tar.gz -C ${{ parameters.path }} .
+    tar -czf ${{ parameters.package_name }}.tar.gz -C ${{ parameters.path }} .
     mkdir -p ./ArtifactPublishLocation
     echo "Moving this archive directory to this location ./ArtifactPublishLocation ..."
-    mv -f ${{ parameters.ArtifactName }}.tar.gz ./ArtifactPublishLocation/${{ parameters.ArtifactName }}.tar.gz
-  displayName: '${{ parameters.ArtifactName }} - Compress ${{ parameters.path }} Artifact'
+    mv -f ${{ parameters.package_name }}.tar.gz ./ArtifactPublishLocation/${{ parameters.package_name }}.tar.gz
+  displayName: '${{ parameters.package_name }} - Compress ${{ parameters.path }} package'
+  condition: and(${{ parameters.terraform_init }}, eq(variables['terraform_plan_exitcode'], '2')) # this task will only run if terrafrom has prompted for changes and a terraform apply has been asked
+
+# -
+# - Terraform Apply
+# -
+
+- script: terraform apply "./out_plan_file"
+  condition: and(${{ parameters.terraform_apply }}, eq(variables['package_available'], 'yes')) # this task will only run if the package is available and a Terraform apply has been asked
+  displayName: '${{ parameters.package_name }} - Terraform Apply'
+  workingDirectory: './${{ parameters.package_name }}'
+
+# -
+# - Terraform Destroy
+# -
+
+- script: |
+    if [ "${{ parameters.main_file_path }}" != "" ] ; 
+    then
+      terraform destroy -var-file="${{ parameters.main_file_path }}" -var-file="$(Agent.TempDirectory)/${{ parameters.main_secret_file_id }}" -auto-approve
+    else
+      terraform destroy -var-file="$(Agent.TempDirectory)/${{ parameters.main_secret_file_id }}" -auto-approve
+    fi
+  condition: and(${{ parameters.terraform_destroy }}, eq(variables['package_available'], 'yes')) # this task will only run if the package is available and a Terraform destroy has been asked
+  displayName: '${{ parameters.package_name }} - Terraform Destroy'
+  workingDirectory: './${{ parameters.package_name }}'

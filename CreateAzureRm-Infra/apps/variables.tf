@@ -4,11 +4,7 @@
 terraform {
   backend "azurerm" {
   }
-  required_version = "0.12.5"
-}
-
-provider "random" {
-  version = "2.1.2"
+  required_version = ">= 0.12.6"
 }
 
 variable "subscription_id" {
@@ -78,8 +74,13 @@ variable "apps_nsgs" {
 }
 
 #Load Balancers & Availability Set & Virtual Machines
-variable "vms" {
-  description = "VMs list."
+variable "linux_vms" {
+  description = "Linux VMs list."
+  type        = any
+}
+
+variable "windows_vms" {
+  description = "Windows VMs list."
   type        = any
 }
 variable "Lb_sku" {
@@ -88,23 +89,13 @@ variable "Lb_sku" {
 }
 
 variable "Lbs" {
-  type        = list
+  type        = any
   description = "Load Balancer list containing the following keys : suffix_name, subnet_iteration, static_ip."
 }
 
 variable "LbRules" {
-  type        = list
+  type        = any
   description = "Load Balancer rules list."
-}
-
-variable "linux_storage_image_reference" {
-  type        = map(string)
-  description = "Could containt an 'id' of a custom image or the following parameters for an Azure public 'image publisher','offer','sku', 'version'"
-}
-
-variable "windows_storage_image_reference" {
-  type        = map(string)
-  description = "Could containt an 'id' of a custom image or the following parameters for an Azure public 'image publisher','offer','sku', 'version'"
 }
 
 variable "app_admin" {
@@ -119,11 +110,6 @@ variable "pass" {
 
 variable "ssh_key" {
   description = "Specifies the ssh public key to login on Linux VM."
-  type        = string
-}
-
-variable "auto_sku" {
-  description = "Specifies the automation account SKU."
   type        = string
 }
 

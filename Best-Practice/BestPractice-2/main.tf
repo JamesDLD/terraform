@@ -1,6 +1,6 @@
 #Set the terraform backend
 terraform {
-  required_version = "0.12.5"
+  required_version = ">= 0.12.6"
 
   backend "azurerm" {
     storage_account_name = "infrsand1vpcjdld1"
@@ -12,7 +12,7 @@ terraform {
 
 #Set the Provider
 provider "azurerm" {
-  version         = "1.31.0"
+  version         = ">= 1.31.0" #Use the last version tested through an Azure DevOps pipeline here : https://dev.azure.com/jamesdld23/vpc_lab/_build
   subscription_id = var.subscription_id
   client_id       = var.client_id
   client_secret   = var.client_secret
@@ -21,23 +21,24 @@ provider "azurerm" {
 
 #Call module/resource
 #Get components
-module "Get-AzureRmVirtualNetwork" {
-  #version                  = "~> 0.1"
-  source                   = "git::https://github.com/JamesDLD/terraform.git//module/Get-AzureRmVirtualNetwork?ref=master"
-  vnets                    = ["bp1-vnet1"]
-  vnet_resource_group_name = "infr-jdld-noprd-rg1"
-}
-
-data "azurerm_resource_group" "infr" {
+data "azurerm_resource_group" "bp2" {
   name = "infr-jdld-noprd-rg1"
 }
 
 #Action
-resource "azurerm_subnet" "DemoBP2" {
-  count                = length(var.subnets)
-  name                 = var.subnets[count.index]["name"]
-  resource_group_name  = data.azurerm_resource_group.infr.name
-  virtual_network_name = element(module.Get-AzureRmVirtualNetwork.vnet_names, var.subnets[count.index]["vnet_name_id"])
-  address_prefix       = var.subnets[count.index]["cidr_block"]
-  service_endpoints    = lookup(var.subnets[count.index], "service_endpoints", null)
+module "Az-VirtualNetwork-demo" {
+  source                      = "JamesDLD/Az-VirtualNetwork/azurerm"
+  version                     = "0.1.1"
+  net_prefix                  = "demo"
+  network_resource_group_name = data.azurerm_resource_group.bp2.name
+  virtual_networks = {
+    vnet1 = {
+      id            = "1"
+      prefix        = "bp2"
+      address_space = ["198.18.1.0/24", "198.18.2.0/24"]
+    }
+  }
+  subnets                 = var.subnets
+  route_tables            = {}
+  network_security_groups = {}
 }

@@ -1,48 +1,48 @@
 #Variables initialization
 
-subnets = [
-  {
-    name              = "bp3-front-snet1"
-    cidr_block        = "10.0.3.0/24"
-    vnet_name_id      = "0" #Id of the vnet
-    service_endpoints = ["Microsoft.Storage", "Microsoft.Sql", "Microsoft.AzureActiveDirectory", "Microsoft.AzureCosmosDB", "Microsoft.ServiceBus"]
-  },
-]
+subnets = {
+  snet1 = {
+    vnet_key          = "vnet1"                                #(Mandatory) 
+    name              = "bp3-front-snet1"                      #(Mandatory) 
+    address_prefix    = "10.0.3.0/24"                          #(Mandatory) 
+    service_endpoints = ["Microsoft.Sql", "Microsoft.Storage"] #(Optional) delete this line for no Service Endpoints
+  }
+}
 
-Lbs = [
-  {
+Lbs = {
+  lb1 = {
     id               = "1" #Id of the load balancer use as a suffix of the load balancer name
     suffix_name      = "internal"
-    subnet_iteration = "0" #Id of the Subnet
-    static_ip        = "10.0.3.4"
-  },
-]
+    subnet_iteration = "0"        #Id of the Subnet
+    static_ip        = "10.0.3.4" #(Optional) Set null to get dynamic IP or delete this line
+  }
+}
 
-vms = [
-  {
-    suffix_name           = "rdg"             #(Mandatory) suffix of the vm
-    id                    = "1"               #(Mandatory) Id of the VM
-    static_ip             = "10.0.3.5"        #(Optional) Set null to get dynamic IP or delete this line
-    internal_lb_iteration = "0"               #(Optional) Id of the Internal Load Balancer, set to null or delete the line if there is no Load Balancer
-    os_type               = "windows"         #(Mandatory) Support "linux" or "windows"
-    storage_data_disks    = []                #(Mandatory) For no data disks set []
-    subnet_iteration      = "0"               #(Mandatory) Id of the Subnet
-    zones                 = ["1"]             #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to "", WARNING you could not have Availabilitysets and AvailabilityZones
-    vm_size               = "Standard_DS1_v2" #(Mandatory) 
-    managed_disk_type     = "Premium_LRS"     #(Mandatory) 
-  },
-  {
-    suffix_name        = "rdg"             #(Mandatory) suffix of the vm
-    id                 = "2"               #(Mandatory) Id of the VM
-    static_ip          = "10.0.3.6"        #(Optional) Set null to get dynamic IP or delete this line
-    os_type            = "windows"         #(Mandatory) Support "linux" or "windows"
-    storage_data_disks = []                #(Mandatory) For no data disks set []
-    subnet_iteration   = "0"               #(Mandatory) Id of the Subnet
-    zones              = ["2"]             #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to "", WARNING you could not have Availabilitysets and AvailabilityZones
-    vm_size            = "Standard_DS1_v2" #(Mandatory) 
-    managed_disk_type  = "Premium_LRS"     #(Mandatory) 
-  },
-]
+vms = {
+  vm1 = {
+    suffix_name           = "rds"          #(Mandatory) suffix of the vm
+    id                    = "1"            #(Mandatory) Id of the VM
+    static_ip             = "10.0.3.5"     #(Optional) Set null to get dynamic IP or delete this line
+    internal_lb_iteration = "0"            #(Optional) Id of the Internal Load Balancer, set to null or delete the line if there is no Load Balancer
+    storage_data_disks    = []             #(Mandatory) For no data disks set []
+    subnet_iteration      = "0"            #(Mandatory) Id of the Subnet
+    zones                 = ["1"]          #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to null or delete the line
+    vm_size               = "Standard_B2s" #(Mandatory) 
+    managed_disk_type     = "Premium_LRS"  #(Mandatory) 
+  }
+
+  vm1 = {
+    suffix_name           = "rds"          #(Mandatory) suffix of the vm
+    id                    = "2"            #(Mandatory) Id of the VM
+    static_ip             = "10.0.3.6"     #(Optional) Set null to get dynamic IP or delete this line
+    internal_lb_iteration = "0"            #(Optional) Id of the Internal Load Balancer, set to null or delete the line if there is no Load Balancer
+    storage_data_disks    = []             #(Mandatory) For no data disks set []
+    subnet_iteration      = "0"            #(Mandatory) Id of the Subnet
+    zones                 = ["1"]          #Availability Zone id, could be 1, 2 or 3, if you don't need to set it to null or delete the line
+    vm_size               = "Standard_B2s" #(Mandatory) 
+    managed_disk_type     = "Premium_LRS"  #(Mandatory) 
+  }
+}
 
 windows_storage_image_reference = {
   publisher = "MicrosoftWindowsServer"

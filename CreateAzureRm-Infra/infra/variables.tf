@@ -4,12 +4,9 @@
 terraform {
   backend "azurerm" {
   }
-  required_version = "0.12.5"
+  required_version = ">= 0.12.6"
 }
 
-provider "random" {
-  version = "2.1.2"
-}
 
 variable "subscription_id" {
   description = "Azure subscription Id."
@@ -110,6 +107,12 @@ variable "backup_policies" {
   }))
 }
 
+#Azure Firewall
+variable "az_firewall_rules" {
+  description = "Azure firewall rules."
+}
+
+
 #Vnet & Subnet & Network Security group
 variable "vnets" {
   description = "Virtual Networks list."
@@ -118,6 +121,11 @@ variable "vnets" {
 
 variable "snets" {
   description = "Subnet list."
+  type        = any
+}
+
+variable "vnets_to_peer" {
+  description = "Vnets to peer."
   type        = any
 }
 

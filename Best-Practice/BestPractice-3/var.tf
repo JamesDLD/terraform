@@ -23,12 +23,7 @@ variable "subnets" {
 
 variable "Lbs" {
   description = "List containing your load balancers."
-  type = list(object({
-    id               = number
-    suffix_name      = string
-    subnet_iteration = number
-    static_ip        = string
-  }))
+  type        = any
 }
 variable "vms" {
   description = "VMs list."
