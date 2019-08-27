@@ -299,7 +299,7 @@ az_firewall_rules = {
       action   = "Dnat"
       rules = [
         {
-          name = "testrule"
+          name = "testrule1"
 
           source_addresses = [
             "10.0.0.0/16",
@@ -307,11 +307,6 @@ az_firewall_rules = {
 
           destination_ports = [
             "53",
-          ]
-
-          destination_addresses = [
-            "8.8.8.8",
-            "8.8.4.4",
           ]
 
           protocols = [

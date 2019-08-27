@@ -182,7 +182,7 @@ resource "azurerm_firewall_nat_rule_collection" "rules" {
     content {
       name                  = lookup(rule.value, "name", null)
       description           = lookup(rule.value, "description", null)
-      destination_addresses = lookup(rule.value, "destination_addresses", null)
+      destination_addresses = lookup(rule.value, "destination_addresses", [azurerm_public_ip.fw_pip.ip_address])
       destination_ports     = lookup(rule.value, "destination_ports", null)
       protocols             = lookup(rule.value, "protocols", null)
       source_addresses      = lookup(rule.value, "source_addresses", null)
