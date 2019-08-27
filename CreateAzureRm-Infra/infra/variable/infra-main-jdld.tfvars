@@ -232,6 +232,7 @@ az_firewall_rules = {
           name             = "AllAzureTags-rule1"
           source_addresses = ["10.0.0.0/16"]
           fqdn_tags        = ["AppServiceEnvironment", "AzureBackup", "MicrosoftActiveProtectionService", "WindowsDiagnostics", "WindowsUpdate"]
+          protocols        = []
         },
         {
           name             = "OsMgmt-rule1"
