@@ -37,6 +37,7 @@ apps_snets = [
 ]
 
 apps_nsgs = {
+
   default_nsg1 = {
     id = "1"
     security_rules = [
@@ -82,6 +83,7 @@ apps_nsgs = {
 Lb_sku = "Standard" #"Basic"
 
 Lbs = {
+
   lb1 = {
     id               = "1" #Id of the load balancer use as a suffix of the load balancer name
     suffix_name      = "ssh"
@@ -105,6 +107,7 @@ Lbs = {
 }
 
 LbRules = {
+
   lbrules1 = {
     Id                = "1"   #Id of a the rule within the Load Balancer 
     lb_key            = "lb1" #Id of the Load Balancer
@@ -156,6 +159,7 @@ LbRules = {
 }
 
 windows_vms = {
+
   vm1 = {
     suffix_name              = "rdg"           #(Mandatory) suffix of the vm
     id                       = "1"             #(Mandatory) Id of the VM

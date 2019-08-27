@@ -208,14 +208,12 @@ route_tables = {
   rt1 = {
     id = "1"
     routes = [
-      /*
       {
         name                   = "all_to_firewall"
         address_prefix         = "0.0.0.0/0"
         next_hop_type          = "VirtualAppliance"
         next_hop_in_ip_address = "10.0.1.4"
       },
-      */
     ]
   }
 }
@@ -225,21 +223,30 @@ route_tables = {
 # -
 az_firewall_rules = {
   application_rule_collections = {
+
     infra_common_services-appcol1 = {
-      priority = 200
+      priority = 100
       action   = "Allow"
       rules = [
         {
-          name = "testrule"
-
-          source_addresses = [
-            "10.0.0.0/16",
+          name             = "AllAzureTags-rule1"
+          source_addresses = ["10.0.0.0/16"]
+          fqdn_tags        = ["AppServiceEnvironment", "AzureBackup", "MicrosoftActiveProtectionService", "WindowsDiagnostics", "WindowsUpdate"]
+          protocols = [
+            {
+              port = "443"
+              type = "Https"
+            },
+            {
+              port = "80"
+              type = "Http"
+            },
           ]
-
-          target_fqdns = [
-            "*.google.com",
-          ]
-
+        },
+        {
+          name             = "OsMgmt-rule1"
+          source_addresses = ["10.0.0.0/16"]
+          target_fqdns     = ["google.com", "debian.anexia.at", "debian.asis.io", "debian.balt.net", "debian.bhs.mirrors.ovh.net", "debian.blizoo.mk", "debian.bononia.it", "debian.c3sl.ufpr.br", "debian.carnet.hr", "debian.cc.lehigh.edu", "debian.charite.de", "debian.co.il", "debian.connesi.it", "debian.cs.binghamton.edu", "debian.csail.mit.edu", "debian.cse.msu.edu"]
           protocols = [
             {
               port = "443"
@@ -254,70 +261,61 @@ az_firewall_rules = {
       ]
     }
 
-    # sec_common_services-appcol1  = {}
-    # apps_common_services-appcol1 = {}
-    # apps_services-appcol1        = {}
-  }
-
-  network_rule_collections = {
-    sec_common_services-netcol1 = {
-      priority = 100
+    sec_common_services-appcol1 = {
+      priority = 200
       action   = "Allow"
       rules = [
         {
-          name = "testrule"
-
-          source_addresses = [
-            "10.0.0.0/16",
-          ]
-
-          destination_ports = [
-            "53",
-          ]
-
-          destination_addresses = [
-            "8.8.8.8",
-            "8.8.4.4",
-          ]
-
+          name             = "sample-rule1"
+          source_addresses = ["*"]
+          target_fqdns     = ["*.mydomain.com"]
           protocols = [
-            "TCP",
-            "UDP",
+            {
+              port = "443"
+              type = "Https"
+            },
           ]
         },
       ]
     }
-    # infra_common_services-netcol1 = {}
-    # sec_common_services-netcol1   = {}
-    # apps_common_services-netcol1  = {}
-    # apps_services-netcol1         = {}
+
+  }
+
+  network_rule_collections = {
+
+    infra_common_services-netcol1 = {
+      priority = 100
+      action   = "Allow"
+      rules = [
+        {
+          name                  = "Dns-rule1"
+          source_addresses      = ["10.0.0.0/16"]
+          destination_ports     = ["53"]
+          destination_addresses = ["8.8.8.8", ]
+          protocols             = ["TCP", "UDP"]
+        },
+      ]
+    }
+
   }
 
   nat_rule_collections = {
-    sec_common_services-natcol1 = {
+
+    infra_common_services-natcol1 = {
       priority = 100
       action   = "Dnat"
       rules = [
         {
-          name = "testrule1"
-
-          source_addresses = [
-            "10.0.0.0/16",
-          ]
-
-          destination_ports = [
-            "53",
-          ]
-
-          protocols = [
-            "TCP",
-            "UDP",
-          ]
+          name               = "rdp-rule1"
+          source_addresses   = ["*"]
+          destination_ports  = ["3389"]
+          protocols          = ["TCP"]
           translated_address = "10.0.2.228"
           translated_port    = "3389"
         },
       ]
     }
+
   }
 
 }
