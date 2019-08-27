@@ -9,9 +9,9 @@ Simple and Powerful
 HashiCorp Terraform enables you to safely and predictably create, change, and improve infrastructure. It is an open source tool that codifies APIs into declarative configuration files that can be shared amongst team members, treated as code, edited, reviewed, and versioned.
 
 
-Objective
+About the [Terraform's modules](https://registry.terraform.io/modules/JamesDLD)
 ------------
-Share Terraform custom modules with the community with the following guidelines :
+On of the objective here is to share Terraform custom modules with the community with the following guidelines :
 -	a module is used when we need to call a given number of resources several times and the same way, for exemple : when creating a VM we need nic, disks, backup, log monitoring, etc ..
 -	a module doesn't contain any static values
 -	a module is called using variables
