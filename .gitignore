@@ -6,6 +6,7 @@
 
 # Directory
 .terraform/
+**/test
 
 # Secret files
 **/test.tf
