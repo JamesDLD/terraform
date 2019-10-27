@@ -47,7 +47,7 @@
         },
         "tags": {
             "type": "string",
-            "defaultValue": "{\"APP\":\"XXX\",\"BUD\":\"XXX\",\"CTC\":\"XXX@XXX\",\"ENV\":\"XXX\"}",
+            "defaultValue": "{\"APP\":\"XXX\",\"BU\":\"XXX\",\"CTC\":\"XXX@XXX\",\"ENV\":\"XXX\"}",
             "metadata": {
                 "description": "Tags of the Bastion and it's public IP."
             }
@@ -190,7 +190,7 @@
             "properties": {
                 "ipConfigurations": [
                     {
-                        "name": "[concat(parameters('bastionHostName'),'-CFG')]",
+                        "name": "[concat(parameters('bastionHostName'),'-ado')]",
                         "properties": {
                             "subnet": {
                                 "id": "[resourceId(parameters('resourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('existingVNETName'),parameters('subnetName'))]"
