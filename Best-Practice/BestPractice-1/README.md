@@ -35,7 +35,7 @@ To do so we will have to declare the following bracket in our Terraform tf file.
 ```hcl
 terraform {
   backend "azurerm" {
-    storage_account_name = "infrsand1vpcjdld2"
+    storage_account_name = "infrsdbx1vpcjdld1"
     container_name       = "tfstate"
     key                  = "BestPractice-1.tfstate"
     resource_group_name  = "infr-jdld-noprd-rg1"

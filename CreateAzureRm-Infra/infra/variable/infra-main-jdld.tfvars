@@ -72,7 +72,7 @@ roles = [
 
 #Storage
 
-sa_infr_name = "infrsand1vpcjdld2"
+sa_infr_name = "infrsdbx1vpcjdld1"
 
 #Backup 
 backup_policies = [
