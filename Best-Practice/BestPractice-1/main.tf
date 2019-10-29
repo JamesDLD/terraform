@@ -1,7 +1,7 @@
 #Set the terraform backend
 terraform {
   backend "azurerm" {
-    storage_account_name = "infrsand1vpcjdld1"
+    storage_account_name = "infrsand1vpcjdld2"
     container_name       = "tfstate"
     key                  = "BestPractice-1.0.12.tfstate"
     resource_group_name  = "infr-jdld-noprd-rg1"

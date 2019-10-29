@@ -1,5 +1,5 @@
 #Variables initialization
-storage_account_name = "infrsand1vpcjdld1"
+storage_account_name = "infrsand1vpcjdld2"
 
 container_name = "tfstate"
 
