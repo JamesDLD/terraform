@@ -1,8 +1,6 @@
 #Multi-stage YAML pipeline demo.
 name: $(BuildDefinitionName).$(DayOfYear)$(Rev:.r)
 
-trigger: none
-
 # schedules:
 # - cron: "45 6 * * 4"
 #   branches:

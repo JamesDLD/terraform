@@ -1,8 +1,6 @@
 #Multi-stage YAML pipeline.
 name: $(BuildDefinitionName).$(DayOfYear)$(Rev:.r)
 
-trigger: none
-
 # schedules:
 # - cron: "45 5 * * 4"
 #   branches:
@@ -12,23 +10,23 @@ trigger: none
 #   always: true
 
 variables:
-- group: terraform_binary  # variable group containing Terraform information like the Terraform version (like terraform_version)
-- name: vmImageName
-  value: 'ubuntu-latest'
-- name: backend_main_secret_file_id1 # secret file used by the following cmdlet Terraform init, plan, apply and destroy 
-  value: 'backend-main-jdld-1.json'
-- name: main_secret_file_id2 # secret file used by the following cmdlet Terraform init, plan, apply and destroy 
-  value: 'main-jdld-2.tfvars'
-- name: artifact_name1
-  value: 'CreateAzureRm-Infra1'
-- name: artifact_name2
-  value: 'CreateAzureRm-Infra2'
+  - group: terraform_binary # variable group containing Terraform information like the Terraform version (like terraform_version)
+  - name: vmImageName
+    value: "ubuntu-latest"
+  - name: backend_main_secret_file_id1 # secret file used by the following cmdlet Terraform init, plan, apply and destroy
+    value: "backend-main-jdld-1.json"
+  - name: main_secret_file_id2 # secret file used by the following cmdlet Terraform init, plan, apply and destroy
+    value: "main-jdld-2.tfvars"
+  - name: artifact_name1
+    value: "CreateAzureRm-Infra1"
+  - name: artifact_name2
+    value: "CreateAzureRm-Infra2"
 
 resources:
   repositories:
     - repository: Yaml_Templates # identifier (A-Z, a-z, 0-9, and underscore)
       type: github
-      endpoint: JamesDLD  # name of the service connection to use (for non-Azure Repos types)
+      endpoint: JamesDLD # name of the service connection to use (for non-Azure Repos types)
       name: JamesDLD/terraform
       #ref: refs/tags/0.0.1  # ref name to use, defaults to 'refs/heads/master'
 
@@ -41,161 +39,156 @@ trigger:
       - release/*
   paths:
     include:
-    - CreateAzureRm-Infra/*
+      - CreateAzureRm-Infra/*
 
 stages:
-- stage: Build_Infra
-  jobs:
-  - job: Terraform_Plan_Infra
-    displayName: Terraform Plan - Infra - Publish a package if Infrastructure changes are identified
-    continueOnError: false
-    pool:
-      vmImage: $(vmImageName)
-    steps:
-
-    - task: DownloadSecureFile@1
-      displayName: 'Download secure file $(backend_main_secret_file_id1)'
-      inputs:
-        secureFile: $(backend_main_secret_file_id1)
-
-    - task: DownloadSecureFile@1
-      displayName: 'Download secure file $(main_secret_file_id2)'
-      inputs:
-        secureFile: $(main_secret_file_id2)
-
-    - template: pipeline/terraform.yml@Yaml_Templates
-      parameters:
-        version: $(terraform_version)
-        path: './CreateAzureRm-Infra/infra/'
-        package_name: 'Infra'
-        terraform_init: true
-        terraform_plan: true
-        backend_file_path: 'variable/infra-backend-jdld.tfvars'
-        backend_secret_file_id: $(backend_main_secret_file_id1)
-        main_secret_file_id: $(main_secret_file_id2)
-        main_file_path: 'variable/infra-main-jdld.tfvars'
-
-    - publish: './ArtifactPublishLocation' # Local path to include in the Artifact
-      artifact: '$(artifact_name1)'
-
-- stage: Deploy_Infra
-  dependsOn: Build_Infra
-  jobs:
-    # track deployments on the environment
-  - deployment: Terraform_Apply_Infra
-    displayName: Terraform Apply - Infra - Resources creation
-    pool:
-      vmImage: $(vmImageName)
-    environment: 'Terraform_Apply'
-    strategy:
-      # default deployment strategy
-      runOnce:
-        deploy:
-          steps:
-    
-          - template: pipeline/terraform.yml@Yaml_Templates
-            parameters:
-              version: $(terraform_version)
-              artifact_path: $(Pipeline.Workspace)/$(artifact_name1)
-              package_name: 'Infra'
-              terraform_apply: true
-
-- stage: Build_Apps
-  dependsOn: Deploy_Infra
-  jobs:
-  - job: Terraform_Plan_Apps
-    displayName: Terraform Plan - Apps - Publish a package if Infrastructure changes are identified
-    continueOnError: false
-    pool:
-      vmImage: $(vmImageName)
-    steps:
-
-    - task: DownloadSecureFile@1
-      displayName: 'Download secure file $(backend_main_secret_file_id1)'
-      inputs:
-        secureFile: $(backend_main_secret_file_id1)
-
-    - task: DownloadSecureFile@1
-      displayName: 'Download secure file $(main_secret_file_id2)'
-      inputs:
-        secureFile: $(main_secret_file_id2)
-
-    - template: pipeline/terraform.yml@Yaml_Templates
-      parameters:
-        version: $(terraform_version)
-        path: './CreateAzureRm-Infra/apps/'
-        package_name: 'Apps'
-        terraform_init: true
-        terraform_plan: true
-        backend_file_path: 'variable/apps-backend-jdld.tfvars'
-        backend_secret_file_id: $(backend_main_secret_file_id1)
-        main_secret_file_id: $(main_secret_file_id2)
-        main_file_path: 'variable/apps-main-jdld.tfvars'
-
-    - publish: './ArtifactPublishLocation' # Local path to include in the Artifact
-      artifact: '$(artifact_name2)'
-
-- stage: Deploy_Apps
-  dependsOn: Build_Apps
-  jobs:
-    # track deployments on the environment
-  - deployment: Terraform_Apply_Apps
-    displayName: Terraform Apply - Apps - Resources creation
-    pool:
-      vmImage: $(vmImageName)
-    environment: 'Terraform_Apply'
-    strategy:
-      # default deployment strategy
-      runOnce:
-        deploy:
-          steps:
-
-          - template: pipeline/terraform.yml@Yaml_Templates
-            parameters:
-              version: $(terraform_version)
-              artifact_path: $(Pipeline.Workspace)/$(artifact_name2)
-              package_name: 'Apps'
-              terraform_apply: true
-
-- stage: Deliver
-  dependsOn: Deploy_Apps
-  jobs:
-    # track deployments on the environment
-  - deployment: Terraform_Destroy
-    displayName: Terraform Destroy - Script ok, now deleting the resources
-    pool:
-      vmImage: $(vmImageName)
-    environment: 'Terraform_Destroy'
-    strategy:
-      # default deployment strategy
-      runOnce:
-        deploy:
-          steps:
-          
+  - stage: Build_Infra
+    jobs:
+      - job: Terraform_Plan_Infra
+        displayName: Terraform Plan - Infra - Publish a package if Infrastructure changes are identified
+        continueOnError: false
+        pool:
+          vmImage: $(vmImageName)
+        steps:
           - task: DownloadSecureFile@1
-            displayName: 'Download secure file $(main_secret_file_id2)'
-            inputs:
-              secureFile: $(main_secret_file_id2) 
-
-          - task: DownloadSecureFile@1
-            displayName: 'Download secure file $(backend_main_secret_file_id1)'
+            displayName: "Download secure file $(backend_main_secret_file_id1)"
             inputs:
               secureFile: $(backend_main_secret_file_id1)
 
-          - template: pipeline/terraform.yml@Yaml_Templates
-            parameters:
-              version: $(terraform_version)
-              artifact_path: $(Pipeline.Workspace)/$(artifact_name2)
-              package_name: 'Apps'
-              terraform_destroy: true
-              main_secret_file_id: $(main_secret_file_id2)
-              main_file_path: 'variable/apps-main-jdld.tfvars'
+          - task: DownloadSecureFile@1
+            displayName: "Download secure file $(main_secret_file_id2)"
+            inputs:
+              secureFile: $(main_secret_file_id2)
 
           - template: pipeline/terraform.yml@Yaml_Templates
             parameters:
               version: $(terraform_version)
-              artifact_path: $(Pipeline.Workspace)/$(artifact_name1)
-              package_name: 'Infra'
-              terraform_destroy: true
+              path: "./CreateAzureRm-Infra/infra/"
+              package_name: "Infra"
+              terraform_init: true
+              terraform_plan: true
+              backend_file_path: "variable/infra-backend-jdld.tfvars"
+              backend_secret_file_id: $(backend_main_secret_file_id1)
               main_secret_file_id: $(main_secret_file_id2)
-              main_file_path: 'variable/infra-main-jdld.tfvars'
+              main_file_path: "variable/infra-main-jdld.tfvars"
+
+          - publish: "./ArtifactPublishLocation" # Local path to include in the Artifact
+            artifact: "$(artifact_name1)"
+
+  - stage: Deploy_Infra
+    dependsOn: Build_Infra
+    jobs:
+      # track deployments on the environment
+      - deployment: Terraform_Apply_Infra
+        displayName: Terraform Apply - Infra - Resources creation
+        pool:
+          vmImage: $(vmImageName)
+        environment: "Terraform_Apply"
+        strategy:
+          # default deployment strategy
+          runOnce:
+            deploy:
+              steps:
+                - template: pipeline/terraform.yml@Yaml_Templates
+                  parameters:
+                    version: $(terraform_version)
+                    artifact_path: $(Pipeline.Workspace)/$(artifact_name1)
+                    package_name: "Infra"
+                    terraform_apply: true
+
+  - stage: Build_Apps
+    dependsOn: Deploy_Infra
+    jobs:
+      - job: Terraform_Plan_Apps
+        displayName: Terraform Plan - Apps - Publish a package if Infrastructure changes are identified
+        continueOnError: false
+        pool:
+          vmImage: $(vmImageName)
+        steps:
+          - task: DownloadSecureFile@1
+            displayName: "Download secure file $(backend_main_secret_file_id1)"
+            inputs:
+              secureFile: $(backend_main_secret_file_id1)
+
+          - task: DownloadSecureFile@1
+            displayName: "Download secure file $(main_secret_file_id2)"
+            inputs:
+              secureFile: $(main_secret_file_id2)
+
+          - template: pipeline/terraform.yml@Yaml_Templates
+            parameters:
+              version: $(terraform_version)
+              path: "./CreateAzureRm-Infra/apps/"
+              package_name: "Apps"
+              terraform_init: true
+              terraform_plan: true
+              backend_file_path: "variable/apps-backend-jdld.tfvars"
+              backend_secret_file_id: $(backend_main_secret_file_id1)
+              main_secret_file_id: $(main_secret_file_id2)
+              main_file_path: "variable/apps-main-jdld.tfvars"
+
+          - publish: "./ArtifactPublishLocation" # Local path to include in the Artifact
+            artifact: "$(artifact_name2)"
+
+  - stage: Deploy_Apps
+    dependsOn: Build_Apps
+    jobs:
+      # track deployments on the environment
+      - deployment: Terraform_Apply_Apps
+        displayName: Terraform Apply - Apps - Resources creation
+        pool:
+          vmImage: $(vmImageName)
+        environment: "Terraform_Apply"
+        strategy:
+          # default deployment strategy
+          runOnce:
+            deploy:
+              steps:
+                - template: pipeline/terraform.yml@Yaml_Templates
+                  parameters:
+                    version: $(terraform_version)
+                    artifact_path: $(Pipeline.Workspace)/$(artifact_name2)
+                    package_name: "Apps"
+                    terraform_apply: true
+
+  - stage: Deliver
+    dependsOn: Deploy_Apps
+    jobs:
+      # track deployments on the environment
+      - deployment: Terraform_Destroy
+        displayName: Terraform Destroy - Script ok, now deleting the resources
+        pool:
+          vmImage: $(vmImageName)
+        environment: "Terraform_Destroy"
+        strategy:
+          # default deployment strategy
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadSecureFile@1
+                  displayName: "Download secure file $(main_secret_file_id2)"
+                  inputs:
+                    secureFile: $(main_secret_file_id2)
+
+                - task: DownloadSecureFile@1
+                  displayName: "Download secure file $(backend_main_secret_file_id1)"
+                  inputs:
+                    secureFile: $(backend_main_secret_file_id1)
+
+                - template: pipeline/terraform.yml@Yaml_Templates
+                  parameters:
+                    version: $(terraform_version)
+                    artifact_path: $(Pipeline.Workspace)/$(artifact_name2)
+                    package_name: "Apps"
+                    terraform_destroy: true
+                    main_secret_file_id: $(main_secret_file_id2)
+                    main_file_path: "variable/apps-main-jdld.tfvars"
+
+                - template: pipeline/terraform.yml@Yaml_Templates
+                  parameters:
+                    version: $(terraform_version)
+                    artifact_path: $(Pipeline.Workspace)/$(artifact_name1)
+                    package_name: "Infra"
+                    terraform_destroy: true
+                    main_secret_file_id: $(main_secret_file_id2)
+                    main_file_path: "variable/infra-main-jdld.tfvars"

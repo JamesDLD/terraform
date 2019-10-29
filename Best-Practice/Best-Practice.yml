@@ -1,8 +1,6 @@
 #Multi-stage YAML pipeline demo.
 name: $(BuildDefinitionName).$(DayOfYear)$(Rev:.r)
 
-trigger: none
-
 # schedules:
 # - cron: "45 5 * * 4"
 #   branches:
@@ -12,21 +10,21 @@ trigger: none
 #   always: true
 
 variables:
-- group: terraform_binary  # variable group containing Terraform information like the Terraform version (like terraform_version)
-- name: vmImageName
-  value: 'ubuntu-latest'
-- name: backend_main_secret_file_id1 # secret file used by the following cmdlet Terraform init, plan, apply and destroy 
-  value: 'backend-main-jdld-1.json'
-- name: main_secret_file_id1 # secret file used by the following cmdlet Terraform init, plan, apply and destroy 
-  value: 'main-jdld-1.json'
-- name: artifact_name
-  value: 'Best-Practice'
+  - group: terraform_binary # variable group containing Terraform information like the Terraform version (like terraform_version)
+  - name: vmImageName
+    value: "ubuntu-latest"
+  - name: backend_main_secret_file_id1 # secret file used by the following cmdlet Terraform init, plan, apply and destroy
+    value: "backend-main-jdld-1.json"
+  - name: main_secret_file_id1 # secret file used by the following cmdlet Terraform init, plan, apply and destroy
+    value: "main-jdld-1.json"
+  - name: artifact_name
+    value: "Best-Practice"
 
 resources:
   repositories:
     - repository: Yaml_Templates # identifier (A-Z, a-z, 0-9, and underscore)
       type: github
-      endpoint: JamesDLD  # name of the service connection to use (for non-Azure Repos types)
+      endpoint: JamesDLD # name of the service connection to use (for non-Azure Repos types)
       name: JamesDLD/terraform
       #ref: refs/tags/0.0.1  # ref name to use, defaults to 'refs/heads/master'
 
@@ -39,198 +37,195 @@ trigger:
       - release/*
   paths:
     include:
-    - Best-Practice/*
+      - Best-Practice/*
 
 stages:
-- stage: Build
-  jobs:
-  - job: Terraform_Plan
-    displayName: Terraform Plan - Publish a package if Infrastructure changes are identified
-    continueOnError: false
-    pool:
-      vmImage: $(vmImageName)
-    steps:
-
-    - task: DownloadSecureFile@1
-      displayName: 'Download secure file $(backend_main_secret_file_id1)'
-      inputs:
-        secureFile: $(backend_main_secret_file_id1)
-
-    - task: DownloadSecureFile@1
-      displayName: 'Download secure file $(main_secret_file_id1)'
-      inputs:
-        secureFile: $(main_secret_file_id1)
-        
-    - template: pipeline/terraform.yml@Yaml_Templates
-      parameters:
-        version: $(terraform_version)
-        path: './Best-Practice/BestPractice-1/'
-        package_name: 'BestPractice-1'
-        terraform_init: true
-        terraform_plan: true
-        backend_secret_file_id: $(backend_main_secret_file_id1)
-        main_secret_file_id: $(backend_main_secret_file_id1)
-
-    - template: pipeline/terraform.yml@Yaml_Templates
-      parameters:
-        version: $(terraform_version)
-        path: './Best-Practice/BestPractice-2/'
-        package_name: 'BestPractice-2'
-        terraform_init: true
-        terraform_plan: true
-        backend_secret_file_id: $(backend_main_secret_file_id1)
-        main_secret_file_id: $(backend_main_secret_file_id1)
-        main_file_path: 'variable/main-jdld.tfvars'
-
-    - template: pipeline/terraform.yml@Yaml_Templates
-      parameters:
-        version: $(terraform_version)
-        path: './Best-Practice/BestPractice-3/'
-        package_name: 'BestPractice-3'
-        terraform_init: true
-        terraform_plan: true
-        backend_secret_file_id: $(backend_main_secret_file_id1)
-        main_secret_file_id: $(main_secret_file_id1)
-        main_file_path: 'variable/main-jdld.tfvars'
-
-    - template: pipeline/terraform.yml@Yaml_Templates
-      parameters:
-        version: $(terraform_version)
-        path: './Best-Practice/BestPractice-4/'
-        package_name: 'BestPractice-4'
-        terraform_init: true
-        terraform_plan: true
-        backend_secret_file_id: $(backend_main_secret_file_id1)
-        main_secret_file_id: $(backend_main_secret_file_id1)
-        main_file_path: 'variable/main-jdld.tfvars'
-
-    - publish: './ArtifactPublishLocation' # Local path to include in the Artifact
-      artifact: '$(artifact_name)'
-
-- stage: Deploy
-  dependsOn: Build
-  jobs:
-    # track deployments on the environment
-  - deployment: Terraform_Apply
-    displayName: Terraform Apply - Resources creation
-    pool:
-      vmImage: $(vmImageName)
-    environment: 'Terraform_Apply'
-    strategy:
-      # default deployment strategy
-      runOnce:
-        deploy:
-          steps:
-
-          - template: pipeline/terraform.yml@Yaml_Templates
-            parameters:
-              version: $(terraform_version)
-              artifact_path: $(Pipeline.Workspace)/$(artifact_name)
-              package_name: 'BestPractice-1'
-              terraform_apply: true
-
-          - template: pipeline/terraform.yml@Yaml_Templates
-            parameters:
-              version: $(terraform_version)
-              artifact_path: $(Pipeline.Workspace)/$(artifact_name)
-              package_name: 'BestPractice-2'
-              terraform_apply: true
-
-          - template: pipeline/terraform.yml@Yaml_Templates
-            parameters:
-              version: $(terraform_version)
-              artifact_path: $(Pipeline.Workspace)/$(artifact_name)
-              package_name: 'BestPractice-3'
-              terraform_apply: true
-
-          - template: pipeline/terraform.yml@Yaml_Templates
-            parameters:
-              version: $(terraform_version)
-              artifact_path: $(Pipeline.Workspace)/$(artifact_name)
-              package_name: 'BestPractice-4'
-              terraform_apply: true
-
-- stage: Deliver
-  dependsOn: Deploy
-  jobs:
-    # track deployments on the environment
-  - deployment: Terraform_Destroy
-    displayName: Terraform Destroy - Script ok, now deleting the resources
-    pool:
-      vmImage: $(vmImageName)
-    environment: 'Terraform_Destroy'
-    strategy:
-      # default deployment strategy
-      runOnce:
-        deploy:
-          steps:
-
+  - stage: Build
+    jobs:
+      - job: Terraform_Plan
+        displayName: Terraform Plan - Publish a package if Infrastructure changes are identified
+        continueOnError: false
+        pool:
+          vmImage: $(vmImageName)
+        steps:
           - task: DownloadSecureFile@1
-            displayName: Download secure file $(backend_main_secret_file_id1)
+            displayName: "Download secure file $(backend_main_secret_file_id1)"
             inputs:
               secureFile: $(backend_main_secret_file_id1)
 
           - task: DownloadSecureFile@1
-            displayName: 'Download secure file $(main_secret_file_id1)'
+            displayName: "Download secure file $(main_secret_file_id1)"
             inputs:
               secureFile: $(main_secret_file_id1)
 
           - template: pipeline/terraform.yml@Yaml_Templates
             parameters:
               version: $(terraform_version)
-              artifact_path: $(Pipeline.Workspace)/$(artifact_name)
-              package_name: 'BestPractice-1'
-              terraform_destroy: true
+              path: "./Best-Practice/BestPractice-1/"
+              package_name: "BestPractice-1"
+              terraform_init: true
+              terraform_plan: true
+              backend_secret_file_id: $(backend_main_secret_file_id1)
               main_secret_file_id: $(backend_main_secret_file_id1)
 
           - template: pipeline/terraform.yml@Yaml_Templates
             parameters:
               version: $(terraform_version)
-              artifact_path: $(Pipeline.Workspace)/$(artifact_name)
-              package_name: 'BestPractice-2'
-              terraform_destroy: true
+              path: "./Best-Practice/BestPractice-2/"
+              package_name: "BestPractice-2"
+              terraform_init: true
+              terraform_plan: true
+              backend_secret_file_id: $(backend_main_secret_file_id1)
               main_secret_file_id: $(backend_main_secret_file_id1)
-              main_file_path: 'variable/main-jdld.tfvars'
+              main_file_path: "variable/main-jdld.tfvars"
 
           - template: pipeline/terraform.yml@Yaml_Templates
             parameters:
               version: $(terraform_version)
-              artifact_path: $(Pipeline.Workspace)/$(artifact_name)
-              package_name: 'BestPractice-3'
-              terraform_destroy: true
+              path: "./Best-Practice/BestPractice-3/"
+              package_name: "BestPractice-3"
+              terraform_init: true
+              terraform_plan: true
+              backend_secret_file_id: $(backend_main_secret_file_id1)
               main_secret_file_id: $(main_secret_file_id1)
-              main_file_path: 'variable/main-jdld.tfvars'
+              main_file_path: "variable/main-jdld.tfvars"
 
           - template: pipeline/terraform.yml@Yaml_Templates
             parameters:
               version: $(terraform_version)
-              artifact_path: $(Pipeline.Workspace)/$(artifact_name)
-              package_name: 'BestPractice-4'
-              terraform_destroy: true
+              path: "./Best-Practice/BestPractice-4/"
+              package_name: "BestPractice-4"
+              terraform_init: true
+              terraform_plan: true
+              backend_secret_file_id: $(backend_main_secret_file_id1)
               main_secret_file_id: $(backend_main_secret_file_id1)
-              main_file_path: 'variable/main-jdld.tfvars'
+              main_file_path: "variable/main-jdld.tfvars"
 
-          - bash: |
-              #Variable
-              backend_secret_file_id_path="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)"
-              rg_name="infr-jdld-noprd-rg1"
-              lb_public_name="bp4-outbound-publiclb1"
-              ip_public_name="bp4-outbound-publiclb1_pip1"
-              client_id=$(cat $backend_secret_file_id_path | jq -r  '.client_id')
-              client_secret=$(cat $backend_secret_file_id_path | jq -r  '.client_secret')
-              tenant_id=$(cat $backend_secret_file_id_path | jq -r  '.tenant_id')
-              subscription_id=$(cat $backend_secret_file_id_path | jq -r  '.subscription_id')
-              
-              #Action
-              echo "Connecting to the Azure tenant id"
-              login=$(az login --service-principal -u $client_id -p $client_secret --tenant $tenant_id)
-              
-              echo "Selecting the Azure subscription"
-              az account set --subscription $subscription_id
-              
-              echo "Deleting the Azure load balancer $lb_public_name located in the resource group $rg_name"
-              az network lb delete -g $rg_name -n $lb_public_name
-              
-              echo "Deleting the Azure public ip $ip_public_name located in the resource group $rg_name"
-              az network public-ip delete -g $rg_name -n $ip_public_name
-            displayName: BestPractice-4 - AZ CLI Delete Public LB and IP
+          - publish: "./ArtifactPublishLocation" # Local path to include in the Artifact
+            artifact: "$(artifact_name)"
+
+  - stage: Deploy
+    dependsOn: Build
+    jobs:
+      # track deployments on the environment
+      - deployment: Terraform_Apply
+        displayName: Terraform Apply - Resources creation
+        pool:
+          vmImage: $(vmImageName)
+        environment: "Terraform_Apply"
+        strategy:
+          # default deployment strategy
+          runOnce:
+            deploy:
+              steps:
+                - template: pipeline/terraform.yml@Yaml_Templates
+                  parameters:
+                    version: $(terraform_version)
+                    artifact_path: $(Pipeline.Workspace)/$(artifact_name)
+                    package_name: "BestPractice-1"
+                    terraform_apply: true
+
+                - template: pipeline/terraform.yml@Yaml_Templates
+                  parameters:
+                    version: $(terraform_version)
+                    artifact_path: $(Pipeline.Workspace)/$(artifact_name)
+                    package_name: "BestPractice-2"
+                    terraform_apply: true
+
+                - template: pipeline/terraform.yml@Yaml_Templates
+                  parameters:
+                    version: $(terraform_version)
+                    artifact_path: $(Pipeline.Workspace)/$(artifact_name)
+                    package_name: "BestPractice-3"
+                    terraform_apply: true
+
+                - template: pipeline/terraform.yml@Yaml_Templates
+                  parameters:
+                    version: $(terraform_version)
+                    artifact_path: $(Pipeline.Workspace)/$(artifact_name)
+                    package_name: "BestPractice-4"
+                    terraform_apply: true
+
+  - stage: Deliver
+    dependsOn: Deploy
+    jobs:
+      # track deployments on the environment
+      - deployment: Terraform_Destroy
+        displayName: Terraform Destroy - Script ok, now deleting the resources
+        pool:
+          vmImage: $(vmImageName)
+        environment: "Terraform_Destroy"
+        strategy:
+          # default deployment strategy
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadSecureFile@1
+                  displayName: Download secure file $(backend_main_secret_file_id1)
+                  inputs:
+                    secureFile: $(backend_main_secret_file_id1)
+
+                - task: DownloadSecureFile@1
+                  displayName: "Download secure file $(main_secret_file_id1)"
+                  inputs:
+                    secureFile: $(main_secret_file_id1)
+
+                - template: pipeline/terraform.yml@Yaml_Templates
+                  parameters:
+                    version: $(terraform_version)
+                    artifact_path: $(Pipeline.Workspace)/$(artifact_name)
+                    package_name: "BestPractice-1"
+                    terraform_destroy: true
+                    main_secret_file_id: $(backend_main_secret_file_id1)
+
+                - template: pipeline/terraform.yml@Yaml_Templates
+                  parameters:
+                    version: $(terraform_version)
+                    artifact_path: $(Pipeline.Workspace)/$(artifact_name)
+                    package_name: "BestPractice-2"
+                    terraform_destroy: true
+                    main_secret_file_id: $(backend_main_secret_file_id1)
+                    main_file_path: "variable/main-jdld.tfvars"
+
+                - template: pipeline/terraform.yml@Yaml_Templates
+                  parameters:
+                    version: $(terraform_version)
+                    artifact_path: $(Pipeline.Workspace)/$(artifact_name)
+                    package_name: "BestPractice-3"
+                    terraform_destroy: true
+                    main_secret_file_id: $(main_secret_file_id1)
+                    main_file_path: "variable/main-jdld.tfvars"
+
+                - template: pipeline/terraform.yml@Yaml_Templates
+                  parameters:
+                    version: $(terraform_version)
+                    artifact_path: $(Pipeline.Workspace)/$(artifact_name)
+                    package_name: "BestPractice-4"
+                    terraform_destroy: true
+                    main_secret_file_id: $(backend_main_secret_file_id1)
+                    main_file_path: "variable/main-jdld.tfvars"
+
+                - bash: |
+                    #Variable
+                    backend_secret_file_id_path="$(Agent.TempDirectory)/$(backend_main_secret_file_id1)"
+                    rg_name="infr-jdld-noprd-rg1"
+                    lb_public_name="bp4-outbound-publiclb1"
+                    ip_public_name="bp4-outbound-publiclb1_pip1"
+                    client_id=$(cat $backend_secret_file_id_path | jq -r  '.client_id')
+                    client_secret=$(cat $backend_secret_file_id_path | jq -r  '.client_secret')
+                    tenant_id=$(cat $backend_secret_file_id_path | jq -r  '.tenant_id')
+                    subscription_id=$(cat $backend_secret_file_id_path | jq -r  '.subscription_id')
+
+                    #Action
+                    echo "Connecting to the Azure tenant id"
+                    login=$(az login --service-principal -u $client_id -p $client_secret --tenant $tenant_id)
+
+                    echo "Selecting the Azure subscription"
+                    az account set --subscription $subscription_id
+
+                    echo "Deleting the Azure load balancer $lb_public_name located in the resource group $rg_name"
+                    az network lb delete -g $rg_name -n $lb_public_name
+
+                    echo "Deleting the Azure public ip $ip_public_name located in the resource group $rg_name"
+                    az network public-ip delete -g $rg_name -n $ip_public_name
+                  displayName: BestPractice-4 - AZ CLI Delete Public LB and IP
