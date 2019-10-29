@@ -41,7 +41,7 @@ variable "subnets" {
 #Call module/resource
 resource "azurerm_virtual_network" "bp1-vnet1" {
   name                = "bp1-vnet1"
-  location            = "francecentral"
+  location            = "westus"
   resource_group_name = "infr-jdld-noprd-rg1"
   address_space       = ["10.0.0.0/16"]
 
