@@ -11,8 +11,8 @@ rg_infr_name = "infr-jdld-noprd-rg1"
 ###
 
 log_analytics_workspace = {
-  name = "demojdldsdbxwk1" #The log analytics workspace name must be unique
-  sku  = "PerGB2018"       #Refer to https://azure.microsoft.com/pricing/details/monitor/ for log analytics pricing 
+  name = "demojdldsdbxlogmon1" #The log analytics workspace name must be unique
+  sku  = "PerGB2018"           #Refer to https://azure.microsoft.com/pricing/details/monitor/ for log analytics pricing 
 
   solutions = [{
     name      = "ContainerInsights"
@@ -22,7 +22,7 @@ log_analytics_workspace = {
 }
 
 key_vault = {
-  name = "demointroaksjdld1" #The kay vault name must be unique
+  name = "demojdldsdbxkeyv1" #The kay vault name must be unique
   sku  = "standard"
 }
 
