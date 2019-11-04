@@ -75,7 +75,7 @@ module "Az-RoleDefinition-Apps" {
   role_prefix = "${var.app_name}-${var.env_name}-"
   role_suffix = "-rdef1"
 }
-/*
+
 module "Az-RoleAssignment-Apps" {
   source                  = "git::https://github.com/JamesDLD/terraform.git//module/Az-RoleAssignment?ref=master"
   ass_countRoleAssignment = length(var.roles)
@@ -91,7 +91,7 @@ module "Az-RoleAssignment-Apps" {
   ass_role_definition_ids = module.Az-RoleDefinition-Apps.role_ids
   ass_principal_id        = var.service_principals[1]["Application_object_id"]
 }
-*/
+
 # -
 # - Azure Firewall
 # -
