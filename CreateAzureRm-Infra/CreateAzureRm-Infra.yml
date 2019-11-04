@@ -1,13 +1,13 @@
 #Multi-stage YAML pipeline.
 name: $(BuildDefinitionName).$(DayOfYear)$(Rev:.r)
 
-# schedules:
-# - cron: "45 5 * * 4"
-#   branches:
-#     include:
-#     - master
-#   displayName: Weekly Thursday 5h45 am UTC build
-#   always: true
+schedules:
+  - cron: "45 5 * * 4"
+    branches:
+      include:
+        - master
+    displayName: Weekly Thursday 5h45 am UTC build
+    always: true
 
 variables:
   - group: terraform_binary # variable group containing Terraform information like the Terraform version (like terraform_version)

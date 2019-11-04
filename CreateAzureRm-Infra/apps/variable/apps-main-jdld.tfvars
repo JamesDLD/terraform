@@ -18,7 +18,7 @@ rg_apps_name = "apps-jdld-sand1-rg1"
 rg_infr_name = "infr-jdld-noprd-rg1"
 
 #Storage
-sa_infr_name = "infrsdbx1vpcjdld1"
+sa_infr_name = "infrasdbx1vpcjdld1"
 
 #Backup
 bck_rsv_name = "jdld-infr-rsv1"

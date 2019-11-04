@@ -91,7 +91,7 @@ module "Az-RoleAssignment-Apps" {
   ass_role_definition_ids = module.Az-RoleDefinition-Apps.role_ids
   ass_principal_id        = var.service_principals[1]["Application_object_id"]
 }
-
+*/
 # -
 # - Azure Firewall
 # -
@@ -194,8 +194,8 @@ resource "azurerm_firewall_nat_rule_collection" "rules" {
 }
 
 resource "azurerm_log_analytics_workspace" "infra" {
-  name                = "${var.app_name}-${var.env_name}-logm1" #The log analytics workspace name must be unique
-  sku                 = "PerGB2018"                             #Refer https://azure.microsoft.com/pricing/details/monitor/ for log analytics pricing 
+  name                = "${var.app_name}-${var.env_name}-logmon1" #The log analytics workspace name must be unique
+  sku                 = "PerGB2018"                               #Refer https://azure.microsoft.com/pricing/details/monitor/ for log analytics pricing 
   location            = data.azurerm_resource_group.Infr.location
   resource_group_name = data.azurerm_resource_group.Infr.name
   tags                = data.azurerm_resource_group.Infr.tags
@@ -230,7 +230,7 @@ resource "azurerm_monitor_diagnostic_setting" "fw" {
     }
   }
 }
-*/
+
 # -
 # - Policy
 # -

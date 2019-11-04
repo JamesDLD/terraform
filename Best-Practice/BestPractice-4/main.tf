@@ -3,9 +3,9 @@ terraform {
   required_version = ">= 0.12.6"
 
   backend "azurerm" {
-    storage_account_name = "infrsdbx1vpcjdld1"
+    storage_account_name = "infrasdbx1vpcjdld1"
     container_name       = "tfstate"
-    key                  = "BestPractice-4.0.12.tfstate"
+    key                  = "BestPractice-4.tfstate"
     resource_group_name  = "infr-jdld-noprd-rg1"
   }
 }
