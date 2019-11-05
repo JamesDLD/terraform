@@ -93,7 +93,7 @@ module "Create-AzureRmLoadBalancer-Apps" {
 
 module "Az-Vm" {
   source                            = "JamesDLD/Az-Vm/azurerm"
-  version                           = "0.1.1"
+  version                           = "0.1.2"
   sa_bootdiag_storage_uri           = data.azurerm_storage_account.Infr.primary_blob_endpoint #(Mandatory)
   subnets_ids                       = data.azurerm_subnet.snets.*.id                          #(Mandatory)
   linux_vms                         = var.linux_vms                                           #(Mandatory)

@@ -29,7 +29,7 @@ Review the code [main.tf](main.tf), as illustrated in the following bracket, the
 ```hcl
 module "Az-Vm-Demo" {
   source                  = "JamesDLD/Az-Vm/azurerm"
-  version                 = "0.1.1"
+  version                 = "0.1.2"
   sa_bootdiag_storage_uri = data.azurerm_storage_account.bp3.primary_blob_endpoint #(Mandatory)
   subnets_ids             = module.Az-VirtualNetwork-Demo.subnet_ids               #(Mandatory)
   linux_vms               = {}                                                     #(Mandatory)
