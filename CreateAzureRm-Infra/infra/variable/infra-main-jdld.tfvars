@@ -109,27 +109,47 @@ vnets = {
 }
 
 snets = {
-  AzureFirewallSubnet = {
-    vnet_key          = "sec1"                                                                                                                                                                  #(Mandatory) 
-    name              = "AzureFirewallSubnet"                                                                                                                                                   #(Mandatory) 
-    address_prefix    = "10.0.1.0/26"                                                                                                                                                           #(Mandatory) 
-    service_endpoints = ["Microsoft.AzureActiveDirectory", "Microsoft.AzureCosmosDB", "Microsoft.EventHub", "Microsoft.KeyVault", "Microsoft.ServiceBus", "Microsoft.Sql", "Microsoft.Storage"] #(Optional) delete this line for no Service Endpoints
+  AzureFirewall1 = {
+    vnet_key       = "sec1"                #(Mandatory) 
+    name           = "AzureFirewallSubnet" #(Mandatory) 
+    address_prefix = "10.0.1.0/26"         #Memo, Az Fw subnet minimu size : https://docs.microsoft.com/fr-fr/azure/firewall/firewall-faq#why-does-azure-firewall-need-a-26-subnet-size                                                                                                                                                    #(Mandatory) 
+    service_endpoints = ["Microsoft.AzureActiveDirectory",
+      "Microsoft.AzureCosmosDB", "Microsoft.EventHub",
+      "Microsoft.KeyVault", "Microsoft.ServiceBus",
+    "Microsoft.Sql", "Microsoft.Storage"] #(Optional) delete this line for no Service Endpoints
   }
 
-  snet1 = {
-    vnet_key       = "apps1"         #(Mandatory) 
-    name           = "frontend"      #(Mandatory) 
-    address_prefix = "10.0.2.224/28" #(Mandatory) 
-    nsg_key        = "nsg1"          #(Optional) delete this line for no NSG
-    rt_key         = "rt1"           #(Optional) delete this line for no Route Table
+  ApplicationGatewatey1 = {
+    vnet_key       = "sec1"         #(Mandatory) 
+    name           = "AppGw1"       #(Mandatory) 
+    nsg_key        = "appgw_nsg1"   #(Optional) delete this line for no NSG
+    address_prefix = "10.0.1.64/27" #Memo, subnet sizing for app gw : https://docs.microsoft.com/fr-fr/azure/application-gateway/configuration-overview                                                                                                                                                     #(Mandatory) 
   }
 
-  snet2 = {
-    vnet_key       = "apps1"         #(Mandatory) 
-    name           = "backend"       #(Mandatory) 
-    address_prefix = "10.0.2.240/28" #(Mandatory) 
-    nsg_key        = "nsg1"          #(Optional) delete this line for no NSG
-    rt_key         = "rt1"           #(Optional) delete this line for no Route Table
+  bastion_sec1 = {
+    vnet_key       = "sec1"               #(Mandatory) 
+    name           = "AzureBastionSubnet" #(Mandatory) 
+    address_prefix = "10.0.1.224/27"      #Memo, subnet sizing for app gw : https://docs.microsoft.com/fr-fr/azure/application-gateway/configuration-overview                                                                                                                                                     #(Mandatory) 
+  }
+
+  front1 = {
+    vnet_key       = "apps1"       #(Mandatory) 
+    name           = "front1"      #(Mandatory) 
+    address_prefix = "10.0.2.0/26" #(Mandatory) 
+    rt_key         = "rt1"         #(Optional) delete this line for no Route Table
+  }
+
+  back1 = {
+    vnet_key       = "apps1"        #(Mandatory) 
+    name           = "back1"        #(Mandatory) 
+    address_prefix = "10.0.2.64/26" #(Mandatory) 
+    rt_key         = "rt1"          #(Optional) delete this line for no Route Table
+  }
+
+  bastion_apps1 = {
+    vnet_key       = "apps1"              #(Mandatory) 
+    name           = "AzureBastionSubnet" #(Mandatory) 
+    address_prefix = "10.0.2.224/27"      #Memo, subnet sizing for app gw : https://docs.microsoft.com/fr-fr/azure/application-gateway/configuration-overview                                                                                                                                                     #(Mandatory) 
   }
 }
 
@@ -140,7 +160,7 @@ vnets_to_peer = {
     remote_vnet_name             = "jdld-infr-apps-vnet1" #(Mandatory) 
     remote_vnet_rg_name          = "infr-jdld-noprd-rg1"  #(Mandatory) 
     allow_virtual_network_access = true                   #(Optional) Controls if the VMs in the remote virtual network can access VMs in the local virtual network. Defaults to false.
-    allow_forwarded_traffic      = false                  #(Optional) Controls if forwarded traffic from VMs in the remote virtual network is allowed. Defaults to false.
+    allow_forwarded_traffic      = true                   #(Optional) Controls if forwarded traffic from VMs in the remote virtual network is allowed. Defaults to false.
     allow_gateway_transit        = false                  #(Optional) Controls gatewayLinks can be used in the remote virtual network’s link to the local virtual network.
     use_remote_gateways          = false                  #(Optional) Controls if remote gateways can be used on the local virtual network. If the flag is set to true, and allow_gateway_transit on the remote peering is also true, virtual network will use gateways of remote virtual network for transit. Only one peering can have this flag set to true. This flag cannot be set if virtual network already has a gateway. Defaults to false.
   }
@@ -150,7 +170,7 @@ vnets_to_peer = {
     remote_vnet_name             = "jdld-infr-sec-vnet1" #(Mandatory) 
     remote_vnet_rg_name          = "infr-jdld-noprd-rg1" #(Mandatory) 
     allow_virtual_network_access = true                  #(Optional) Controls if the VMs in the remote virtual network can access VMs in the local virtual network. Defaults to false.
-    allow_forwarded_traffic      = true                  #(Optional) Controls if forwarded traffic from VMs in the remote virtual network is allowed. Defaults to false.
+    allow_forwarded_traffic      = false                 #(Optional) Controls if forwarded traffic from VMs in the remote virtual network is allowed. Defaults to false.
     allow_gateway_transit        = false                 #(Optional) Controls gatewayLinks can be used in the remote virtual network’s link to the local virtual network.
     use_remote_gateways          = false                 #(Optional) Controls if remote gateways can be used on the local virtual network. If the flag is set to true, and allow_gateway_transit on the remote peering is also true, virtual network will use gateways of remote virtual network for transit. Only one peering can have this flag set to true. This flag cannot be set if virtual network already has a gateway. Defaults to false.
   }
@@ -161,40 +181,65 @@ vnets_to_peer = {
 # - Network Security Group
 # -
 infra_nsgs = {
-  nsg1 = {
+  appgw_nsg1 = {
     id = "1"
     security_rules = [
       {
-        description                = "Demo1"
+        description                = "MS Reco : https://docs.microsoft.com/fr-fr/azure/application-gateway/configuration-overview"
         direction                  = "Inbound"
-        name                       = "ALL_to_NIC_tcp-3389"
+        name                       = "AzureLoadBalancer_to_AppGw"
         access                     = "Allow"
         priority                   = "2000"
+        source_address_prefix      = "AzureLoadBalancer"
+        destination_address_prefix = "*"
+        destination_port_range     = "*"
+        protocol                   = "*"
+        source_port_range          = "*"
+      },
+      {
+        description                = "MS Reco : https://docs.microsoft.com/fr-fr/azure/application-gateway/configuration-overview"
+        direction                  = "Inbound"
+        name                       = "All_to_AppGw_Rangesv2"
+        access                     = "Allow"
+        priority                   = "2010"
         source_address_prefix      = "*"
         destination_address_prefix = "*"
-        destination_port_range     = "3389"
-        protocol                   = "tcp"
+        destination_port_range     = "65200-65535"
+        protocol                   = "*"
         source_port_range          = "*"
       },
       {
         direction                  = "Inbound"
-        name                       = "ALL_to_NIC_tcp-80-443"
+        name                       = "All_to_AppGw_Http_Https"
         access                     = "Allow"
-        priority                   = "2001"
+        priority                   = "2020"
         source_address_prefix      = "*"
         destination_address_prefix = "*"
-        destination_port_range     = "80"
-        protocol                   = "tcp"
+        destination_port_ranges    = ["80", "443"]
+        protocol                   = "Tcp"
         source_port_range          = "*"
       },
       {
-        direction                  = "Outbound"
-        name                       = "ALL_to_GoogleDns_udp-53"
-        access                     = "Allow"
-        priority                   = "2001"
+        description                = "MS Reco : https://docs.microsoft.com/fr-fr/azure/application-gateway/configuration-overview"
+        direction                  = "Inbound"
+        name                       = "All_to_AppGw_any"
+        access                     = "Deny"
+        priority                   = "3000"
         source_address_prefix      = "*"
-        destination_address_prefix = "8.8.8.8"
-        destination_port_range     = "53"
+        destination_address_prefix = "*"
+        destination_port_range     = "*"
+        protocol                   = "*"
+        source_port_range          = "*"
+      },
+      {
+        description                = "MS Reco : https://docs.microsoft.com/fr-fr/azure/application-gateway/configuration-overview"
+        direction                  = "Outbound"
+        name                       = "ALL_to_ALL"
+        access                     = "Allow"
+        priority                   = "2100"
+        source_address_prefix      = "*"
+        destination_address_prefix = "*"
+        destination_port_range     = "*"
         protocol                   = "*"
         source_port_range          = "*"
       },
@@ -208,12 +253,14 @@ route_tables = {
   rt1 = {
     id = "1"
     routes = [
+      /*
       {
         name                   = "all_to_firewall"
         address_prefix         = "0.0.0.0/0"
         next_hop_type          = "VirtualAppliance"
         next_hop_in_ip_address = "10.0.1.4"
       },
+      */
     ]
   }
 }
@@ -221,6 +268,7 @@ route_tables = {
 # -
 # - Azure Firewall
 # -
+
 az_firewall_rules = {
   application_rule_collections = {
 

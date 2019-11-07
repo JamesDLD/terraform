@@ -50,7 +50,7 @@ data "azurerm_storage_account" "Infr" {
 ## Core Network components
 module "Az-VirtualNetwork-Infra" {
   source                      = "JamesDLD/Az-VirtualNetwork/azurerm"
-  version                     = "0.1.1"
+  version                     = "0.1.2"
   net_prefix                  = "${var.app_name}-${var.env_name}"
   network_resource_group_name = data.azurerm_resource_group.Infr.name
   virtual_networks            = var.vnets
@@ -104,7 +104,7 @@ resource "azurerm_public_ip" "fw_pip" {
   sku                 = "Standard"
   tags                = data.azurerm_resource_group.Infr.tags
 }
-
+/*
 resource "azurerm_firewall" "fw" {
   name                = "${var.app_name}-${var.env_name}-fw1"
   location            = azurerm_public_ip.fw_pip.location
@@ -230,7 +230,7 @@ resource "azurerm_monitor_diagnostic_setting" "fw" {
     }
   }
 }
-
+*/
 # -
 # - Policy
 # -
