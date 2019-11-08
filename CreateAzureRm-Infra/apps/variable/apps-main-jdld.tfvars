@@ -84,34 +84,28 @@ Lb_sku = "Standard" #"Basic"
 
 Lbs = {
 
-  lb1 = {
+  iis1 = {
     id               = "1" #Id of the load balancer use as a suffix of the load balancer name
-    suffix_name      = "ssh"
+    suffix_name      = "iis"
     subnet_iteration = "0" #Id of the Subnet
     static_ip        = "10.0.2.4"
   }
 
-  lb2 = {
+  rdg1 = {
     id               = "1" #Id of the load balancer use as a suffix of the load balancer name
-    suffix_name      = "gfs"
+    suffix_name      = "rdg"
     subnet_iteration = "1" #Id of the Subnet
     static_ip        = "10.0.2.68"
   }
 
-  lb3 = {
-    id               = "1" #Id of the load balancer use as a suffix of the load balancer name
-    suffix_name      = "rds"
-    subnet_iteration = "1" #Id of the Subnet
-    static_ip        = "10.0.2.69"
-  }
 }
 
 LbRules = {
 
-  lbrules1 = {
-    Id                = "1"   #Id of a the rule within the Load Balancer 
-    lb_key            = "lb1" #Id of the Load Balancer
-    suffix_name       = "ssh" #MUST match the Lbs suffix_name
+  iis_lbrule1 = {
+    Id                = "1"    #Id of a the rule within the Load Balancer 
+    lb_key            = "iis1" #Id of the Load Balancer
+    suffix_name       = "iis"  #MUST match the Lbs suffix_name
     lb_port           = "80"
     backend_port      = "80"
     probe_port        = "80"
@@ -120,37 +114,13 @@ LbRules = {
     load_distribution = "Default"
   }
 
-  lbrules2 = {
-    Id                = "2"   #Id of a the rule within the Load Balancer 
-    lb_key            = "lb1" #Id of the Load Balancer
-    suffix_name       = "ssh" #MUST match the Lbs suffix_name
-    lb_port           = "22"
-    backend_port      = "22"
-    probe_port        = "22"
-    probe_protocol    = "Tcp"
-    request_path      = ""
-    load_distribution = "Default"
-  }
-
-  lbrules3 = {
-    Id                = "1"   #Id of a the rule within the Load Balancer 
-    lb_key            = "lb2" #Id of the Load Balancer
-    suffix_name       = "gfs" #MUST match the Lbs suffix_name
-    lb_port           = "22"
-    backend_port      = "22"
-    probe_port        = "22"
-    probe_protocol    = "Tcp"
-    request_path      = ""
-    load_distribution = "Default"
-  }
-
-  lbrules4 = {
-    Id                = "1"   #Id of a the rule within the Load Balancer 
-    lb_key            = "lb3" #Id of the Load Balancer
-    suffix_name       = "rds" #MUST match the Lbs suffix_name
-    lb_port           = "3389"
-    backend_port      = "3389"
-    probe_port        = "3389"
+  rdg_lbrule1 = {
+    Id                = "1"    #Id of a the rule within the Load Balancer 
+    lb_key            = "rdg1" #Id of the Load Balancer
+    suffix_name       = "rdg"  #MUST match the Lbs suffix_name
+    lb_port           = "443"
+    backend_port      = "443"
+    probe_port        = "443"
     probe_protocol    = "Tcp"
     request_path      = ""
     load_distribution = "Default"
@@ -161,8 +131,9 @@ LbRules = {
 windows_vms = {
 
   vm1 = {
-    suffix_name              = "rdg"           #(Mandatory) suffix of the vm
+    suffix_name              = "iis"           #(Mandatory) suffix of the vm
     id                       = "1"             #(Mandatory) Id of the VM
+    internal_lb_iteration    = "0"             #(Optional) Id of the Internal Load Balancer, set to null or delete the line if there is no Load Balancer
     storage_data_disks       = []              #(Mandatory) For no data disks set []
     subnet_iteration         = "0"             #(Mandatory) Id of the Subnet
     security_group_iteration = "1"             #(Optional) Id of the Network Security Group
@@ -174,7 +145,8 @@ windows_vms = {
 
   vm2 = {
     suffix_name              = "rdg"           #(Mandatory) suffix of the vm
-    id                       = "2"             #(Mandatory) Id of the VM
+    id                       = "1"             #(Mandatory) Id of the VM
+    internal_lb_iteration    = "1"             #(Optional) Id of the Internal Load Balancer, set to null or delete the line if there is no Load Balancer
     storage_data_disks       = []              #(Mandatory) For no data disks set []
     subnet_iteration         = "1"             #(Mandatory) Id of the Subnet
     security_group_iteration = "1"             #(Optional) Id of the Network Security Group
@@ -202,7 +174,6 @@ linux_vms = {
         create_option     = "Empty"
       },
     ]                                     #(Mandatory) For no data disks set []
-    internal_lb_iteration    = "0"        #(Optional) Id of the Internal Load Balancer, set to null or delete the line if there is no Load Balancer
     subnet_iteration         = "0"        #(Mandatory) Id of the Subnet
     security_group_iteration = "1"        #(Optional) Id of the Network Security Group
     static_ip                = "10.0.2.9" #(Optional) Set null to get dynamic IP or delete this line
@@ -216,7 +187,6 @@ linux_vms = {
     suffix_name              = "ssh"           #(Mandatory) suffix of the vm
     id                       = "2"             #(Mandatory) Id of the VM
     storage_data_disks       = []              #(Mandatory) For no data disks set []
-    internal_lb_iteration    = "0"             #(Optional) Id of the Internal Load Balancer, set to null or delete the line if there is no Load Balancer
     subnet_iteration         = "1"             #(Mandatory) Id of the Subnet
     security_group_iteration = "1"             #(Optional) Id of the Network Security Group
     static_ip                = "10.0.2.73"     #(Optional) Set null to get dynamic IP or delete this line
