@@ -180,7 +180,7 @@ stages:
                     version: $(terraform_version)
                     artifact_path: $(Pipeline.Workspace)/$(artifact_name2)
                     package_name: "Apps"
-                    terraform_destroy: true
+                    terraform_destroy: false
                     main_secret_file_id: $(main_secret_file_id2)
                     main_file_path: "variable/apps-main-jdld.tfvars"
 
@@ -189,6 +189,6 @@ stages:
                     version: $(terraform_version)
                     artifact_path: $(Pipeline.Workspace)/$(artifact_name1)
                     package_name: "Infra"
-                    terraform_destroy: true
+                    terraform_destroy: false
                     main_secret_file_id: $(main_secret_file_id2)
                     main_file_path: "variable/infra-main-jdld.tfvars"

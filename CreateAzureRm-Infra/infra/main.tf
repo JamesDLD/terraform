@@ -91,7 +91,7 @@ module "Az-RoleAssignment-Apps" {
   ass_role_definition_ids = module.Az-RoleDefinition-Apps.role_ids
   ass_principal_id        = var.service_principals[1]["Application_object_id"]
 }
-
+/*
 # -
 # - Azure Firewall
 # -
@@ -104,7 +104,7 @@ resource "azurerm_public_ip" "fw_pip" {
   sku                 = "Standard"
   tags                = data.azurerm_resource_group.Infr.tags
 }
-/*
+
 resource "azurerm_firewall" "fw" {
   name                = "${var.app_name}-${var.env_name}-fw1"
   location            = azurerm_public_ip.fw_pip.location
@@ -254,3 +254,8 @@ module "Az-PolicyAssignment-Infra-udr-on-subnet" {
   p_ass_value_parameter1     = module.Az-VirtualNetwork-Infra.route_table_ids[0]
 }
 */
+
+
+# -
+# - Application Gateway
+# -
