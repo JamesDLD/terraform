@@ -22,9 +22,8 @@ resources:
   repositories:
     - repository: Yaml_Templates # identifier (A-Z, a-z, 0-9, and underscore)
       type: github
-      endpoint: JamesDLD # name of the service connection to use (for non-Azure Repos types)
       name: JamesDLD/terraform
-      #ref: refs/tags/0.0.1  # ref name to use, defaults to 'refs/heads/master'
+      ref: refs/tags/0.4.0 # ref name to use, defaults to 'refs/heads/master'
 
 trigger:
   batch: true # when a build is running, the system waits until the build is completed
