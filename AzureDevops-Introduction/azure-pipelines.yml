@@ -51,7 +51,7 @@ stages:
             inputs:
               secureFile: $(backend_main_secret_file_id1)
 
-          - template: pipeline/terraform.yml@Yaml_Templates
+          - template: terraform.yml@Yaml_Templates
             parameters:
               version: $(terraform_version)
               path: "./AzureDevops-Introduction/aks-k8s/"
@@ -80,7 +80,7 @@ stages:
           runOnce:
             deploy:
               steps:
-                - template: pipeline/terraform.yml@Yaml_Templates
+                - template: terraform.yml@Yaml_Templates
                   parameters:
                     version: $(terraform_version)
                     artifact_path: $(Pipeline.Workspace)/$(artifact_name)
@@ -107,7 +107,7 @@ stages:
                   inputs:
                     secureFile: $(backend_main_secret_file_id1)
 
-                - template: pipeline/terraform.yml@Yaml_Templates
+                - template: terraform.yml@Yaml_Templates
                   parameters:
                     version: $(terraform_version)
                     artifact_path: $(Pipeline.Workspace)/$(artifact_name)
