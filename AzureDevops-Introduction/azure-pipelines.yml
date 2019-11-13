@@ -10,10 +10,11 @@ schedules:
     always: true
 
 variables:
-  - group: terraform_binary # variable group containing Terraform information like the Terraform version (like terraform_version)
+  - name: terraform_version
+    value: "0.12.13"
   - name: vmImageName
     value: "ubuntu-latest"
-  - name: backend_main_secret_file_id1 # secret file used by the following cmdlet Terraform init, plan, apply and destroy
+  - name: backend_main_secret_file_id1 # secret id located in your Azure DevOps library, file used by the following cmdlet Terraform init, plan, apply and destroy
     value: "backend-main-jdld-1.json"
   - name: artifact_name
     value: "AzureDevops-Introduction"
@@ -21,9 +22,9 @@ variables:
 resources:
   repositories:
     - repository: Yaml_Templates # identifier (A-Z, a-z, 0-9, and underscore)
-      type: github
-      name: JamesDLD/terraform
-      ref: refs/tags/0.4.0 # ref name to use, defaults to 'refs/heads/master'
+      type: git #git refers to Azure Repos Git repos
+      name: Template/template_pipeline #To refer to a repo in another project within the same organization, prefix the name with that project's name. For example, OtherProject/otherRepo.
+      ref: refs/tags/0.1.0 # ref name to use, defaults to 'refs/heads/master'
 
 trigger:
   batch: true # when a build is running, the system waits until the build is completed
