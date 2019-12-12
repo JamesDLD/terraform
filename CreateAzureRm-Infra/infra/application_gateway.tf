@@ -1,10 +1,10 @@
 
-/*
 resource "azurerm_public_ip" "infra" {
   name                = "appgateway1-pip1"
   resource_group_name = data.azurerm_resource_group.Infr.name
   location            = data.azurerm_resource_group.Infr.location
-  allocation_method   = "Dynamic"
+  allocation_method   = "Static"   #Needed for app gw v2
+  sku                 = "Standard" #Needed for app gw v2
 }
 
 # since these variables are re-used - a locals block makes this more maintainable
@@ -31,7 +31,7 @@ resource "azurerm_application_gateway" "network" {
 
   gateway_ip_configuration {
     name      = "appgateway1-CFG"
-    subnet_id = element(module.Az-VirtualNetwork-Infra.subnet_ids, 1)
+    subnet_id = lookup(module.Az-VirtualNetwork-Infra.subnets, "ApplicationGatewatey1", null)["id"]
   }
 
   frontend_port {
@@ -45,7 +45,8 @@ resource "azurerm_application_gateway" "network" {
   }
 
   backend_address_pool {
-    name = "${local.backend_address_pool_name}"
+    name         = "${local.backend_address_pool_name}"
+    ip_addresses = ["10.0.2.8"]
   }
 
   backend_http_settings {
@@ -72,4 +73,3 @@ resource "azurerm_application_gateway" "network" {
     backend_http_settings_name = "${local.http_setting_name}"
   }
 }
-*/

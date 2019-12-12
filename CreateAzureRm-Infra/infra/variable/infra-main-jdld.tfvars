@@ -55,7 +55,7 @@ roles = [
   },
   {
     suffix_name = "apps-armdeploy-infra"
-    actions     = "Microsoft.Resources/deployments/*"
+    actions     = "Microsoft.Resources/deployments/* Microsoft.Resources/subscriptions/resourcegroups/read"
     not_actions = "Microsoft.Authorization/*/Delete Microsoft.Authorization/*/Write Microsoft.Authorization/elevateAccess/Action"
   },
   {
@@ -349,7 +349,7 @@ az_firewall_rules = {
           source_addresses   = ["*"]
           destination_ports  = ["3389"]
           protocols          = ["TCP"]
-          translated_address = "10.0.2.228"
+          translated_address = "10.0.2.8"
           translated_port    = "3389"
         },
       ]
