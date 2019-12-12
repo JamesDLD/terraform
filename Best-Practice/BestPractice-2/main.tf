@@ -28,7 +28,7 @@ data "azurerm_resource_group" "bp2" {
 #Action
 module "Az-VirtualNetwork-demo" {
   source                      = "JamesDLD/Az-VirtualNetwork/azurerm"
-  version                     = "0.1.1"
+  version                     = "0.1.3"
   net_prefix                  = "demo"
   network_resource_group_name = data.azurerm_resource_group.bp2.name
   virtual_networks = {
