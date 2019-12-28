@@ -22,7 +22,7 @@ log_analytics_workspace = {
 }
 
 key_vault = {
-  name = "demojdldsdbxkeyv1" #The kay vault name must be unique
+  name = "demojdldsdbxkeyv2" #The kay vault name must be unique
   sku  = "standard"
 }
 
