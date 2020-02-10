@@ -34,7 +34,7 @@ data "azurerm_storage_account" "bp3" {
 #Action
 module "Az-VirtualNetwork-Demo" {
   source                      = "JamesDLD/Az-VirtualNetwork/azurerm"
-  version                     = "0.1.1"
+  version                     = "0.1.4"
   net_prefix                  = "demo"
   network_resource_group_name = data.azurerm_resource_group.bp3.name
   virtual_networks = {

@@ -50,7 +50,7 @@ data "azurerm_storage_account" "Infr" {
 ## Core Network components
 module "Az-VirtualNetwork-Infra" {
   source                      = "JamesDLD/Az-VirtualNetwork/azurerm"
-  version                     = "0.1.1"
+  version                     = "0.1.4"
   net_prefix                  = "${var.app_name}-${var.env_name}"
   network_resource_group_name = data.azurerm_resource_group.Infr.name
   virtual_networks            = var.vnets

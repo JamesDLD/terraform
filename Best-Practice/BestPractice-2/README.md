@@ -58,7 +58,7 @@ Specify the module version
 ```hcl
 module "Az-VirtualNetwork" {
   source                      = "JamesDLD/Az-VirtualNetwork/azurerm"
-  version                     = "0.1.1"
+  version                     = "0.1.4"
   net_prefix                  = "demo"
   network_resource_group_name = data.azurerm_resource_group.bp2.name
   virtual_networks = var.virtual_networks
