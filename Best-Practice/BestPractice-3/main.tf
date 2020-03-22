@@ -12,11 +12,12 @@ terraform {
 
 #Set the Provider
 provider "azurerm" {
-  version         = ">= 1.31.0"
+  version         = "~> 2.0"
   subscription_id = var.subscription_id
   client_id       = var.client_id
   client_secret   = var.client_secret
   tenant_id       = var.tenant_id
+  features {}
 }
 
 #Call module/resource
@@ -34,7 +35,7 @@ data "azurerm_storage_account" "bp3" {
 #Action
 module "Az-VirtualNetwork-Demo" {
   source                      = "JamesDLD/Az-VirtualNetwork/azurerm"
-  version                     = "0.1.1"
+  version                     = "0.1.4"
   net_prefix                  = "demo"
   network_resource_group_name = data.azurerm_resource_group.bp3.name
   virtual_networks = {
