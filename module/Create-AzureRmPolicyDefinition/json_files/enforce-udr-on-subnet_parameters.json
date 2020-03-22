@@ -1,0 +1,9 @@
+{
+    "udrId": {
+        "type": "String",
+        "metadata": {
+            "description": "Resource Id of the Route Table",
+            "displayName": "Route Table Id"
+        }
+    }
+}

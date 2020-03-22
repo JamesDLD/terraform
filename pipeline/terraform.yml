@@ -12,6 +12,7 @@ parameters:
   terraform_apply: false #Decide to perform a Terraform apply
   terraform_destroy: false #Decide to perform a Terraform destroy
   artifact_path: "" #Fill in the Artifact path location when Terraform applied is asked (usually it's $(Pipeline.Workspace)/$(artifact_name))
+  service_connection_name: "" #Azure DevOps Service Connection name to use
 
 steps:
   # -
@@ -50,34 +51,63 @@ steps:
       archiveFilePatterns: "${{ parameters.artifact_path }}/${{ parameters.package_name }}.tar.gz"
       destinationFolder: "./${{ parameters.package_name }}"
 
+  - task: AzureCLI@1
+    displayName: "${{ parameters.package_name }} - Setup Authentication"
+    inputs:
+      azureSubscription: "${{ parameters.service_connection_name }}"
+      addSpnToEnvironment: true
+      scriptLocation: inlineScript
+      failOnStandardError: "true"
+      inlineScript: |
+        echo "##vso[task.setvariable variable=ARM_SUBSCRIPTION_ID]$(az account show --query="id" -o tsv)"
+        echo "##vso[task.setvariable variable=ARM_CLIENT_ID]${servicePrincipalId}"
+        echo "##vso[task.setvariable variable=ARM_CLIENT_SECRET]${servicePrincipalKey}"
+        echo "##vso[task.setvariable variable=ARM_TENANT_ID]$(az account show --query="tenantId" -o tsv)"
+
+    #condition: ne(${{ parameters.service_connection_name }}, '') # this task will only run if an Azure DevOps service connection has been set
   # -
   # - Terraform Init
   # -
 
   - script: |
-      if [ "${{ parameters.backend_file_path }}" != "" ] && [ "${{ parameters.backend_secret_file_id }}" != "" ] ; 
+      if [ "${{ parameters.backend_file_path }}" != "" ] && [ "${{ parameters.backend_secret_file_id }}" != "no_secret_file_id_provided" ] ; 
       then
         terraform init -backend-config="${{ parameters.backend_file_path }}" -backend-config="$(Agent.TempDirectory)/${{ parameters.backend_secret_file_id }}" -input=false -reconfigure
-      elif [ "${{ parameters.backend_file_path }}" == "" ] && [ "${{ parameters.backend_secret_file_id }}" != "" ] ; 
+      elif [ "${{ parameters.backend_file_path }}" == "" ] && [ "${{ parameters.backend_secret_file_id }}" != "no_secret_file_id_provided" ] ; 
       then
         terraform init -backend-config="$(Agent.TempDirectory)/${{ parameters.backend_secret_file_id }}" -input=false -reconfigure
+      elif [ "${{ parameters.backend_file_path }}" != "" ] && [ "${{ parameters.backend_secret_file_id }}" == "no_secret_file_id_provided" ] ; 
+      then
+        terraform init -backend-config="${{ parameters.backend_file_path }}" -input=false -reconfigure
       else
         terraform init -input=false -reconfigure
       fi
     displayName: "${{ parameters.package_name }} - Terraform Init"
     workingDirectory: ${{ parameters.path }}
     condition: ${{ parameters.terraform_init }} # this task will only run if terraform_init equals true
+    env:
+      TF_IN_AUTOMATION: true
+      ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+      ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+      ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+      ARM_TENANT_ID: $(ARM_TENANT_ID)
 
   # -
   # - Terraform Plan
   # -
 
   - script: |
-      if [ "${{ parameters.main_file_path }}" != "" ] ; 
+      if [ "${{ parameters.main_file_path }}" != "" ] && [ "${{ parameters.main_secret_file_id }}" != "no_secret_file_id_provided" ] ; 
       then
         OUTPUT=$(terraform plan -var-file="${{ parameters.main_file_path }}" -var-file="$(Agent.TempDirectory)/${{ parameters.main_secret_file_id }}" -out="./out_plan_file" -input=false -detailed-exitcode)
-      else
+      elif [ "${{ parameters.main_file_path }}" == "" ] && [ "${{ parameters.main_secret_file_id }}" != "no_secret_file_id_provided" ] ; 
+      then
         OUTPUT=$(terraform plan -var-file="$(Agent.TempDirectory)/${{ parameters.main_secret_file_id }}" -out="./out_plan_file" -input=false -detailed-exitcode)
+      elif [ "${{ parameters.main_file_path }}" != "" ] && [ "${{ parameters.main_secret_file_id }}" == "no_secret_file_id_provided" ] ; 
+      then
+        OUTPUT=$(terraform plan -var-file="${{ parameters.main_file_path }}" -out="./out_plan_file" -input=false -detailed-exitcode)
+      else
+        OUTPUT=$(terraform plan -out="./out_plan_file" -input=false -detailed-exitcode)
       fi
 
       OUT=$?
@@ -100,16 +130,30 @@ steps:
       if [[ $OUTPUT =~ "[DEPRECATED]" ]]; then
           echo "##vso[task.logissue type=warning;]A Terraform property has been deprecated."
           echo "##vso[task.complete result=SucceededWithIssues;]"
-          if [ "${{ parameters.main_file_path }}" != "" ] ; 
+
+          if [ "${{ parameters.main_file_path }}" != "" ] && [ "${{ parameters.main_secret_file_id }}" != "no_secret_file_id_provided" ] ; 
           then
             terraform plan -var-file="${{ parameters.main_file_path }}" -var-file="$(Agent.TempDirectory)/${{ parameters.main_secret_file_id }}" -input=false
-          else
+          elif [ "${{ parameters.main_file_path }}" == "" ] && [ "${{ parameters.main_secret_file_id }}" != "no_secret_file_id_provided" ] ; 
+          then
             terraform plan -var-file="$(Agent.TempDirectory)/${{ parameters.main_secret_file_id }}" -input=false
+          elif [ "${{ parameters.main_file_path }}" != "" ] && [ "${{ parameters.main_secret_file_id }}" == "no_secret_file_id_provided" ] ; 
+          then
+            terraform plan -var-file="${{ parameters.main_file_path }}" -input=false
+          else
+            terraform plan
           fi
+
       fi
     displayName: "${{ parameters.package_name }} - Terraform Plan"
     workingDirectory: ${{ parameters.path }}
     condition: ${{ parameters.terraform_plan }} # this task will only run if terraform_plan equals true
+    env:
+      TF_IN_AUTOMATION: true
+      ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+      ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+      ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+      ARM_TENANT_ID: $(ARM_TENANT_ID)
 
   - script: |
       echo "Compressing ${{ parameters.path }} directory ..."
@@ -140,6 +184,25 @@ steps:
       else
         terraform destroy -var-file="$(Agent.TempDirectory)/${{ parameters.main_secret_file_id }}" -auto-approve
       fi
+
+      if [ "${{ parameters.main_file_path }}" != "" ] && [ "${{ parameters.main_secret_file_id }}" != "no_secret_file_id_provided" ] ; 
+      then
+        terraform destroy -var-file="${{ parameters.main_file_path }}" -var-file="$(Agent.TempDirectory)/${{ parameters.main_secret_file_id }}" -auto-approve
+      elif [ "${{ parameters.main_file_path }}" == "" ] && [ "${{ parameters.main_secret_file_id }}" != "no_secret_file_id_provided" ] ; 
+      then
+        terraform destroy -var-file="$(Agent.TempDirectory)/${{ parameters.main_secret_file_id }}" -auto-approve
+      elif [ "${{ parameters.main_file_path }}" != "" ] && [ "${{ parameters.main_secret_file_id }}" == "no_secret_file_id_provided" ] ; 
+      then
+        terraform destroy -var-file="${{ parameters.main_file_path }}" -auto-approve
+      else
+        terraform destroy -auto-approve
+      fi
     condition: and(${{ parameters.terraform_destroy }}, eq(variables['package_available'], 'yes')) # this task will only run if the package is available and a Terraform destroy has been asked
     displayName: "${{ parameters.package_name }} - Terraform Destroy"
     workingDirectory: "./${{ parameters.package_name }}"
+    env:
+      TF_IN_AUTOMATION: true
+      ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+      ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+      ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+      ARM_TENANT_ID: $(ARM_TENANT_ID)

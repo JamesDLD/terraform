@@ -4,7 +4,8 @@ provider "azurerm" {
   client_id       = var.service_principals[0]["Application_Id"]
   client_secret   = var.service_principals[0]["Application_Secret"]
   tenant_id       = var.tenant_id
-  version         = ">= 1.31.0" #Use the last version tested through an Azure DevOps pipeline here : https://dev.azure.com/jamesdld23/vpc_lab/_build?definitionId=6&_a=summary
+  version         = "~> 2.0"
+  features {}
 }
 
 ####################################################
@@ -50,7 +51,7 @@ data "azurerm_storage_account" "Infr" {
 ## Core Network components
 module "Az-VirtualNetwork-Infra" {
   source                      = "JamesDLD/Az-VirtualNetwork/azurerm"
-  version                     = "0.1.3"
+  version                     = "0.1.4"
   net_prefix                  = "${var.app_name}-${var.env_name}"
   network_resource_group_name = data.azurerm_resource_group.Infr.name
   virtual_networks            = var.vnets

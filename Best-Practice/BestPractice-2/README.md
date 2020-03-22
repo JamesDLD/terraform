@@ -51,6 +51,8 @@ provider "azurerm" {
   client_id       = "${var.client_id}"
   client_secret   = "${var.client_secret}"
   tenant_id       = "${var.tenant_id}"
+  version         = "~> 2.0"
+  features {}
 }
 ```
 
@@ -58,7 +60,7 @@ Specify the module version
 ```hcl
 module "Az-VirtualNetwork" {
   source                      = "JamesDLD/Az-VirtualNetwork/azurerm"
-  version                     = "0.1.3"
+  version                     = "0.1.4"
   net_prefix                  = "demo"
   network_resource_group_name = data.azurerm_resource_group.bp2.name
   virtual_networks = var.virtual_networks
