@@ -3,7 +3,7 @@ Repository inventory
 
 | Id  | Description | Build Status |
 | ------------- | ------------- | ------------- |
-| [Application Gateway](azurerm_application_gateway) | Tutoriel on [medium.com](https://medium.com/@jamesdld23/build-an-azure-application-gateway-with-terraform-8264fbd5fa42/?WT.mc_id=AZ-MVP-5003548) on how to build an Azure Application Gateway | N/A |
+| [Application Gateway](azurerm_application_gateway) | Tutoriel on [medium.com](https://medium.com/faun/build-an-azure-application-gateway-with-terraform-8264fbd5fa42/?WT.mc_id=AZ-MVP-5003548) on how to build an Azure Application Gateway | N/A |
 | [Best-Practice](Best-Practice) | Share a list of best practices and tutoriels when using Terraform on Azure | [![Build Status](https://dev.azure.com/jamesdld23/vpc_lab/_apis/build/status/JamesDLD.terraform%20BP?branchName=master)](https://dev.azure.com/jamesdld23/vpc_lab/_build/latest?definitionId=5&branchName=master) |
 | [Azure DevOps - Intro](AzureDevops-Introduction) | Share articles about CI/CD, Azure DevOps and Terraform on Azure. | [![Build Status](https://dev.azure.com/jamesdld23/vpc_lab/_apis/build/status/JamesDLD.terraform%20Introduction?branchName=master)](https://dev.azure.com/jamesdld23/vpc_lab/_build/latest?definitionId=9&branchName=master) |
 | [CreateAzureRm-Infra](CreateAzureRm-Infra)  | Share Terraform script that reveal how to create a VPC in Azure and how application client can create their resources | [![Build Status](https://dev.azure.com/jamesdld23/vpc_lab/_apis/build/status/JamesDLD.terraform%20VPC?branchName=master)](https://dev.azure.com/jamesdld23/vpc_lab/_build/latest?definitionId=6&branchName=master) |

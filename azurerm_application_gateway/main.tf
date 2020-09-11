@@ -250,8 +250,9 @@ resource "azurerm_application_gateway" "agw" {
   backend_http_settings {
     name                  = local.http_setting_name
     cookie_based_affinity = "Disabled"
-    port                  = 80
-    protocol              = "Http"
+    port                  = 443
+    protocol              = "Https"
+    host_name             = local.backend_address_pool.fqdns[0]
     request_timeout       = 1
   }
 
