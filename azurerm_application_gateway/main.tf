@@ -3,16 +3,17 @@
 # -
 
 locals {
-  prefix   = "demo"
-  rg_name  = "mygroup1" #An existing Resource Group for the Application Gateway 
-  sku_name = "Standard_v2" #Sku with WAF is : WAF_v2
+  prefix   = "mvp"
+  rg_name  = "infr-hub-prd-rg1" #An existing Resource Group for the Application Gateway 
+  sku_name = "Standard_v2"      #Sku with WAF is : WAF_v2
   sku_tier = "Standard_v2"
   zones    = ["1", "2", "3"] #Availability zones to spread the Application Gateway over. They are also only supported for v2 SKUs.
   capacity = {
     min = 1 #Minimum capacity for autoscaling. Accepted values are in the range 0 to 100.
     max = 3 #Maximum capacity for autoscaling. Accepted values are in the range 2 to 125.
   }
-  subnet_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/mygroup1/providers/Microsoft.Network/virtualNetworks/myvnet1/subnets/mysubnet1" #Fill Here a dedicated subnet if for the Application Gateway
+  subnet_name = "agw-snet1"
+  vnet_name   = "aadds-vnet"
 
   appname = "mysite1"
   backend_address_pool = {
@@ -39,6 +40,12 @@ locals {
 #Get the Application Gateway Resource Group
 data "azurerm_resource_group" "rg" {
   name = local.rg_name
+}
+
+data "azurerm_subnet" "agw" {
+  name                 = local.subnet_name
+  virtual_network_name = local.vnet_name
+  resource_group_name  = data.azurerm_resource_group.rg.name
 }
 
 # -
@@ -93,10 +100,10 @@ resource "azurerm_key_vault" "agw" {
   purge_protection_enabled   = false
   sku_name                   = "standard"
 
-    network_acls {
-      default_action = "Deny"
-      bypass         = "AzureServices"
-    }
+  # network_acls {
+  #   default_action = "Allow"
+  #   bypass         = "AzureServices"
+  # }
 
   tags = data.azurerm_resource_group.rg.tags
 }
@@ -195,6 +202,7 @@ resource "azurerm_public_ip" "agw" {
 # -
 
 resource "azurerm_application_gateway" "agw" {
+  depends_on          = [azurerm_key_vault_certificate.mysite1]
   name                = "${local.prefix}-hub-agw1"
   location            = data.azurerm_resource_group.rg.location
   resource_group_name = data.azurerm_resource_group.rg.name
@@ -219,7 +227,7 @@ resource "azurerm_application_gateway" "agw" {
 
   gateway_ip_configuration {
     name      = "${local.prefix}-hub-agw1-ip-configuration"
-    subnet_id = local.subnet_id
+    subnet_id = data.azurerm_subnet.agw.id
   }
 
   frontend_ip_configuration {
