@@ -184,6 +184,11 @@ resource "azurerm_key_vault_certificate" "mysite1" {
   }
 }
 
+resource "time_sleep" "wait_60_seconds" {
+  depends_on = [azurerm_key_vault_certificate.mysite1]
+
+  create_duration = "60s"
+}
 #
 # Public IP
 #
@@ -202,7 +207,7 @@ resource "azurerm_public_ip" "agw" {
 # -
 
 resource "azurerm_application_gateway" "agw" {
-  depends_on          = [azurerm_key_vault_certificate.mysite1]
+  depends_on          = [azurerm_key_vault_certificate.mysite1, time_sleep.wait_60_seconds]
   name                = "${local.prefix}-hub-agw1"
   location            = data.azurerm_resource_group.rg.location
   resource_group_name = data.azurerm_resource_group.rg.name
